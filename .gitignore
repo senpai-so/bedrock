@@ -40,3 +40,4 @@ yarn-error.log*
 # ignore contracts directory
 eth/node_modules
 eth/artifacts/*
+contracts/cw721-base/target/
