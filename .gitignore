@@ -41,3 +41,4 @@ yarn-error.log*
 eth/node_modules
 eth/artifacts/*
 contracts/cw721-base/target/
+packages/cw721/target/

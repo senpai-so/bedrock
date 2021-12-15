@@ -9,7 +9,9 @@ class MyDocument extends Document {
   render() {
     return (
       <Html className='h-full bg-red-50'>
-        <Head />
+        <Head>
+          <meta name='terra-wallet' />
+        </Head>
         <body className='h-full'>
           <Main />
           <NextScript />

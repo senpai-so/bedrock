@@ -1,383 +1,215 @@
-import React, { useCallback } from 'react'
-import cs from 'classnames'
-import { BigNumber } from '@ethersproject/bignumber'
-
-import { Dashboard } from 'components/Dashboard'
-import { Notification } from 'components/Notification'
-import { CheckoutForm } from 'components/CheckoutForm'
-
-import { ethers } from 'ethers'
-
-import { Elements } from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
-
-import api from 'lib/utils/api-client'
-
-import { User } from 'lib/models'
-
-import { dollarsToCents } from 'lib/utils/currency'
+import React from 'react'
+import {
+  Fee,
+  MsgSend,
+  LCDClient,
+  MnemonicKey,
+  MsgExecuteContract,
+  Coins
+} from '@terra-money/terra.js'
 
 import {
-  fetchSpotPrices,
-  fetchSpotPricesUSDCToLuna,
-  makeTradeTo,
-  makeTradeToRinkeby
-} from 'lib/utils/uniswap'
+  useWallet,
+  useConnectedWallet,
+  WalletStatus,
+  CreateTxFailed,
+  Timeout,
+  TxFailed,
+  TxResult,
+  TxUnspecifiedError,
+  UserDenied
+} from '@terra-money/wallet-provider'
 
-import { makeTradeToV3 } from 'lib/utils/uniswapv3'
+import { Page } from 'components/Page'
 
-import { stake as stakeOHM } from 'lib/utils/olympusDAO'
-import { mnemonicToEntropy } from 'ethers/lib/utils'
+export default function Index() {
+  const {
+    status,
+    // network,
+    // wallets,
+    // availableConnectTypes,
+    // availableInstallTypes,
+    availableConnections,
+    // supportFeatures,
+    connect,
+    // install,
+    disconnect
+  } = useWallet()
 
-type PaymentIntent = {
-  id: string
-  clientSecret: string
-}
+  const [txResult, setTxResult] = React.useState<TxResult | null>(null)
+  const [txError, setTxError] = React.useState<string | null>(null)
 
-// TODO unify with swap.ts
-type SwapResponse = {
-  success: boolean
-  error?: string
-}
+  const connectedWallet = useConnectedWallet()
+  console.log('connectedWallet', connectedWallet)
 
-type NFTMetadata = {}
+  // Loonies Wallet Address. Signs contract, receives funds
+  const SIGNER_WALLET_ADDRESS = 'terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8'
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'INVALID_KEY'
-)
+  const MAIN_WALLET_ADDRESS = 'terra15048c7jn3hlz9ewsvuf6glhx6g88lg5tc22uvw'
 
-const calculateGasMargin = (value: number) => (value * 120) / 100
+  // LocalTerra NFT contract deployed address
+  const NFT_CONTRACT_ADDRESS = ''
 
-const Index: React.FC<{
-  session?: User
-}> = () => {
-  // STATE
+  // const TEST_TO_ADDRESS = 'terra12hnhh5vtyg5juqnzm43970nh4fw42pt27nw9g9'
 
-  const [currentAccount, setCurrentAccount] = React.useState('')
-  const [dollars, setDollars] = React.useState(1.0)
-  const [paymentIntent, setPaymentIntent] =
-    React.useState<PaymentIntent | null>(null)
-  const [showNotification, setShowNotification] = React.useState(false)
-  const [notificationTitle, setNotificationTitle] = React.useState('')
-  const [notificationText, setNotificationText] = React.useState('')
-  const [usdcToOHMPrice, setUSDCToOHMPrice] = React.useState<number | null>(
-    null
-  )
-  const [estimatedGas, setEstimatedGas] = React.useState('')
-  const [isStaking, setIsStaking] = React.useState(false)
-  const [readyToPay, setReadyToPay] = React.useState(false)
-  const [stakingPrompt, setIsStakingPrompt] = React.useState('')
+  const ONE_UST = 1000000
+  const ONE_LUNA = 1000000
 
-  const connectWallet = useCallback(async () => {
-    try {
-      const { ethereum } = window as any
+  const LCD_URL = 'http://localhost:1317'
 
-      if (!ethereum) {
-        alert('Get MetaMask!')
-        return
-      }
+  const mk = new MnemonicKey({
+    mnemonic:
+      'satisfy adjust timber high purchase tuition stool faith fine install that you unaware feed domain license impose boss human eager hat rent enjoy dawn'
+  })
 
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+  const handleClickMint = () => {
+    if (connectedWallet) {
+      console.log('minting')
 
-      console.log('Connected', accounts[0])
-      setCurrentAccount(accounts[0])
+      setTxResult(null)
+      setTxError(null)
 
-      return accounts[0]
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
+      const fee = new Fee(1000000 * 10, '8350000uusd')
 
-  const fetchPrice = async () => {
-    // Fiat -> ETH
-    const token0Price = await fetchSpotPricesUSDCToLuna()
-    // const token0Price = await fetchSpotPrices()
-    setUSDCToOHMPrice(Number(token0Price))
-  }
+      connectedWallet
+        .post({
+          fee: fee,
+          msgs: [
+            new MsgSend(connectedWallet.walletAddress, MAIN_WALLET_ADDRESS, {
+              uusd: 50 * ONE_UST
+              // uluna: 100 * ONE_LUNA
+            })
+          ]
+        })
+        .then(async (nextTxResult: TxResult) => {
+          console.log('here')
+          console.log(nextTxResult)
+          setTxResult(nextTxResult)
 
-  const calculateGasFees = async (num: number) => {
-    // TODO improve this
-    if (usdcToOHMPrice && num) {
-      const gas = (num * 0.0875) / 4
-      setEstimatedGas(calculateGasMargin(gas).toFixed(2))
-    } else {
-      setEstimatedGas('')
-    }
-  }
+          // Mint an NfT
+          const gasPrices =
+            await // await fetch('https://bombay-fcd.terra.dev/v1/txs/gas_prices')
+            (await fetch('http://localhost:3060/v1/txs/gas_prices')).json()
 
-  const renderStripeForm = () => {
-    setReadyToPay(true)
-  }
+          const gasPricesCoins = new Coins(gasPrices)
 
-  // fetch payments info
-  const fetchPaymentIntent = async (): Promise<PaymentIntent | undefined> => {
-    return api
-      .post('/paymentIntent', {
-        amount: dollarsToCents(dollars)
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        return data as PaymentIntent
-      })
-  }
+          const lcd = new LCDClient({
+            URL: LCD_URL,
+            chainID: 'bombay-12',
+            gasPrices: gasPricesCoins,
+            gasAdjustment: '1.5'
+          })
 
-  // approve swap from our wallet
-  const approveSwap = async (): Promise<SwapResponse | undefined> => {
-    return api
-      .post('/paymentIntent', {
-        amount: dollars
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        return data as SwapResponse
-      })
-  }
+          const signerWallet = lcd.wallet(mk)
 
-  // step 1
-  const startBuyAndMint = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
+          const mint = new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            NFT_CONTRACT_ADDRESS,
+            {
+              mint: {
+                token_id: 'DUCHESSTAYTAY',
+                owner: connectedWallet.walletAddress,
+                name: 'DuchessTayTay',
+                description:
+                  'Allows the owner to petrify anyone looking at him or her',
+                image: 'http://localhost/loonies/DuchessTayTay.jpeg'
+                // recipient: wallet.key.accAddress
+              }
+            }
+          )
 
-    if (dollars === 0) {
-      alert(`Minimum purchase is $1`)
-      return
-    }
+          const tranfer = new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            NFT_CONTRACT_ADDRESS,
+            {
+              transfer_nft: {
+                token_id: 'DUCHESSTAYTAY',
+                owner: connectedWallet.walletAddress,
+                recipient: wallet.key.accAddress
+              }
+            }
+          )
 
-    // wait for user to enter credit card details
-    fetchPaymentIntent().then((paymentIntent) => {
-      setPaymentIntent(paymentIntent || null)
-      renderStripeForm()
-    })
-  }
-
-  // step 2
-  const makeTradeUniswap = useCallback(async () => {
-    const { ethereum } = window as any
-
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum)
-      const signer = provider.getSigner()
-
-      // recipient wallet for sOHM's post-swap
-      await connectWallet()
-
-      // middle-man
-      const ourWallet = '0x0da6D1Ace9905f4C7b21a719EfeA88ea0eDa1064' // Jim's Main Metamask Wallet
-      // const ourWallet = '0x3b5F735966c029FF5a6ab2a14FD01ca67345893f' // Jim's Test Metamask Wallet
-      await approveSwap()
-
-      // TODO swap to OHM using our pre-bought USDC tokens
-      console.log(`Swapping into account ${currentAccount}`)
-      setIsStakingPrompt('Performing swap...')
-
-      // const res = await makeTradeTo(dollars, ourTestWallet, signer)
-      const res = await makeTradeToRinkeby(12340, ourWallet, signer)
-      console.log(res)
-
-      // wait for transaction to finish
-      setIsStakingPrompt('Waiting for transaction to settle')
-    }
-  }, [approveSwap, connectWallet, currentAccount, dollars])
-
-  // step 2
-  const stake = async () => {
-    try {
-      const { ethereum } = window as any
-
-      if (!ethereum) {
-        alert('Get MetaMask!')
-        return
-      }
-
-      console.log('Staking OHM...')
-      setIsStakingPrompt('Staking OHM')
-
-      const _value = 0.1
-      const value = _value.toString()
-      const provider = new ethers.providers.Web3Provider(ethereum)
-      const address = await provider.getSigner().getAddress()
-
-      stakeOHM({ value, provider, address })
-    } catch (error) {
-      console.log(error)
+          const tx = await signerWallet.createAndSignTx({
+            msgs: [mint, tranfer]
+          })
+          const result = await lcd.tx.broadcast(tx)
+          console.log('mint result', result)
+        })
+        .catch((error: unknown) => {
+          console.log('error', error)
+          if (error instanceof UserDenied) {
+            setTxError('User Denied')
+          } else if (error instanceof CreateTxFailed) {
+            setTxError('Create Tx Failed: ' + error.message)
+          } else if (error instanceof TxFailed) {
+            setTxError('Tx Failed: ' + error.message)
+          } else if (error instanceof Timeout) {
+            setTxError('Timeout')
+          } else if (error instanceof TxUnspecifiedError) {
+            setTxError('Unspecified Error: ' + error.message)
+          } else {
+            setTxError(
+              'Unknown Error: ' +
+                (error instanceof Error ? error.message : String(error))
+            )
+          }
+        })
     }
   }
-
-  // step 4
-  const transferBackToSender = async () => {
-    // TODO issue a transaction back to the sender
-    // How do we sign transaction without asking for approval?
-    // setIsStakingPrompt('Receiving LUNA')
-  }
-
-  // CALLBACKS
-
-  const stripeOnSuccess = useCallback(async () => {
-    if (isStaking) {
-      return
-    }
-
-    setIsStaking(true)
-
-    await makeTradeUniswap()
-
-    setIsStakingPrompt('Click to Mint')
-    // await stake()
-
-    // await transferBackToSender()
-  }, [isStaking, makeTradeUniswap])
-
-  const handleUSDChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const num = Number(e.currentTarget.value)
-
-    if (!isNaN(num)) {
-      setDollars(num)
-      calculateGasFees(num)
-    } else {
-      setEstimatedGas('')
-    }
-  }
-
-  const mint = (e: React.ChangeEvent<HTMLInputElement>) => {
-    alert('Minted!')
-  }
-
   return (
-    <Dashboard>
-      <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-6 sm:px-6'>
-        <div className='border-gray-200 rounded-lg p-4'>
-          <h2
-            id='applicant-information-title'
-            className='text-3xl font-medium text-gray-700'
-          >
-            LunaPay: One-click purchase
+    <Page>
+      <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
+        <div className='flex flex-col items-center justify-center space-y-12'>
+          <h2 className='font-bold text-3xl text-blue-700'>
+            Exclusive 1st Drop
           </h2>
 
-          <p className='mt-2 text-gray-500'>
-            Click to purchase LUNA with your credit card!
-          </p>
-
-          <div className='flex flex-col sm:flex-row sm:space-x-4'>
-            <div
-              className='rounded-2xl bg-yellow-200 px-5 py-4 border-0 mt-4 cursor-pointer'
-              onClick={fetchPrice}
-            >
-              <h4 className='font-bold'>
-                {' '}
-                <b className='mr-2'>🌔</b>LUNA
-              </h4>
-            </div>
+          <div>
+            <img className='rounded-xl' src='/LooniesGif.gif'></img>
           </div>
 
-          {usdcToOHMPrice !== null && (
+          {status === WalletStatus.WALLET_NOT_CONNECTED && (
             <>
-              <div className='flex flex-col sm:space-y-2 mt-4'>
-                <div>
-                  <p className='mt-4 font-medium text-gray-500'>
-                    Set amount you want to buy
-                  </p>
-                </div>
-
-                <div className='rounded-2xl bg-gray-50 px-4 py-4 border-2 border-gray-100 mt-4 text-lg cursor-pointer'>
-                  <div className='flex flex-row font-lg'>
-                    <div className='flex-initial'>
-                      <b className='mr-2'>💵</b>USD
-                    </div>
-
-                    <div className='flex-grow text-right text-2xl'>
-                      <input
-                        className='text-right bg-transparent text-gray-700 focus:outline-none'
-                        placeholder='0.00'
-                        onChange={handleUSDChange}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-
-                <div className='rounded-2xl bg-gray-50 px-4 py-4 border-2 border-gray-100 mt-4 text-lg cursor-pointer'>
-                  <div className='flex flex-row font-lg'>
-                    <div className='flex-initial'>
-                      <b className='mr-2'>🌔</b>
-                      LUNA
-                    </div>
-
-                    <div className='flex-grow text-right text-2xl font-bold'>
-                      <input
-                        className='text-right text-purple-500 bg-transparent focus:outline-none'
-                        value={(dollars * usdcToOHMPrice).toFixed(6)}
-                        readOnly
-                      ></input>
-                      <p className='text-gray-400 text-xs'>
-                        Rounded to 6 decimals
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {estimatedGas != '' && (
-                <p className='text-indigo-400 text-xs italic font-medium mt-4'>
-                  Est. total gas: ${estimatedGas} USD. Total ~$
-                  {(Number(dollars) + Number(estimatedGas)).toFixed(2)}
-                </p>
-              )}
+              {availableConnections
+                .filter((_) => _.type === 'EXTENSION')
+                .map(({ type, name, icon, identifier = '' }) => (
+                  <button
+                    key={'connection-' + type + identifier}
+                    className='inline-flex items-center px-6 py-3 text-blue-700 font-bold rounded-2xl border-2 border-blue-600 bg-white focus:outline-none '
+                    onClick={() => connect(type, identifier)}
+                  >
+                    <img
+                      src={icon}
+                      alt={name}
+                      style={{ width: '1em', height: '1em' }}
+                      className='mr-2'
+                    />
+                    Connect Wallet
+                  </button>
+                ))}
             </>
           )}
 
-          {usdcToOHMPrice !== null && !readyToPay && (
-            <div className='mt-4'>
+          {status === WalletStatus.WALLET_CONNECTED && (
+            <>
               <button
-                className='rounded-xl bg-indigo-500 font-bold text-white px-5 py-4 border-0 mt-4 cursor-pointer'
-                onClick={startBuyAndMint}
+                className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                onClick={() => handleClickMint()}
               >
-                Purchase {Number(dollars * usdcToOHMPrice).toFixed(2)} LUNA
+                🌙 Mint
               </button>
-            </div>
-          )}
 
-          {usdcToOHMPrice !== null &&
-            readyToPay &&
-            paymentIntent?.clientSecret &&
-            !isStaking && (
-              <div className='flex items-left mt-4 pt-0 justify-end rounded-b'>
-                <div className='w-full'>
-                  <Elements stripe={stripePromise}>
-                    <CheckoutForm
-                      clientSecret={paymentIntent.clientSecret}
-                      successCallback={stripeOnSuccess}
-                      buttonPrompt='Finish and pay'
-                    />
-                  </Elements>
-                </div>
-              </div>
-            )}
-
-          {usdcToOHMPrice !== null && stakingPrompt && (
-            <div className='mt-4'>
               <button
-                className={cs(
-                  'rounded-xl font-bold text-white px-5 py-4 border-0 mt-4 cursor-pointer',
-                  stakingPrompt === 'Click to Mint'
-                    ? 'bg-yellow-200 text-gray-700'
-                    : 'bg-indigo-500 text-white'
-                )}
-                onClick={async (e) => {
-                  if (stakingPrompt === 'Click to Mint') {
-                    mint(e)
-                  } else startBuyAndMint(e)
-                }}
+                className='mt-4 inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                onClick={() => disconnect()}
               >
-                {stakingPrompt}
+                Disconnect
               </button>
-            </div>
+            </>
           )}
         </div>
       </div>
-
-      {showNotification && (
-        <Notification title={notificationTitle} text={notificationText} />
-      )}
-    </Dashboard>
+    </Page>
   )
 }
-
-export default Index
