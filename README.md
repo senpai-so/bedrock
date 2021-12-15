@@ -1,10 +1,8 @@
 # bedrock
 
-VERSION: v0.1
-
 *This is alpha software*
 
-Bedrock helps you launch NFT's on Terra blockchain.
+🗿 🌔 Bedrock helps you launch NFT's on Terra blockchain.
 
 Our main features are:
 * *Create/Mint* NFT's
