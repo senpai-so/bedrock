@@ -1,10 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import {
-  LCDClient,
   MnemonicKey,
   MsgExecuteContract,
-  Coins
 } from '@terra-money/terra.js'
 
 import { getLCD } from '../../lib/utils/terra'
@@ -68,8 +66,10 @@ export default async function handler(
     console.log(result)
 
     res.status(200).json({ success: true })
+    return
   }
 
   // catch-all
   res.status(404).json({ success: false, error: 'NOT FOUND' })
+  return
 }

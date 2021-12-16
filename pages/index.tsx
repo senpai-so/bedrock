@@ -1,8 +1,6 @@
 import React from 'react'
 import {
   Fee,
-  MnemonicKey,
-  MsgExecuteContract,
   MsgSend
 } from '@terra-money/terra.js'
 
@@ -20,7 +18,6 @@ import {
 
 import { Page } from 'components/Page'
 
-import { getLCD } from 'lib/utils/terra'
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST } from 'lib/utils/currency'
@@ -84,7 +81,7 @@ export default function Index() {
           } else {
             setTxError(
               'Unknown Error: ' +
-                (error instanceof Error ? error.message : String(error))
+              (error instanceof Error ? error.message : String(error))
             )
           }
         })
@@ -127,6 +124,7 @@ export default function Index() {
 
           {status === WalletStatus.WALLET_CONNECTED && (
             <>
+              <p> Connected Wallet: {connectedWallet.walletAddress} </p>
               <button
                 className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onClick={() => handleClickMint()}
