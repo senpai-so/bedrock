@@ -185,12 +185,12 @@ export default function Index() {
                 🌙 Mint
               </button>
 
-              <button
+              {/* <button
                 className='mt-4 inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onClick={() => disconnect()}
               >
                 Disconnect
-              </button>
+              </button> */}
             </>
           )}
         </div>
