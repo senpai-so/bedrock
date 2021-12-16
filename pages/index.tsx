@@ -22,6 +22,8 @@ import {
 
 import { Page } from 'components/Page'
 
+import { getLocalTerraLCD } from 'lib/utils/nft-mint'
+
 export default function Index() {
   const {
     status,
@@ -47,127 +49,97 @@ export default function Index() {
   const MAIN_WALLET_ADDRESS = 'terra15048c7jn3hlz9ewsvuf6glhx6g88lg5tc22uvw'
 
   // LocalTerra NFT contract deployed address
-  const NFT_CONTRACT_ADDRESS = 'terra1sshdl5qajv0q0k6shlk8m9sd4lplpn6gggfr86'
+  const NFT_CONTRACT_ADDRESS = 'terra17dkr9rnmtmu7x4azrpupukvur2crnptyfvsrvr'
 
   // const TEST_TO_ADDRESS = 'terra12hnhh5vtyg5juqnzm43970nh4fw42pt27nw9g9'
 
   const ONE_UST = 1000000
+
   const ONE_LUNA = 1000000
 
   const LCD_URL = 'http://localhost:1317'
-
-  function sleep(ms: number) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms)
-    })
-  }
 
   const mk = new MnemonicKey({
     mnemonic:
       'satisfy adjust timber high purchase tuition stool faith fine install that you unaware feed domain license impose boss human eager hat rent enjoy dawn'
   })
 
-  const handleClickMint = () => {
+  const handleClickMint = async () => {
     if (connectedWallet) {
-      console.log('minting')
-
       setTxResult(null)
       setTxError(null)
 
+      const lcd = await getLocalTerraLCD()
+      const owner = SIGNER_WALLET_ADDRESS
+      const signer = lcd.wallet(mk)
+      const buyer = connectedWallet.walletAddress
+      const contractAddress = NFT_CONTRACT_ADDRESS
+
       const fee = new Fee(1000000 * 10, '8350000uusd')
 
-      connectedWallet
-        .post({
-          fee: fee,
-          msgs: [
-            new MsgSend(connectedWallet.walletAddress, SIGNER_WALLET_ADDRESS, {
-              uusd: 1 * ONE_UST
-              // uluna: 100 * ONE_LUNA
-            })
-          ]
-        })
-        .then(async (nextTxResult: TxResult) => {
-          setTxResult(nextTxResult)
+      // console.log('transferring...')
+      // connectedWallet
+      //   .post({
+      //     fee: fee,
+      //     msgs: [
+      //       new MsgSend(buyer, owner, {
+      //         uusd: 1 * ONE_UST
+      //         // uluna: 100 * ONE_LUNA
+      //       })
+      //     ]
+      //   })
+      //   .then(async (nextTxResult: TxResult) => {
+      //     console.log('transferred.')
+      //     setTxResult(nextTxResult)
+      //     await step2()
+      //   })
+      //   .catch((error: unknown) => {
+      //     if (error instanceof UserDenied) {
+      //       setTxError('User Denied')
+      //     } else if (error instanceof CreateTxFailed) {
+      //       setTxError('Create Tx Failed: ' + error.message)
+      //     } else if (error instanceof TxFailed) {
+      //       setTxError('Tx Failed: ' + error.message)
+      //     } else if (error instanceof Timeout) {
+      //       setTxError('Timeout')
+      //     } else if (error instanceof TxUnspecifiedError) {
+      //       setTxError('Unspecified Error: ' + error.message)
+      //     } else {
+      //       setTxError(
+      //         'Unknown Error: ' +
+      //           (error instanceof Error ? error.message : String(error))
+      //       )
+      //     }
+      //   })
 
-          // Mint an NfT
-          const gasPrices =
-            await // await fetch('https://bombay-fcd.terra.dev/v1/txs/gas_prices')
-            (await fetch('http://localhost:3060/v1/txs/gas_prices')).json()
-
-          const gasPricesCoins = new Coins(gasPrices)
-
-          const lcd = new LCDClient({
-            URL: LCD_URL,
-            chainID: 'localterra',
-            gasPrices: gasPricesCoins,
-            gasAdjustment: '1.5'
-          })
-
-          const signerWallet = lcd.wallet(mk)
-          const newOwner = connectedWallet.walletAddress
-
-          const mint = new MsgExecuteContract(newOwner, NFT_CONTRACT_ADDRESS, {
-            mint: {
-              token_id: 'DUCHESSTAYTAY',
-              owner: newOwner,
-              name: 'DuchessTayTay',
-              description:
-                'Allows the owner to petrify anyone looking at him or her',
-              image: 'http://localhost:3000/loonies/DuchessTayTay.jpeg'
+      console.log('minting')
+      const msg = new MsgExecuteContract(
+        owner,
+        contractAddress,
+        {
+          mint: {
+            token_id: 'TRIPPYDIPPY',
+            owner: buyer,
+            name: 'TrippyDippy',
+            description: 'A Dude',
+            image: 'http://localhost:3000/loonies/TrippyDippy.jpeg',
+            extension: {
+              name: 'TrippyDippy',
+              image: 'http://localhost:3000/loonies/TrippyDippy.jpeg'
             }
-          })
-
-          const transfer = new MsgExecuteContract(
-            newOwner,
-            NFT_CONTRACT_ADDRESS,
-            {
-              transfer_nft: {
-                token_id: 'DUCHESSTAYTAY',
-                recipient: newOwner
-              }
-            }
-          )
-
-          sleep(2000)
-
-          // mint part
-          const tx = await signerWallet.createAndSignTx({
-            msgs: [mint]
-          })
-
-          console.log('mint tx', tx)
-          const result = await lcd.tx.broadcast(tx)
-          console.log('mint result', result)
-
-          sleep(2000)
-
-          const tx1 = await signerWallet.createAndSignTx({
-            msgs: [transfer]
-          })
-
-          console.log('mint tx', tx)
-          const result1 = await lcd.tx.broadcast(tx1)
-          console.log('transfer result', result1)
-        })
-        .catch((error: unknown) => {
-          console.log('error', error)
-          if (error instanceof UserDenied) {
-            setTxError('User Denied')
-          } else if (error instanceof CreateTxFailed) {
-            setTxError('Create Tx Failed: ' + error.message)
-          } else if (error instanceof TxFailed) {
-            setTxError('Tx Failed: ' + error.message)
-          } else if (error instanceof Timeout) {
-            setTxError('Timeout')
-          } else if (error instanceof TxUnspecifiedError) {
-            setTxError('Unspecified Error: ' + error.message)
-          } else {
-            setTxError(
-              'Unknown Error: ' +
-                (error instanceof Error ? error.message : String(error))
-            )
           }
-        })
+        },
+        { uluna: 1 * ONE_LUNA }
+      )
+
+      // mint part
+      const tx = await signer.createAndSignTx({
+        msgs: [msg]
+      })
+
+      console.log('mint tx', tx)
+      const result = await lcd.tx.broadcast(tx)
+      console.log(result)
     }
   }
   return (

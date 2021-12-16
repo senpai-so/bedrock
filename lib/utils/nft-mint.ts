@@ -1,35 +1,72 @@
-import fetch from 'isomorphic-fetch'
-import { MsgSend, MnemonicKey, Coins, LCDClient } from '@terra-money/terra.js'
+import {
+  LCDClient,
+  MnemonicKey,
+  MsgExecuteContract,
+  Coins
+} from '@terra-money/terra.js'
 
-// Fetch gas prices and convert to `Coin` format.
-const gasPrices = await (
-  await fetch('https://bombay-fcd.terra.dev/v1/txs/gas_prices')
-).json()
-const gasPricesCoins = new Coins(gasPrices)
+const LCD_URL = 'http://localhost:1317'
 
-const lcd = new LCDClient({
-  URL: 'https://bombay-lcd.terra.dev/',
-  chainID: 'bombay-12',
-  gasPrices: gasPricesCoins,
-  gasAdjustment: '1.5',
-  gas: 10000000
-})
+export async function getLocalTerraLCD() {
+  const gasPrices = await (
+    await fetch('http://localhost:3060/v1/txs/gas_prices')
+  ).json()
 
-const mk = new MnemonicKey({
-  mnemonic:
-    'satisfy adjust timber high purchase tuition stool faith fine install that you unaware feed domain license impose boss human eager hat rent enjoy dawn'
-})
+  const gasPricesCoins = new Coins(gasPrices)
 
-const wallet = lcd.wallet(mk)
+  return new LCDClient({
+    URL: LCD_URL,
+    chainID: 'localterra'
+    // gasPrices: gasPricesCoins,
+    // gasAdjustment: '1.5'
+  })
+}
 
-// Transfer 1 Luna.
-const send = new MsgSend(
-  wallet.key.accAddress,
-  'terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8',
-  { uluna: '1000000' }
-)
+export async function mint(
+  contractAddress: string,
+  recipientAddress: string,
+  mk: MnemonicKey
+) {
+  // Mint an NfT
+  const lcd = await getLocalTerraLCD()
+  const signerWallet = lcd.wallet(mk)
+  const newOwner = recipientAddress
 
-const tx = await wallet.createAndSignTx({ msgs: [send] })
-const result = await lcd.tx.broadcast(tx)
+  const mint = new MsgExecuteContract(newOwner, contractAddress, {
+    mint: {
+      token_id: 'DUCHESSTAYTAY',
+      owner: newOwner,
+      name: 'DuchessTayTay',
+      description: 'Allows the owner to petrify anyone looking at him or her',
+      image: 'http://localhost:3000/loonies/DuchessTayTay.jpeg',
+      extension: {
+        name: 'DuchessTayTay',
+        image: 'http://localhost:3000/loonies/DuchessTayTay.jpeg'
+      }
+    }
+  })
 
-console.log(result)
+  const transfer = new MsgExecuteContract(newOwner, contractAddress, {
+    transfer_nft: {
+      token_id: 'DUCHESSTAYTAY',
+      recipient: newOwner
+    }
+  })
+
+  // mint part
+  const tx = await signerWallet.createAndSignTx({
+    msgs: [mint]
+  })
+
+  console.log('mint tx', tx)
+  const result = await lcd.tx.broadcast(tx)
+  console.log('mint result', result)
+
+  const tx1 = await signerWallet.createAndSignTx({
+    msgs: [transfer]
+  })
+
+  console.log('mint tx', tx)
+  const result1 = await lcd.tx.broadcast(tx1)
+  console.log('transfer result', result1)
+}
