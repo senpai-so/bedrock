@@ -48,7 +48,7 @@ export default function Index() {
   const MAIN_WALLET_ADDRESS = 'terra15048c7jn3hlz9ewsvuf6glhx6g88lg5tc22uvw'
 
   // LocalTerra NFT contract deployed address
-  const NFT_CONTRACT_ADDRESS = ''
+  const NFT_CONTRACT_ADDRESS = 'terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8'
 
   // const TEST_TO_ADDRESS = 'terra12hnhh5vtyg5juqnzm43970nh4fw42pt27nw9g9'
 
@@ -113,7 +113,6 @@ export default function Index() {
                 description:
                   'Allows the owner to petrify anyone looking at him or her',
                 image: 'http://localhost/loonies/DuchessTayTay.jpeg'
-                // recipient: wallet.key.accAddress
               }
             }
           )

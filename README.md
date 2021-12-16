@@ -1,13 +1,14 @@
 # bedrock
 
-*This is alpha software*
+_This is alpha software_
 
-🗿 🌔 Bedrock helps you launch NFT's on Terra blockchain.
+🗿 🌔 Bedrock helps you launch NFT's on Terra blockchain. Right now, it's tailored to the Loonies launch.
 
 Our main features are:
-* *Create/Mint* NFT's
-* Pay using Fiat (or Luna/UST)
-* *Create auctions* for secondary markets for NFT's
+
+- _Create/Mint_ NFT's
+- Pay using Fiat (or Luna/UST)
+- _Create auctions_ for secondary markets for NFT's
 
 Bedrock is meant to be a single repo with three components: a front-end, set of COSMWASM contracts deployable on Terra, and
 a payments integration.
@@ -24,9 +25,10 @@ Follow the [tutorial](https://docs.terra.money/Tutorials/Smart-contracts/Overvie
 
 We store a custom fork of the [CW721 standard](https://github.com/CosmWasm/cw-nfts). Specifically, we extend the `cw721-base` contract to enforce a max token supply and a payable function. This avoids the need to create a separate contract for purchasing NFT's. We also ensure that this contract is deployable on the Terra ecosystem.
 
-To set up, navigate to `contracts/cw721-base` and run
+To set up, navigate to `contracts/cw721-base` and run the test command:
 
 ```
+cd contracts/cw721-base/
 cargo test
 ```
 
@@ -41,15 +43,27 @@ sha256sum cw721_base.wasm
 
 Then, make sure a local Terra node is running (for instructions, see Part 1) and deploy the contract using:
 
-```
+```bash
 terrad tx wasm store cw721_base.wasm --from test1 --chain-id=localterra --gas=auto --fees=100000uluna --broadcast-mode=block
 ```
 
 And to instantiate the contract, use:
 
+```bash
+terrad tx wasm instantiate 2 '{"name": "LooniesCore", "symbol": "LOON", "minter": "terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8", "max_token_count": 10000}' --from test1 --chain-id=localterra --fees=10000uluna --gas=auto --broadcast-mode=block
 ```
-terrad tx wasm instantiate 2 '{"name": "LooniesCore", "symbol": "LOON", "minter": "terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8" "max_token_count": 10000}' --from test1 --chain-id=localterra --fees=10000uluna --gas=auto --broadcast-mode=block
+
+You should see an output that looks like:
+
 ```
+  msg_index: 0
+raw_log: '[{"events":[{"type":"instantiate_contract","attributes":[{"key":"creator","value":"terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8"},{"key":"admin"},{"key":"code_id","value":"2"},{"key":"contract_address","value":"terra1sshdl5qajv0q0k6shlk8m9sd4lplpn6gggfr86"}]},{"type":"message","attributes":[{"key":"action","value":"/terra.wasm.v1beta1.MsgInstantiateContract"},{"key":"module","value":"wasm"},{"key":"sender","value":"terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8"}]}]}]'
+timestamp: ""
+tx: null
+txhash: 1EFC78A141F0CABBD94627C745A5CFF4194663EEC92003923B525D4186404A65
+```
+
+Find the value corresponding to key "contract_address". In the above example, it is `terra1sshdl5qajv0q0k6shlk8m9sd4lplpn6gggfr86`.
 
 Then, to make sure the instantiation is correct, run
 
