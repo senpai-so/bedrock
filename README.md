@@ -36,21 +36,35 @@ This installs packages and runs tests. Once tests pass, compile the contract usi
 
 ```
 RUSTFLAGS='-C link-arg=-s' cargo wasm
-cp ../../target/wasm32-unknown-unknown/release/cw721_base.wasm .
-ls -l cw721_base.wasm
-sha256sum cw721_base.wasm
+cp ../../target/wasm32-unknown-unknown/release/rest_nft_base.wasm .
+ls -l rest_nft_base.wasm
+sha256sum rest_nft_base.wasm
 ```
 
 Then, make sure a local Terra node is running (for instructions, see Part 1) and deploy the contract using:
 
 ```bash
-terrad tx wasm store cw721_base.wasm --from test1 --chain-id=localterra --gas=auto --fees=100000uluna --broadcast-mode=block
+terrad tx wasm store rest_nft_base.wasm --from test1 --chain-id=localterra --gas=auto --fees=100000uluna --broadcast-mode=block
 ```
+
+You should see a result like
+
+```
+raw_log: '[{"events":[{"type":"message","attributes":[{"key":"action","value":"/terra.wasm.v1beta1.MsgStoreCode"},{"key":"module","value":"wasm"}]},{"type":"store_code","attributes":[{"key":"sender","value":"terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8"},{"key":"code_id","value":"3"}]}]}]'
+```
+
+Pay attention to the `code_id` value.
 
 And to instantiate the contract, use:
 
 ```bash
-terrad tx wasm instantiate 2 '{"name": "LooniesCore", "symbol": "LOON", "minter": "terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8", "max_token_count": 10000}' --from test1 --chain-id=localterra --fees=10000uluna --gas=auto --broadcast-mode=block
+terrad tx wasm instantiate CODE_VALUE '{"name": "LooniesCore", "symbol": "LOON", "minter": "terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8", "max_token_count": 10000}' --from test1 --chain-id=localterra --fees=10000uluna --gas=auto --broadcast-mode=block
+```
+
+From our above example, this would be
+
+```bash
+terrad tx wasm instantiate 3 '{"name": "LooniesCore", "symbol": "LOON", "minter": "terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8", "max_token_count": 10000}' --from test1 --chain-id=localterra --fees=10000uluna --gas=auto --broadcast-mode=block
 ```
 
 You should see an output that looks like:
@@ -68,7 +82,7 @@ Find the value corresponding to key "contract_address". In the above example, it
 Then, to make sure the instantiation is correct, run
 
 ```
-terrad query wasm contract-store CONTRACT_ADDRESS '{"num_tokens":{}}'
+terrad query wasm contract-store terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8 '{"num_tokens":{}}'
 ```
 
 where `CONTRACT_ADDRESS` is the address of the contract instantiated from above command.

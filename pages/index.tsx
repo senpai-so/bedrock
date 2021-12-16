@@ -40,7 +40,6 @@ export default function Index() {
   const [txError, setTxError] = React.useState<string | null>(null)
 
   const connectedWallet = useConnectedWallet()
-  console.log('connectedWallet', connectedWallet)
 
   // Loonies Wallet Address. Signs contract, receives funds
   const SIGNER_WALLET_ADDRESS = 'terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8'
@@ -48,7 +47,7 @@ export default function Index() {
   const MAIN_WALLET_ADDRESS = 'terra15048c7jn3hlz9ewsvuf6glhx6g88lg5tc22uvw'
 
   // LocalTerra NFT contract deployed address
-  const NFT_CONTRACT_ADDRESS = 'terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8'
+  const NFT_CONTRACT_ADDRESS = 'terra1sshdl5qajv0q0k6shlk8m9sd4lplpn6gggfr86'
 
   // const TEST_TO_ADDRESS = 'terra12hnhh5vtyg5juqnzm43970nh4fw42pt27nw9g9'
 
@@ -56,6 +55,12 @@ export default function Index() {
   const ONE_LUNA = 1000000
 
   const LCD_URL = 'http://localhost:1317'
+
+  function sleep(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    })
+  }
 
   const mk = new MnemonicKey({
     mnemonic:
@@ -75,15 +80,13 @@ export default function Index() {
         .post({
           fee: fee,
           msgs: [
-            new MsgSend(connectedWallet.walletAddress, MAIN_WALLET_ADDRESS, {
-              uusd: 50 * ONE_UST
+            new MsgSend(connectedWallet.walletAddress, SIGNER_WALLET_ADDRESS, {
+              uusd: 1 * ONE_UST
               // uluna: 100 * ONE_LUNA
             })
           ]
         })
         .then(async (nextTxResult: TxResult) => {
-          console.log('here')
-          console.log(nextTxResult)
           setTxResult(nextTxResult)
 
           // Mint an NfT
@@ -95,45 +98,56 @@ export default function Index() {
 
           const lcd = new LCDClient({
             URL: LCD_URL,
-            chainID: 'bombay-12',
+            chainID: 'localterra',
             gasPrices: gasPricesCoins,
             gasAdjustment: '1.5'
           })
 
           const signerWallet = lcd.wallet(mk)
+          const newOwner = connectedWallet.walletAddress
 
-          const mint = new MsgExecuteContract(
-            connectedWallet.walletAddress,
-            NFT_CONTRACT_ADDRESS,
-            {
-              mint: {
-                token_id: 'DUCHESSTAYTAY',
-                owner: connectedWallet.walletAddress,
-                name: 'DuchessTayTay',
-                description:
-                  'Allows the owner to petrify anyone looking at him or her',
-                image: 'http://localhost/loonies/DuchessTayTay.jpeg'
-              }
+          const mint = new MsgExecuteContract(newOwner, NFT_CONTRACT_ADDRESS, {
+            mint: {
+              token_id: 'DUCHESSTAYTAY',
+              owner: newOwner,
+              name: 'DuchessTayTay',
+              description:
+                'Allows the owner to petrify anyone looking at him or her',
+              image: 'http://localhost:3000/loonies/DuchessTayTay.jpeg'
             }
-          )
+          })
 
-          const tranfer = new MsgExecuteContract(
-            connectedWallet.walletAddress,
+          const transfer = new MsgExecuteContract(
+            newOwner,
             NFT_CONTRACT_ADDRESS,
             {
               transfer_nft: {
                 token_id: 'DUCHESSTAYTAY',
-                owner: connectedWallet.walletAddress,
-                recipient: wallet.key.accAddress
+                recipient: newOwner
               }
             }
           )
 
+          sleep(2000)
+
+          // mint part
           const tx = await signerWallet.createAndSignTx({
-            msgs: [mint, tranfer]
+            msgs: [mint]
           })
+
+          console.log('mint tx', tx)
           const result = await lcd.tx.broadcast(tx)
           console.log('mint result', result)
+
+          sleep(2000)
+
+          const tx1 = await signerWallet.createAndSignTx({
+            msgs: [transfer]
+          })
+
+          console.log('mint tx', tx)
+          const result1 = await lcd.tx.broadcast(tx1)
+          console.log('transfer result', result1)
         })
         .catch((error: unknown) => {
           console.log('error', error)
