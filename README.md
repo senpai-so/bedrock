@@ -25,10 +25,10 @@ Follow the [tutorial](https://docs.terra.money/Tutorials/Smart-contracts/Overvie
 
 We store a custom fork of the [CW721 standard](https://github.com/CosmWasm/cw-nfts). Specifically, we extend the `cw721-base` contract to enforce a max token supply and a payable function. This avoids the need to create a separate contract for purchasing NFT's. We also ensure that this contract is deployable on the Terra ecosystem.
 
-To set up, navigate to `contracts/cw721-base` and run the test command:
+To set up, navigate to `contracts/rest-nft/contracts/rest-nft-base` and run the test command:
 
 ```
-cd contracts/cw721-base/
+cd contracts/rest-nft/contracts/rest-nft-base
 cargo test
 ```
 
@@ -53,9 +53,9 @@ You should see a result like
 raw_log: '[{"events":[{"type":"message","attributes":[{"key":"action","value":"/terra.wasm.v1beta1.MsgStoreCode"},{"key":"module","value":"wasm"}]},{"type":"store_code","attributes":[{"key":"sender","value":"terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8"},{"key":"code_id","value":"3"}]}]}]'
 ```
 
-Pay attention to the `code_id` value.
+Pay attention to the `code_id` value. Here, it's "3".
 
-And to instantiate the contract, use:
+Great! You now have your contract template on the blockchain. You still need to instantiate it before you can start using. To instantiate the contract, use (replace CODE_VALUE):
 
 ```bash
 terrad tx wasm instantiate CODE_VALUE '{"name": "LooniesCore", "symbol": "LOON", "minter": "terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8", "max_token_count": 10000}' --from test1 --chain-id=localterra --fees=10000uluna --gas=auto --broadcast-mode=block
@@ -86,6 +86,14 @@ terrad query wasm contract-store terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8 '{
 ```
 
 where `CONTRACT_ADDRESS` is the address of the contract instantiated from above command.
+
+Bonus: test minting
+
+To test minting, you can try this command
+
+```
+terrad tx wasm execute terra17dkr9rnmtmu7x4azrpupukvur2crnptyfvsrvr '{"mint":{"token_id": "DUCHTYTY3", "owner": "terra15048c7jn3hlz9ewsvuf6glhx6g88lg5tc22uvw", "name": "DTT", "image": "http://localhost:3000/loonies/DuchessTayTay.jpeg", "extension": {"name": "DTT", "image": "http://localhost:3000/loonies/DuchessTayTay.jpeg"}}}' --from test1 --chain-id=localterra --gas=auto --fees=1000000uluna --broadcast-mode=block
+```
 
 ### Part 3: Web app
 
@@ -119,10 +127,10 @@ Note: for loading .env, you need to manually call `dotenv.config(...)` at the to
 
 To execute locally>
 
-Check your .env is populated correctly. Then run
+Check your .env is populated correctly. Then run (no .ts extension at the end)
 
 ```
-yarn run:<scriptName>.ts
+yarn run:<scriptName>
 ```
 
 ## Learn More
