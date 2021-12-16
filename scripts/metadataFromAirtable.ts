@@ -18,7 +18,10 @@ function getAirtableClient(baseId: string): AirtableBase {
 // eslint-disable-next-line prettier/prettier
 ; (async (connection) => {
   console.log('Connecting to Airtable')
-  const base = getAirtableClient('appn2XbAF0nNuS6de')
+
+  // Keeping in here as it's not rly a secret
+  const looniesMetadataAirtableId = 'appn2XbAF0nNuS6de'
+  const base = getAirtableClient(looniesMetadataAirtableId)
 
   await base('Table 1')
     .select({
