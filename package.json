@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "repl": "ts-node -r tsconfig-paths/register -P ./tsconfig.commonjs.json",
-    "contract:types": "zx scripts/build.types.mjs"
+    "test": "run-s test:*",
+    "test:lint": "eslint . --ext ts,tsx",
+    "test:prettier": "prettier '**/*.{js,jsx,ts,tsx,json}' --check",
+    "run:prettier": "prettier --write . ",
+    "run:metadataFromAirtable": "ts-node -P ./tsconfig.commonjs.json -r tsconfig-paths/register ./scripts/metadataFromAirtable.ts"
   },
   "dependencies": {
     "@ethersproject/units": "^5.5.0",
@@ -36,7 +40,9 @@
     "@web3-react/portis-connector": "^6.1.9",
     "@web3-react/walletconnect-connector": "^6.2.8",
     "@web3-react/walletlink-connector": "^6.2.8",
+    "airtable": "^0.11.1",
     "classnames": "^2.3.1",
+    "dotenv": "^10.0.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-config-standard-react": "^11.0.1",
     "eslint-plugin-node": "^11.1.0",

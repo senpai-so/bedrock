@@ -111,6 +111,20 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+## Scripts
+
+We keep convenient scripts to run in `scripts/`. They're written in Typescript and are hooked up to import from any existing path in the repo.
+
+Note: for loading .env, you need to manually call `dotenv.config(...)` at the top of the file.
+
+To execute locally>
+
+Check your .env is populated correctly. Then run
+
+```
+yarn run:<scriptName>.ts
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
