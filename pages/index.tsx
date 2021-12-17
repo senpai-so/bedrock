@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+
 import { Fee, MsgSend } from '@terra-money/terra.js'
 
 import {
@@ -15,6 +16,7 @@ import {
 } from '@terra-money/wallet-provider'
 
 import { Page } from 'components/Page'
+import { Modal } from 'components/Modal'
 
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
@@ -25,6 +27,7 @@ export default function Index() {
 
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [txError, setTxError] = React.useState<string | null>(null)
+  const [showModal, setShowModal] = React.useState(false)
 
   const connectedWallet = useConnectedWallet()
 
@@ -35,6 +38,10 @@ export default function Index() {
       .catch((error) => {
         // TODO handle error
       })
+  }
+
+  const toggleDisconnect = () => {
+    setShowModal(!showModal)
   }
 
   const handleClickMint = async () => {
@@ -86,6 +93,12 @@ export default function Index() {
     }
   }
 
+  const abbreviateWalletAddress = (address: string) => {
+    return address.length > 12
+      ? address.slice(0, 6) + '...' + address.slice(-4)
+      : address
+  }
+
   return (
     <Page>
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
@@ -129,21 +142,29 @@ export default function Index() {
 
           {status === WalletStatus.WALLET_CONNECTED && (
             <>
-              <p> Connected Wallet: {connectedWallet?.walletAddress} </p>
+              <div
+                className='border cursor-pointer border-1 px-4 py-2 sm:text-lg font-medium border-gray-300 rounded-lg text-gray-700'
+                onClick={() => toggleDisconnect()}
+              >
+                🧧{' '}
+                {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
+              </div>
               <button
                 className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onClick={() => handleClickMint()}
               >
                 <span className='mr-2'>🌙 </span> Mint
               </button>
-
-              <button
-                className='mt-4 inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                onClick={() => disconnect()}
-              >
-                Disconnect
-              </button>
             </>
+          )}
+
+          {showModal && (
+            <Modal
+              action={() => disconnect()}
+              walletAddress={abbreviateWalletAddress(
+                connectedWallet?.walletAddress || ''
+              )}
+            />
           )}
         </div>
       </div>
