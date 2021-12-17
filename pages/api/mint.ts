@@ -8,7 +8,6 @@ import { toULuna } from '../../lib/utils/currency'
 
 import prisma from '../../lib/prisma';
 import pickRandom from 'pick-random';
-import { delBasePath } from 'next/dist/shared/lib/router/router'
 
 
 type SwapResponse = {
@@ -83,6 +82,8 @@ export default async function handler(
       { uluna: toULuna(1) }
     )
 
+    console.log(msg)
+
     // mint part
     const tx = await signer.createAndSignTx({
       msgs: [msg]
@@ -95,8 +96,6 @@ export default async function handler(
     res.status(200).json({ success: true })
 
     await save_mint_to_db(token?.token_id)
-
-    prisma.$disconnect()
 
     return
   }

@@ -24,11 +24,11 @@ export const api = {
 
 // ----------------------------------------------------------------------------
 
-export const mnemonic = process.env.SIGNER_WALLET_MNEMONIC || 'satisfy adjust timber high purchase tuition stool faith fine install that you unaware feed domain license impose boss human eager hat rent enjoy dawn'
+export const mnemonic = process.env.SIGNER_WALLET_MNEMONIC || ''
 
-export const contractAddress = process.env.NFT_CONTRACT_ADDRESS || 'terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5'
+export const contractAddress = process.env.NFT_CONTRACT_ADDRESS || ''
 
-export const ownerAddress = process.env.SIGNER_WALLET_ADDRESS || 'terra1dcegyrekltswvyy0xy69ydgxn9x8x32zdtapd8'
+export const ownerAddress = process.env.SIGNER_WALLET_ADDRESS || ''
 
 export function getEnv(
   key: string,
