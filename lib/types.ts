@@ -20,11 +20,14 @@ export interface NFTTokenItem {
   description?: string
   image?: string
   extension: Extension
-  owner: string
 }
 
 export interface Extension {
   name?: string
   description?: string
   image?: string
+}
+
+export interface OwnerOf {
+  owner: string
 }

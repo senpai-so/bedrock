@@ -24,7 +24,7 @@ import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
 import { getLCD } from 'lib/utils/terra'
-import { NFTTokenItem } from 'lib/types'
+import { NFTTokenItem, OwnerOf } from 'lib/types'
 
 const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
 
@@ -56,77 +56,31 @@ export default function Index() {
     setShowModal(!showModal)
   }
 
-  const handleClickMint = async () => {
-    if (connectedWallet) {
-      setTxResult(null)
-      setTxError(null)
-
-      const buyer = connectedWallet.walletAddress
-      console.log('buyer', buyer)
-      console.log('owner', ownerAddress)
-
-      // TODO use proper fee
-      const fee = new Fee(1000000 * 10, '8350000uluna')
-
-      // TODO switch to pay btwn luna or uust depending on what user chooses
-      console.log('posting...')
-      connectedWallet
-        .post({
-          fee: fee,
-          msgs: [
-            new MsgSend(buyer, ownerAddress, {
-              // uusd: toUUST(1)
-              uluna: toULuna(1)
-            })
-          ]
-        })
-        .then(async (nextTxResult: TxResult) => {
-          console.log('transferred.')
-          setTxResult(nextTxResult)
-
-          const res = mint(buyer)
-          await res
-        })
-        .catch((error: unknown) => {
-          console.log('error!')
-          console.log(error)
-          if (error instanceof UserDenied) {
-            setTxError('User Denied')
-          } else if (error instanceof CreateTxFailed) {
-            setTxError('Create Tx Failed: ' + error.message)
-          } else if (error instanceof TxFailed) {
-            setTxError('Tx Failed: ' + error.message)
-          } else if (error instanceof Timeout) {
-            setTxError('Timeout')
-          } else if (error instanceof TxUnspecifiedError) {
-            setTxError('Unspecified Error: ' + error.message)
-          } else {
-            setTxError(
-              'Unknown Error: ' +
-                (error instanceof Error ? error.message : String(error))
-            )
-          }
-        })
-    }
-  }
-
   const abbreviateWalletAddress = (address: string) => {
     return address.length > 12
       ? address.slice(0, 6) + '...' + address.slice(-4)
       : address
   }
 
-  async function fetchSetNFTData(tokenId: string): Promise<NFTTokenItem> {
+  async function fetchSetNFTData(tokenId: string) {
     const lcd = await getLCD()
-    const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
+    const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
       contractAddress,
       {
-        nft_info: { token_id: 'DUCHTYTY3' }
+        owner_of: { token_id: token_id }
       }
-    )
-    console.log(nftInfo)
-    setNFTInfo(nftInfo)
-    return nftInfo
+    )) as unknown as OwnerOf
+
+    if (ownership.owner === connectedWallet?.walletAddress) {
+      const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
+        contractAddress,
+        {
+          nft_info: { token_id: token_id }
+        }
+      )
+      console.log(nftInfo)
+      setNFTInfo(nftInfo)
+    }
   }
 
   function renderImage() {
@@ -154,7 +108,7 @@ export default function Index() {
   }
 
   function render() {
-    if (!(connectedWallet?.walletAddress === nftInfo?.owner)) {
+    if (!nftInfo) {
       return (
         <>
           <h2>You are not the owner of this NFT!</h2>
@@ -168,11 +122,11 @@ export default function Index() {
         <div>{renderImage()}</div>
 
         <div
-          className='border cursor-pointer border-1 px-4 py-2 sm:text-lg border-gray-300 rounded-lg text-gray-700'
+          className='border cursor-pointer px-4 py-2 sm:text-lg border-gray-300 rounded-lg text-gray-700'
           onClick={() => toggleDisconnect()}
         >
-          🧧{' '}
-          <span className='font-medium'>
+          Owner 🧧{' '}
+          <span className='px-3 py-2 font-medium'>
             {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
           </span>
         </div>
