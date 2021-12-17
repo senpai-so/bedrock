@@ -2,6 +2,6 @@
 module.exports = {
   reactStrictMode: false,
   images: {
-    domains: ['assets.terra.money']
+    domains: ['assets.terra.money', 'localhost', 'loonies.world']
   }
 }
