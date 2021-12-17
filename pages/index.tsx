@@ -20,7 +20,7 @@ import { Modal } from 'components/Modal'
 
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
-import { toUUST } from 'lib/utils/currency'
+import { toUUST, toULuna } from 'lib/utils/currency'
 
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
@@ -52,16 +52,17 @@ export default function Index() {
       const buyer = connectedWallet.walletAddress
 
       // TODO use proper fee
-      const fee = new Fee(1000000 * 10, '8350000uusd')
+      const fee = new Fee(1000000 * 10, '8350000uluna')
 
       // TODO switch to pay btwn luna or uust depending on what user chooses
+      console.log('posting...')
       connectedWallet
         .post({
           fee: fee,
           msgs: [
             new MsgSend(buyer, ownerAddress, {
-              uusd: toUUST(1)
-              // uluna: 100 * ONE_LUNA
+              // uusd: toUUST(1)
+              uluna: toULuna(1)
             })
           ]
         })
@@ -73,6 +74,8 @@ export default function Index() {
           await res
         })
         .catch((error: unknown) => {
+          console.log('error!')
+          console.log(error)
           if (error instanceof UserDenied) {
             setTxError('User Denied')
           } else if (error instanceof CreateTxFailed) {
@@ -86,7 +89,7 @@ export default function Index() {
           } else {
             setTxError(
               'Unknown Error: ' +
-                (error instanceof Error ? error.message : String(error))
+              (error instanceof Error ? error.message : String(error))
             )
           }
         })

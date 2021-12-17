@@ -6,9 +6,36 @@ import { getLCD } from '../../lib/utils/terra'
 import { mnemonic, ownerAddress, contractAddress } from '../../lib/config'
 import { toULuna } from '../../lib/utils/currency'
 
+import prisma from '../../lib/prisma';
+import pickRandom from 'pick-random';
+import { delBasePath } from 'next/dist/shared/lib/router/router'
+
+
 type SwapResponse = {
   success: boolean
   error?: string
+}
+
+async function get_random_non_minted_nft() {
+  const tokensAvailable = await prisma.nftTokens.findMany({
+    where: { isMinted: false },
+    select: { id: true }
+  });
+  const random_token = pickRandom(tokensAvailable)[0]
+  const full_token = await prisma.nftTokens.findUnique({
+    where: { id: random_token.id },
+  });
+  return full_token
+}
+
+async function save_mint_to_db(token_id?: string) {
+  if (token_id) {
+    await prisma.nftTokens.update({
+      where: { token_id: token_id },
+      data: { isMinted: true },
+    });
+  }
+  return
 }
 
 export default async function handler(
@@ -29,6 +56,9 @@ export default async function handler(
       return
     }
 
+    const token = await get_random_non_minted_nft()
+
+    console.log(token)
     const lcd = await getLCD()
     const mk = new MnemonicKey({ mnemonic })
     const signer = lcd.wallet(mk)
@@ -38,14 +68,14 @@ export default async function handler(
       contractAddress,
       {
         mint: {
-          token_id: 'TRIPPYDIPPY',
+          token_id: token?.token_id,
           owner: buyer,
-          name: 'TrippyDippy',
-          description: 'A Dude',
-          image: 'http://localhost:3000/loonies/TrippyDippy.jpeg',
+          name: token?.name,
+          description: token?.description,
+          image: token?.image_uri,
           extension: {
-            name: 'TrippyDippy',
-            image: 'http://localhost:3000/loonies/TrippyDippy.jpeg'
+            name: token?.extension_name,
+            image: token?.extension_image
           }
         }
       },
@@ -63,6 +93,11 @@ export default async function handler(
     console.log(result)
 
     res.status(200).json({ success: true })
+
+    await save_mint_to_db(token?.token_id)
+
+    prisma.$disconnect()
+
     return
   }
 

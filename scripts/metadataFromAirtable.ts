@@ -33,7 +33,9 @@ function getAirtableClient(baseId: string): AirtableBase {
         records.forEach(async (record) => {
           const tokenId = record.fields['token_id'] as string
           const name = record.fields['name'] as string
-          const images = record.fields['image'] as Attachment[]
+          const description = record.fields['description'] as string
+          const image = record.fields['image'] as Attachment[]
+          const traits = record.fields['traits'] as string
           // ...
         })
 

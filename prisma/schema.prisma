@@ -1,0 +1,22 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model NftTokens {
+  id                Int              @default(autoincrement()) @id
+  token_id          String           @unique
+  name              String
+  description       String
+  extension_name    String
+  extension_image   String
+  image_uri         String
+  isMinted          Boolean          @default(false)
+}
