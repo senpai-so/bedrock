@@ -118,14 +118,13 @@ export default function Index() {
 
   async function fetchSetNFTData(tokenId: string): Promise<NFTTokenItem> {
     const lcd = await getLCD()
-    console.log('contract', contractAddress)
     const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
-      // 'terra17dkr9rnmtmu7x4azrpupukvur2crnptyfvsrvr',
       contractAddress,
       {
         nft_info: { token_id: 'DUCHTYTY3' }
       }
     )
+    console.log(nftInfo)
     setNFTInfo(nftInfo)
     return nftInfo
   }
@@ -155,15 +154,28 @@ export default function Index() {
   }
 
   function render() {
+    if (!(connectedWallet?.walletAddress === nftInfo?.owner)) {
+      return (
+        <>
+          <h2>You are not the owner of this NFT!</h2>
+          <p>You need to be the owner to view this</p>
+        </>
+      )
+    }
+
     return (
       <>
+        <div>{renderImage()}</div>
+
         <div
-          className='border cursor-pointer border-1 px-4 py-2 sm:text-lg font-medium border-gray-300 rounded-lg text-gray-700'
+          className='border cursor-pointer border-1 px-4 py-2 sm:text-lg border-gray-300 rounded-lg text-gray-700'
           onClick={() => toggleDisconnect()}
         >
-          🧧 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
+          🧧{' '}
+          <span className='font-medium'>
+            {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
+          </span>
         </div>
-        <div>{renderImage()}</div>
       </>
     )
   }
@@ -178,10 +190,14 @@ export default function Index() {
   return (
     <Page>
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
-        <div className='flex flex-col items-center justify-center space-y-12'>
+        <div className='flex flex-col items-center justify-center space-y-4'>
           <h2 className='font-bold text-3xl text-blue-700'>
-            Exclusive 1st Drop
+            {nftInfo?.extension.name || 'NFT View Page'}
           </h2>
+
+          <p className='text-base text-gray-700'>
+            {nftInfo?.description || `A starry-eyed space cadet`}
+          </p>
 
           {status === WalletStatus.WALLET_NOT_CONNECTED && (
             <>

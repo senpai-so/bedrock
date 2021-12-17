@@ -16,7 +16,11 @@ export interface NFTMarketplace {
 }
 
 export interface NFTTokenItem {
+  name?: string
+  description?: string
+  image?: string
   extension: Extension
+  owner: string
 }
 
 export interface Extension {
