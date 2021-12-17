@@ -17,6 +17,7 @@ import {
 
 import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
+import { FAQ } from 'components/FAQ'
 
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
@@ -50,6 +51,8 @@ export default function Index() {
       setTxError(null)
 
       const buyer = connectedWallet.walletAddress
+      console.log('buyer', buyer)
+      console.log('owner', ownerAddress)
 
       // TODO use proper fee
       const fee = new Fee(1000000 * 10, '8350000uluna')
@@ -89,7 +92,7 @@ export default function Index() {
           } else {
             setTxError(
               'Unknown Error: ' +
-              (error instanceof Error ? error.message : String(error))
+                (error instanceof Error ? error.message : String(error))
             )
           }
         })
@@ -160,6 +163,8 @@ export default function Index() {
               </button>
             </>
           )}
+
+          <FAQ />
 
           {showModal && (
             <Modal

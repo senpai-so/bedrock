@@ -6,24 +6,36 @@ import { getLCD } from '../../lib/utils/terra'
 import { mnemonic, ownerAddress, contractAddress } from '../../lib/config'
 import { toULuna } from '../../lib/utils/currency'
 
-import prisma from '../../lib/prisma';
-import pickRandom from 'pick-random';
-
+import prisma from '../../lib/prisma'
+import pickRandom from 'pick-random'
 
 type SwapResponse = {
   success: boolean
   error?: string
 }
 
+// Prisma schema
+interface NftTokens {
+  id: number
+  token_id: string
+  name: string
+  description: string
+  extension_name: string
+  extension_image: string
+  image_uri: string
+  isMinted: () => boolean
+}
+
 async function get_random_non_minted_nft() {
-  const tokensAvailable = await prisma.nftTokens.findMany({
+  const tokensAvailable: NftTokens[] = (await prisma.nftTokens.findMany({
     where: { isMinted: false },
     select: { id: true }
-  });
+  })) as NftTokens[]
+
   const random_token = pickRandom(tokensAvailable)[0]
   const full_token = await prisma.nftTokens.findUnique({
-    where: { id: random_token.id },
-  });
+    where: { id: random_token.id }
+  })
   return full_token
 }
 
@@ -31,8 +43,8 @@ async function save_mint_to_db(token_id?: string) {
   if (token_id) {
     await prisma.nftTokens.update({
       where: { token_id: token_id },
-      data: { isMinted: true },
-    });
+      data: { isMinted: true }
+    })
   }
   return
 }
