@@ -17,6 +17,7 @@ import {
 
 import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
+import { FAQ } from 'components/FAQ'
 
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
@@ -160,6 +161,8 @@ export default function Index() {
               </button>
             </>
           )}
+
+          <FAQ />
 
           {showModal && (
             <Modal
