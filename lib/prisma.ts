@@ -1,8 +1,7 @@
 // lib/prisma.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-let prisma: PrismaClient;
-prisma = new PrismaClient();
+const prisma: PrismaClient = new PrismaClient()
 // if (process.env.NODE_ENV === 'production') {
 //     prisma = new PrismaClient();
 // } else {
@@ -12,4 +11,4 @@ prisma = new PrismaClient();
 //     prisma = global.prisma;
 // }
 
-export default prisma;
+export default prisma

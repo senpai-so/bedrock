@@ -89,7 +89,7 @@ export default function Index() {
           } else {
             setTxError(
               'Unknown Error: ' +
-              (error instanceof Error ? error.message : String(error))
+                (error instanceof Error ? error.message : String(error))
             )
           }
         })
