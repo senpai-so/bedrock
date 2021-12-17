@@ -1,8 +1,6 @@
 import React from 'react'
-import {
-  Fee,
-  MsgSend
-} from '@terra-money/terra.js'
+import Image from 'next/image'
+import { Fee, MsgSend } from '@terra-money/terra.js'
 
 import {
   useWallet,
@@ -81,7 +79,7 @@ export default function Index() {
           } else {
             setTxError(
               'Unknown Error: ' +
-              (error instanceof Error ? error.message : String(error))
+                (error instanceof Error ? error.message : String(error))
             )
           }
         })
@@ -97,7 +95,13 @@ export default function Index() {
           </h2>
 
           <div>
-            <img className='rounded-xl' src='/LooniesGif.gif'></img>
+            <Image
+              className='rounded-xl'
+              src='/LooniesGif.gif'
+              height='400'
+              width='400'
+              alt='LooniesGif'
+            />
           </div>
 
           {status === WalletStatus.WALLET_NOT_CONNECTED && (
@@ -110,10 +114,11 @@ export default function Index() {
                     className='inline-flex items-center px-6 py-3 text-blue-700 font-bold rounded-2xl border-2 border-blue-600 bg-white focus:outline-none '
                     onClick={() => connect(type, identifier)}
                   >
-                    <img
+                    <Image
                       src={icon}
                       alt={name}
-                      style={{ width: '1em', height: '1em' }}
+                      width='1em'
+                      height='1em'
                       className='mr-2'
                     />
                     Connect Wallet
@@ -124,7 +129,7 @@ export default function Index() {
 
           {status === WalletStatus.WALLET_CONNECTED && (
             <>
-              <p> Connected Wallet: {connectedWallet.walletAddress} </p>
+              <p> Connected Wallet: {connectedWallet?.walletAddress} </p>
               <button
                 className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onClick={() => handleClickMint()}

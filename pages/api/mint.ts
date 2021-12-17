@@ -1,9 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import {
-  MnemonicKey,
-  MsgExecuteContract,
-} from '@terra-money/terra.js'
+import { MnemonicKey, MsgExecuteContract } from '@terra-money/terra.js'
 
 import { getLCD } from '../../lib/utils/terra'
 import { mnemonic, ownerAddress, contractAddress } from '../../lib/config'

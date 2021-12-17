@@ -14,7 +14,6 @@ const prodUrl = 'https://fcd.terra.dev'
 const prodApiUrl = 'https://fcd.terra.dev'
 const prodChainID = 'columbus-4'
 
-
 // gets correct url based on env settings
 function getBaseUrl() {
   return isDev ? localUrl : isPreview ? devnetUrl : prodUrl
