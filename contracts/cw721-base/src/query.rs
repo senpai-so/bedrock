@@ -160,6 +160,16 @@ where
         })
     }
 
+    pub fn nft_info(&self, deps: Deps, token_id: String) -> StdResult<NftInfoResponse<T>> {
+        let info = self.tokens.load(deps.storage, &token_id)?;
+        Ok(NftInfoResponse {
+            name: info.name,
+            description: info.description,
+            image: info.image,
+            extension: info.extension,
+        })
+    }
+
     pub fn query(&self, deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
         match msg {
             QueryMsg::Minter {} => to_binary(&self.minter(deps)?),

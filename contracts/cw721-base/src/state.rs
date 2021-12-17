@@ -30,7 +30,7 @@ where
 {
 }
 
-impl<T, C> Default for Cw721Contract<'static, T, C>
+impl<'a, T, C> Default for Cw721Contract<'a, T, C>
 where
   T: Serialize + DeserializeOwned + Clone,
 {
