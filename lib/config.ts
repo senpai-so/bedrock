@@ -26,7 +26,10 @@ export const api = {
 
 export const mnemonic = process.env.SIGNER_WALLET_MNEMONIC || ''
 
-export const contractAddress = process.env.NFT_CONTRACT_ADDRESS || ''
+export const contractAddress =
+  process.env.NFT_CONTRACT_ADDRESS ||
+  process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS ||
+  ''
 
 export const ownerAddress =
   process.env.SIGNER_WALLET_ADDRESS ||
