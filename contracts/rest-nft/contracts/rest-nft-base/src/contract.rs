@@ -40,9 +40,9 @@ pub fn execute(
     match msg {
         ExecuteMsg::Update {
             token_id,
-            token_uri,
+            image,
             extension,
-        } => execute_update(deps, env, info, token_id, token_uri, extension),
+        } => execute_update(deps, env, info, token_id, image, extension),
         // Freeze token metadata
         ExecuteMsg::Freeze {} => execute_freeze(deps, env, info),
 

@@ -23,6 +23,7 @@ mod tests {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
             minter: CREATOR.to_string(),
+            max_token_count: 1, 
             token_supply: None,
         };
 
@@ -30,10 +31,13 @@ mod tests {
 
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
+            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: "john".to_string(),
-            token_uri: None,
             extension: None,
+            image: Some("".to_string()),
+            description: Some("".to_string()),
+
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
         execute(deps.as_mut(), mock_env(), info, exec_msg).unwrap();
@@ -57,6 +61,7 @@ mod tests {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
             minter: CREATOR.to_string(),
+            max_token_count: 1,
             token_supply: Some(1),
         };
 
@@ -64,10 +69,12 @@ mod tests {
 
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
+            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: "john".to_string(),
-            token_uri: None,
             extension: None,
+            image: Some("".to_string()),
+            description: Some("".to_string()),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
@@ -92,6 +99,7 @@ mod tests {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
             minter: CREATOR.to_string(),
+            max_token_count: 1,
             token_supply: Some(1),
         };
 
@@ -99,10 +107,12 @@ mod tests {
         // Mint an NFT
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
+            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: OWNER.to_string(),
-            token_uri: None,
             extension: None,
+            image: Some("".to_string()),
+            description: Some("".to_string()),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
@@ -121,7 +131,6 @@ mod tests {
         let token_count = contract.token_count(&deps.storage).unwrap();
         // Token count decrements
         assert_eq!(token_count, 0);
-
         let res = RestNFTContract::default().nft_info(deps.as_ref(), token_id.into());
         match res {
             Ok(_) => panic!("Should not return token info"),
@@ -138,6 +147,7 @@ mod tests {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
             minter: CREATOR.to_string(),
+            max_token_count: 1,
             token_supply: Some(1),
         };
 
@@ -146,10 +156,12 @@ mod tests {
         // Mint an NFT
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
+            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: "john".to_string(),
-            token_uri: None,
             extension: None,
+            image: Some("".to_string()),
+            description: Some("".to_string()),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
@@ -158,12 +170,12 @@ mod tests {
         let res = RestNFTContract::default()
             .nft_info(deps.as_ref(), token_id.into())
             .unwrap();
-        assert_eq!(None, res.token_uri);
+        assert_eq!(Some("".to_string()), res.image);
 
         // Update NFT Metadata
         let exec_msg = ExecuteMsg::Update {
             token_id: token_id.to_string(),
-            token_uri: Some("https://moon.com".to_string()),
+            image: Some("https://moon.com".to_string()),
             extension: Some(Metadata {
                 image: None,
                 image_data: None,
@@ -182,7 +194,7 @@ mod tests {
         let res = RestNFTContract::default()
             .nft_info(deps.as_ref(), token_id.into())
             .unwrap();
-        assert_eq!(Some("https://moon.com".to_string()), res.token_uri);
+        assert_eq!(Some("https://moon.com".to_string()), res.image);
 
         // Freeze all nft metadata
         let exec_msg = ExecuteMsg::Freeze {};
@@ -191,7 +203,7 @@ mod tests {
         // Should not be updatable
         let exec_msg = ExecuteMsg::Update {
             token_id: token_id.to_string(),
-            token_uri: Some("https://moonit.com".to_string()),
+            image: Some("https://moonit.com".to_string()),
             extension: Some(Metadata {
                 image: None,
                 image_data: None,
@@ -218,6 +230,7 @@ mod tests {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
             minter: CREATOR.to_string(),
+            max_token_count: 1,
             token_supply: Some(1),
         };
 
@@ -225,11 +238,14 @@ mod tests {
 
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
+            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: CREATOR.to_string(),
-            token_uri: None,
             extension: None,
+            image: Some("".to_string()),
+            description: Some("".to_string()),
         };
+
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
         execute(deps.as_mut(), mock_env(), info.clone(), exec_msg).unwrap();
@@ -252,7 +268,7 @@ mod tests {
         // Old minter cannot update
         let exec_msg = ExecuteMsg::Update {
             token_id: token_id.to_string(),
-            token_uri: Some("https://moonit.com".to_string()),
+            image: Some("https://moonit.com".to_string()),
             extension: Some(Metadata {
                 image: None,
                 image_data: None,
@@ -283,6 +299,7 @@ mod tests {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
             minter: CREATOR.to_string(),
+            max_token_count: 1,
             token_supply: Some(1),
         };
 
@@ -291,10 +308,14 @@ mod tests {
         // Mint an NFT
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
+            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: CREATOR.to_string(),
-            token_uri: None,
             extension: None,
+            image: Some("".to_string()),
+            description: Some("".to_string()),
+            
+            
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
@@ -303,7 +324,7 @@ mod tests {
         let res = RestNFTContract::default()
             .nft_info(deps.as_ref(), token_id.into())
             .unwrap();
-        assert_eq!(None, res.token_uri);
+        assert_eq!(Some("".to_string()), res.image);
 
         let info = mock_info(PUBLIC, &[]);
         // Only minter can freeze metadata
@@ -314,7 +335,7 @@ mod tests {
         // Public cannot update metadata
         let exec_msg = ExecuteMsg::Update {
             token_id: token_id.to_string(),
-            token_uri: Some("https://moonit.com".to_string()),
+            image: Some("https://moonit.com".to_string()),
             extension: Some(Metadata {
                 image: None,
                 image_data: None,
