@@ -139,7 +139,7 @@ export default function Index() {
       const tokenId = token_id as string
       fetchSetNFTData(tokenId)
     }
-  }, [status, token_id])
+  }, [fetchSetNFTData, status, token_id])
 
   return (
     <Page>
