@@ -119,6 +119,14 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+### Database
+The backend postgres database is currently hosted on heroku.
+
+Add the DATABASE_URL secret to your .env file. 
+
+Run yarn prisma studio to view the database on http://localhost:5555
+
+
 ## Scripts
 
 We keep convenient scripts to run in `scripts/`. They're written in Typescript and are hooked up to import from any existing path in the repo.
