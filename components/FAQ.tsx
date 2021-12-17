@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import cs from 'classnames'
+
+import ReactMarkdown from 'react-markdown'
 import { Disclosure } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 
@@ -8,22 +10,23 @@ import { EmptyProps } from 'lib/types'
 const faqs = [
   {
     question: 'What are Loonies?',
-    answer:
-      'Loonies are a limited edition collection of 6666 NFTs that live in LASA (Loonies Aeronautics and Space Administration). They’re crazy enough to think they can build rocket ships that fly to different chain networks & are going to prove to other NFTs they can. Their first mission is to fly to the Solana metaverse Desolates (desolate.space)'
+    answer: `Loonies are a limited edition collection of 10000 NFTs that live in LASA (Loonies Aeronautics and Space Administration). They’re crazy enough to think they can build rocket ships that fly to different chain networks & are going to prove to other NFTs they can. Their first mission is to fly to the Solana metaverse Desolates (desolate.space)`
   },
   {
     question: 'How do I buy a Loonie?',
-    answer:
-      'With Luna coins! Follow this tutorial to set up a wallet, buy a Luna coin. Then come back here and click on "Connect Wallet", then the "Mint" button.'
+    answer: `With Luna coins! Follow [this tutorial](/tutorial) to set up a wallet and buy a Luna coin. Then come back here and click on "Connect Wallet" > "Mint" buttons.`
   },
   {
     question: 'How do I set up a wallet to buy?',
-    answer: 'Go to Terra Station and create a wallet.'
+    answer: `Install [Terra Station](https://docs.terra.money/Tutorials/Get-started/Terra-Station-desktop.html) and then the [Chrome Extension](https://docs.terra.money/Tutorials/Get-started/Terra-Station-extension.html)`
   },
   {
     question: 'How do I view my NFT?',
-    answer:
-      "You'll need to download Terra Station *Desktop*. Then, authenticate with your wallet and click on the NFT tab to view your NFT."
+    answer: `You'll need to download [Terra Station Desktop](https://docs.terra.money/Tutorials/Get-started/Terra-Station-desktop.html) (extension doesn't support NFTs at the moment). Then, authenticate with your wallet and click on the NFT tab to view your NFT.`
+  },
+  {
+    question: 'How do I stay updated on future drops?',
+    answer: `Join our [Discord channel](https://discord.gg/eQRWqApR4A) to stay in the loop and be alerted of future drops 🙌`
   }
 ]
 
@@ -57,8 +60,10 @@ export const FAQ: React.FC<EmptyProps> = () => {
                         </span>
                       </Disclosure.Button>
                     </dt>
-                    <Disclosure.Panel as='dd' className='mt-2 pr-12'>
-                      <p className='text-base text-gray-500'>{faq.answer}</p>
+                    <Disclosure.Panel as='dd' className='mt-2'>
+                      <p className={cs('text-base', 'markdown-container')}>
+                        <ReactMarkdown>{faq.answer}</ReactMarkdown>
+                      </p>
                     </Disclosure.Panel>
                   </>
                 )}
@@ -67,6 +72,12 @@ export const FAQ: React.FC<EmptyProps> = () => {
           </dl>
         </div>
       </div>
+
+      <style global jsx>{`
+        .markdown-container a {
+          color: blue;
+        }
+      `}</style>
     </div>
   )
 }
