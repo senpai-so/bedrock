@@ -51,6 +51,8 @@ export default function Index() {
       setTxError(null)
 
       const buyer = connectedWallet.walletAddress
+      console.log('buyer', buyer)
+      console.log('owner', ownerAddress)
 
       // TODO use proper fee
       const fee = new Fee(1000000 * 10, '8350000uluna')

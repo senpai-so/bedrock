@@ -28,7 +28,10 @@ export const mnemonic = process.env.SIGNER_WALLET_MNEMONIC || ''
 
 export const contractAddress = process.env.NFT_CONTRACT_ADDRESS || ''
 
-export const ownerAddress = process.env.SIGNER_WALLET_ADDRESS || ''
+export const ownerAddress =
+  process.env.SIGNER_WALLET_ADDRESS ||
+  process.env.NEXT_PUBLIC_SIGNER_WALLET_ADDRESS ||
+  ''
 
 export function getEnv(
   key: string,
