@@ -76,7 +76,7 @@ pub fn execute_update(
   _env: Env,
   info: MessageInfo,
   token_id: String,
-  token_uri: Option<String>,
+  image: Option<String>,
   extension: Extension,
 ) -> Result<Response, ContractError> {
   let cw721_contract = RestNFTContract::default();
@@ -95,7 +95,7 @@ pub fn execute_update(
     .tokens
     .update(deps.storage, &token_id, |token| match token {
       Some(mut token_info) => {
-        // token_info.token_uri = token_uri;
+        token_info.image = image;
         token_info.extension = extension;
         Ok(token_info)
       }
