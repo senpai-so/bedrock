@@ -119,6 +119,49 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+## Database
+
+The backend postgres database is currently hosted on heroku.
+
+Add the DATABASE_URL secret to your .env file. 
+
+Run yarn prisma studio to view the database on http://localhost:5555
+
+## Testnet
+
+### Part 1: Get coins from the faucet
+
+Head to https://faucet.terra.money/ and get some tokens to use for development on the testnet
+
+### Part 2: Deploy contract to testnet
+
+TODO: Figure out how to do this through the terrad cli
+
+- Upload contract through the terra station web app (by uploading the .wasm file)
+- Look at transaction history to obtain contract's code id
+- Create contract through the terra station web app where
+
+```bash
+Code : <code id retrieved before>
+InitMsg Json : '{"name": "LooniesCore", "symbol": "LOON", "minter": "<project wallet address>", "max_token_count": 10000}'
+```
+- Look at transaction history to obtain contract address
+
+Note that you will need the wallet address and mnemonic of the creator in the application itself for signing transactions.
+
+### Part 2: Replace the following env variables
+```bash
+NODE_ENV='testnet'
+SIGNER_WALLET_MNEMONIC=<project wallet mnemonic of creator>
+NFT_CONTRACT_ADDRESS=<contract address retrieved from the above steps>
+SIGNER_WALLET_ADDRESS=<project wallet address>
+```
+Run `yarn dev` to deploy the app locally at [http://localhost:3000](http://localhost:3000). 
+
+
+Now all the blockchain calls made on the app will be going to the bombay-12 testnet instead
+
+
 ## Scripts
 
 We keep convenient scripts to run in `scripts/`. They're written in Typescript and are hooked up to import from any existing path in the repo.
