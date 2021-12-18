@@ -1,6 +1,8 @@
 export const isServer = typeof window === 'undefined'
-export const isDev = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV
-export const isPreview = process.env.NODE_ENV !== 'development' && process.env.IS_PREVIEW
+export const isDev =
+  process.env.NODE_ENV === 'development' || !process.env.NODE_ENV
+export const isPreview =
+  process.env.NODE_ENV !== 'development' && process.env.IS_PREVIEW
 
 export const domain = getEnv('DOMAIN', 'loonies.world')
 export const port = getEnv('PORT', '3000')
@@ -24,9 +26,15 @@ export const api = {
 
 export const mnemonic = process.env.SIGNER_WALLET_MNEMONIC || ''
 
-export const contractAddress = process.env.NFT_CONTRACT_ADDRESS || process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
+export const contractAddress =
+  process.env.NFT_CONTRACT_ADDRESS ||
+  process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS ||
+  ''
 
-export const ownerAddress = process.env.SIGNER_WALLET_ADDRESS || process.env.NEXT_PUBLIC_SIGNER_WALLET_ADDRESS || ''
+export const ownerAddress =
+  process.env.SIGNER_WALLET_ADDRESS ||
+  process.env.NEXT_PUBLIC_SIGNER_WALLET_ADDRESS ||
+  ''
 
 export function getEnv(
   key: string,
