@@ -55,6 +55,7 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     const { buyer } = req.body
+    console.log('buyer in mint post', buyer)
 
     if (!mnemonic) {
       console.log('Environment variable `SIGNER_WALLET_MNEMONIC` is not set')
@@ -73,6 +74,10 @@ export default async function handler(
     const lcd = await getLCD()
     const mk = new MnemonicKey({ mnemonic })
     const signer = lcd.wallet(mk)
+    console.log(signer)
+
+    console.log('ownerAddress', ownerAddress)
+    console.log('contractAddress', contractAddress)
 
     const msg = new MsgExecuteContract(
       ownerAddress,
@@ -99,6 +104,10 @@ export default async function handler(
     // mint part
     const tx = await signer.createAndSignTx({
       msgs: [msg]
+    }).catch((error: unknown) => {
+      console.log('Error creating and signing transaction')
+      console.log(error)
+      throw error
     })
 
     console.log('mint tx', tx)

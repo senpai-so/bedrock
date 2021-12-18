@@ -2,47 +2,47 @@ import { LCDClient, Coins } from '@terra-money/terra.js'
 
 import { isDev, isPreview } from 'lib/config'
 
-const localUrl = 'http://localhost:1317'
-const localApiUrl = 'http://localhost:3060'
+const localLcdUrl = 'http://localhost:1317'
+const localFcdUrl = 'http://localhost:3060'
 const localChainID = 'localterra'
 
-const devnetUrl = 'https://bombay-fcd.terra.dev/'
-const devnetApiUrl = 'https://bombay-fcd.terra.dev'
-const devChainID = 'bombay-12'
+const testnetLcdUrl = 'https://bombay-fcd.terra.dev'
+const testnetFcdUrl = 'https://bombay-fcd.terra.dev'
+const testnetChainID = 'bombay-12'
 
-const prodUrl = 'https://fcd.terra.dev'
-const prodApiUrl = 'https://fcd.terra.dev'
-const prodChainID = 'columbus-4'
+const prodLcdUrl = 'https://fcd.terra.dev'
+const prodFcdUrl = 'https://fcd.terra.dev'
+const prodChainID = 'columbus-5'
 
 // gets correct url based on env settings
-function getBaseUrl() {
-  return isDev ? localUrl : isPreview ? devnetUrl : prodUrl
+function getLcdUrl() {
+  return isDev ? localLcdUrl : isPreview ? testnetLcdUrl : prodLcdUrl
 }
 
-function getApiUrl() {
-  return isDev ? localApiUrl : isPreview ? devnetApiUrl : prodApiUrl
+function getFcdUrl() {
+  return isDev ? localFcdUrl : isPreview ? testnetFcdUrl : prodFcdUrl
 }
 
 function getChainID() {
-  return isDev ? localChainID : isPreview ? devChainID : prodChainID
+  return isDev ? localChainID : isPreview ? testnetChainID : prodChainID
 }
 
 export async function getGasPrices() {
-  const apiUrl = getApiUrl()
-  const terraApiUrl = `${apiUrl}/v1/txs/gas_prices`
+  const fcdUrl = getFcdUrl()
+  const terraFcdUrl = `${fcdUrl}/v1/txs/gas_prices`
 
-  const gasPrices = await (await fetch(terraApiUrl)).json()
+  const gasPrices = await (await fetch(terraFcdUrl)).json()
   return gasPrices
 }
 
 export async function getLCD() {
-  const baseUrl = getBaseUrl()
+  const lcdUrl = getLcdUrl()
   const chainID = getChainID()
   const gasPrices = await getGasPrices()
   const gasPricesCoins = new Coins(gasPrices)
 
   return new LCDClient({
-    URL: baseUrl,
+    URL: lcdUrl,
     chainID: chainID,
     gasPrices: gasPricesCoins,
     gasAdjustment: '1.5'
