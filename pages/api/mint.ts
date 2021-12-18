@@ -55,7 +55,6 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     const { buyer } = req.body
-    console.log('buyer in mint post', buyer)
 
     if (!mnemonic) {
       console.log('Environment variable `SIGNER_WALLET_MNEMONIC` is not set')
@@ -74,7 +73,7 @@ export default async function handler(
     const lcd = await getLCD()
     const mk = new MnemonicKey({ mnemonic })
     const signer = lcd.wallet(mk)
-    console.log(signer)
+    console.log('signer', signer)
 
     console.log('ownerAddress', ownerAddress)
     console.log('contractAddress', contractAddress)
