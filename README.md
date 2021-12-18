@@ -158,13 +158,14 @@ InitMsg Json : '{"name": "LooniesCore", "symbol": "LOON", "minter": "<project wa
 
 Note that you will need the wallet address and mnemonic of the creator in the application itself for signing transactions.
 
-### Part 2: Replace the following env variables
+### Part 2: Replace the following env variables in your .env.local file
 
 ```bash
-NODE_ENV='testnet'
 SIGNER_WALLET_MNEMONIC=<project wallet mnemonic of creator>
 NFT_CONTRACT_ADDRESS=<contract address retrieved from the above steps>
+NEXT_PUBLIC_NFT_CONTRACT_ADDRESS=<contract address retrieved from the above steps>
 SIGNER_WALLET_ADDRESS=<project wallet address>
+NEXT_PUBLIC_SIGNER_WALLET_ADDRESS=<project wallet address>
 ```
 
 Run `yarn dev` to deploy the app locally at [http://localhost:3000](http://localhost:3000).
