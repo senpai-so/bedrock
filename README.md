@@ -105,7 +105,15 @@ Install packages:
 yarn
 ```
 
-Then, run the development server:
+Populate .env
+
+```bash
+cp .env.example .env
+```
+
+Then edit this file. Contact Eunice or Jim (@ataki12) on Telegram to get example creds for localterra or testnet.
+
+Once you have .env populated, run the development server:
 
 ```bash
 yarn dev
