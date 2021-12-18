@@ -102,13 +102,15 @@ export default async function handler(
     console.log(msg)
 
     // mint part
-    const tx = await signer.createAndSignTx({
-      msgs: [msg]
-    }).catch((error: unknown) => {
-      console.log('Error creating and signing transaction')
-      console.log(error)
-      throw error
-    })
+    const tx = await signer
+      .createAndSignTx({
+        msgs: [msg]
+      })
+      .catch((error: unknown) => {
+        console.log('Error creating and signing transaction')
+        console.log(error)
+        throw error
+      })
 
     console.log('mint tx', tx)
     const result = await lcd.tx.broadcast(tx)

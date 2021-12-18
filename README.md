@@ -123,7 +123,7 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 The backend postgres database is currently hosted on heroku.
 
-Add the DATABASE_URL secret to your .env file. 
+Add the DATABASE_URL secret to your .env file.
 
 Run yarn prisma studio to view the database on http://localhost:5555
 
@@ -145,22 +145,23 @@ TODO: Figure out how to do this through the terrad cli
 Code : <code id retrieved before>
 InitMsg Json : '{"name": "LooniesCore", "symbol": "LOON", "minter": "<project wallet address>", "max_token_count": 10000}'
 ```
+
 - Look at transaction history to obtain contract address
 
 Note that you will need the wallet address and mnemonic of the creator in the application itself for signing transactions.
 
 ### Part 2: Replace the following env variables
+
 ```bash
 NODE_ENV='testnet'
 SIGNER_WALLET_MNEMONIC=<project wallet mnemonic of creator>
 NFT_CONTRACT_ADDRESS=<contract address retrieved from the above steps>
 SIGNER_WALLET_ADDRESS=<project wallet address>
 ```
-Run `yarn dev` to deploy the app locally at [http://localhost:3000](http://localhost:3000). 
 
+Run `yarn dev` to deploy the app locally at [http://localhost:3000](http://localhost:3000).
 
 Now all the blockchain calls made on the app will be going to the bombay-12 testnet instead
-
 
 ## Scripts
 
