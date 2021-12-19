@@ -12,8 +12,15 @@ import { NftTokens } from 'lib/types'
 
 type MintResponse = {
   success: boolean
-  token?: NftTokens | null
+  tokenId?: string | null
   error?: string
+}
+
+const orUndefined = (token: NftTokens | null) => {
+  if (token) return token
+  if (token === null) {
+    return undefined
+  }
 }
 
 async function get_random_non_minted_nft() {
@@ -101,10 +108,17 @@ export default async function handler(
       })
 
     console.log('mint tx', tx)
-    const result = await lcd.tx.broadcast(tx)
-    console.log(result)
+    try {
+      const result = await lcd.tx.broadcast(tx)
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: String(error)
+      })
+      return
+    }
 
-    res.status(200).json({ success: true })
+    res.status(200).json({ success: true, tokenId: token?.token_id })
 
     await save_mint_to_db(token?.token_id)
 

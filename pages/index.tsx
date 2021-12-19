@@ -22,11 +22,17 @@ import { FAQ } from 'components/FAQ'
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
-import { NftTokens } from 'lib/types'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import FinishMintComponent from 'src/finishMintComponent'
 
 class ServerError extends Error {}
+
+type MintResponse = {
+  success: boolean
+  token_id?: string | null
+  error?: string
+}
 
 export default function Index() {
 
@@ -35,12 +41,12 @@ export default function Index() {
   const [txError, setTxError] = React.useState<string | null>(null)
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [showModal, setShowModal] = React.useState(false)
-  const [mintedToken, setMintedToken] = React.useState<boolean>(false)
+  const [mintedTokenId, setMintedTokenId] = React.useState<string | null>(null)
 
 
   const connectedWallet = useConnectedWallet()
 
-  const mint = (buyer: string) => {
+  const mint = (buyer: string): Promise<void | MintResponse> => {
     return api
       .post('/mint', { buyer })
       .then((res) => res.json())
@@ -55,6 +61,7 @@ export default function Index() {
 
   const handleClickMint = () => {
     const toastId = toast.loading("Transaction Pending...")
+
     if (connectedWallet) {
       setTxError(null)
       setTxResult(null)
@@ -82,9 +89,10 @@ export default function Index() {
           console.log('transferred.')
           setTxResult(nextTxResult)
 
-          const res = await mint(buyer)
-          await res
-          toast.update(toastId, { render: "Transaction Successful", type: "success", isLoading: false, autoClose: 10000});
+          await mint(buyer).then((res) => {
+            if (res?.token_id) setMintedTokenId(res.token_id)
+          })
+          toast.update(toastId, { render: "Transaction Successful", type: "success", isLoading: false, closeOnClick:true, autoClose: 7000});
         })
         .catch((error: unknown) => {
           let error_msg: string = ''
@@ -106,7 +114,7 @@ export default function Index() {
             error_msg = 'Error: [Unknown Error] Please try again'
             console.log(error instanceof Error ? error.message : String(error))
           } 
-          toast.update(toastId, { render: `${error_msg}`, type: "error", isLoading: false, autoClose: 10000});
+          toast.update(toastId, { render: `${error_msg}`, type: "error", isLoading: false, closeOnClick: true, autoClose: 7000});
           setTxError(error_msg)
         })
     }
@@ -180,6 +188,9 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
+              { mintedTokenId? 
+              <FinishMintComponent token_id={mintedTokenId}/>
+               :
                 <button 
                 className="inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" 
                 onClick={() => {handleClickMint()}}
@@ -187,6 +198,7 @@ export default function Index() {
                   Mint!
                   
                 </button>
+              }
             </>
           )}
 

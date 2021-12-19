@@ -16,6 +16,9 @@ import { NFTTokenItem, OwnerOf } from 'lib/types'
 
 const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
 
+const isProperImage = (imageUri: string) =>
+  imageUri.startsWith('http://') || imageUri.startsWith('https://')
+
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
 
@@ -39,29 +42,9 @@ export default function Index() {
       : address
   }
 
-  async function fetchSetNFTData(tokenId: string) {
-    const lcd = await getLCD()
-    const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
-      contractAddress,
-      {
-        owner_of: { token_id: token_id }
-      }
-    )) as unknown as OwnerOf
-
-    if (ownership.owner === connectedWallet?.walletAddress) {
-      const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
-        contractAddress,
-        {
-          nft_info: { token_id: token_id }
-        }
-      )
-      console.log(nftInfo)
-      setNFTInfo(nftInfo)
-    }
-  }
-
   function renderImage() {
-    if (!nftInfo?.extension?.image) {
+    const imageUrl = nftInfo?.extension?.image
+    if (!imageUrl) {
       return (
         <Image
           alt='no nft'
@@ -72,16 +55,16 @@ export default function Index() {
         />
       )
     }
-
-    return (
-      <Image
-        alt='nft logo'
-        src={nftInfo.extension.image}
-        height='400'
-        width='400'
-        className={imageStyle}
-      />
-    )
+    if (isProperImage(imageUrl))
+      return (
+        <Image
+          alt='nft logo'
+          src={imageUrl}
+          height='400'
+          width='400'
+          className={imageStyle}
+        />
+      )
   }
 
   function render() {
@@ -112,11 +95,31 @@ export default function Index() {
   }
 
   useEffect(() => {
+    async function fetchSetNFTData(tokenId: string) {
+      const lcd = await getLCD()
+      const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
+        contractAddress,
+        {
+          owner_of: { token_id: token_id }
+        }
+      )) as unknown as OwnerOf
+
+      if (ownership.owner === connectedWallet?.walletAddress) {
+        const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
+          contractAddress,
+          {
+            nft_info: { token_id: token_id }
+          }
+        )
+        console.log(nftInfo)
+        setNFTInfo(nftInfo)
+      }
+    }
     if (status === WalletStatus.WALLET_CONNECTED) {
       const tokenId = token_id as string
       fetchSetNFTData(tokenId)
     }
-  }, [fetchSetNFTData, status, token_id])
+  }, [connectedWallet?.walletAddress, status, token_id])
 
   return (
     <Page>
