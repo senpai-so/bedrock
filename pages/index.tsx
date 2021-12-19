@@ -55,7 +55,7 @@ export default function Index() {
       console.log('owner', ownerAddress)
 
       // TODO use proper fee
-      const fee = new Fee(1000000 * 10, '8350000uluna')
+      const fee = new Fee(1000000 * 0.01133, '11330uluna')
 
       // TODO switch to pay btwn luna or uust depending on what user chooses
       console.log('posting...')
