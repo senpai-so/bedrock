@@ -22,8 +22,10 @@ import { FAQ } from 'components/FAQ'
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
+import ButtonLoader from './buttonLoader'
 
 export default function Index() {
+
   const { status, availableConnections, connect, disconnect } = useWallet()
 
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
@@ -45,7 +47,7 @@ export default function Index() {
     setShowModal(!showModal)
   }
 
-  const handleClickMint = async () => {
+  const handleClickMint = () => {
     if (connectedWallet) {
       setTxResult(null)
       setTxError(null)
@@ -97,6 +99,7 @@ export default function Index() {
           }
         })
     }
+    console.log("Finished mint..")
   }
 
   const abbreviateWalletAddress = (address: string) => {
@@ -155,12 +158,7 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
-              <button
-                className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                onClick={() => handleClickMint()}
-              >
-                <span className='mr-2'>🌙 </span> Mint
-              </button>
+              <ButtonLoader onClick={handleClickMint} buttonText='Mint!'/>
             </>
           )}
 

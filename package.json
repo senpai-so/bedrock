@@ -58,6 +58,8 @@
     "prisma": "3.6.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-loader-spinner": "^4.0.0",
+    "react-loading-icons": "^1.0.6",
     "react-markdown": "^7.1.1",
     "stripe": "^8.191.0",
     "ts-node": "^10.4.0",

@@ -7845,6 +7845,18 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-loader-spinner@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-loader-spinner/-/react-loader-spinner-4.0.0.tgz#43d9e71b0574219f64216933c28ef5faa12262f6"
+  integrity sha512-RU2vpEej6G4ECei0h3q6bgLU10of9Lw5O+4AwF/mtkrX5oY20Sh/AxoPJ7etbrs/7Q3u4jN5qwCwGLRKCHpk6g==
+  dependencies:
+    prop-types "^15.7.2"
+
+react-loading-icons@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-loading-icons/-/react-loading-icons-1.0.6.tgz#bd421b79a5057f33d93d37a64a08ea3a2655cc89"
+  integrity sha512-VvO1ww1CacxKCcQ9Sy4yPKRVPnM/g26ob8x74pTfYpVQjgv+n8ug0vT8i09YBuGs7L831ldqGivY2op+2vKMHw==
+
 react-markdown@^7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/react-markdown/-/react-markdown-7.1.1.tgz#cb4d2c2fa3bc1292c889b068a5bf064ae4be1c60"
