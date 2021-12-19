@@ -2,27 +2,15 @@ import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 
-import { Fee, MsgSend } from '@terra-money/terra.js'
-
 import {
   useWallet,
   useConnectedWallet,
   WalletStatus,
-  TxResult,
-  UserDenied,
-  CreateTxFailed,
-  Timeout,
-  TxFailed,
-  TxUnspecifiedError
 } from '@terra-money/wallet-provider'
 
 import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
-import { FAQ } from 'components/FAQ'
 
-import api from 'lib/utils/api-client'
-import { ownerAddress } from 'lib/config'
-import { toUUST, toULuna } from 'lib/utils/currency'
 import { getLCD } from 'lib/utils/terra'
 import { NFTTokenItem, OwnerOf } from 'lib/types'
 
@@ -31,8 +19,6 @@ const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
 
-  const [txResult, setTxResult] = React.useState<TxResult | null>(null)
-  const [txError, setTxError] = React.useState<string | null>(null)
   const [nftInfo, setNFTInfo] = React.useState<NFTTokenItem | null>(null)
   const [showModal, setShowModal] = React.useState(false)
 
@@ -42,15 +28,6 @@ export default function Index() {
   const connectedWallet = useConnectedWallet()
 
   const imageStyle = 'h-32 w-32 rounded-full mx-auto mb-4'
-
-  const mint = (buyer: string) => {
-    return api
-      .post('/mint', { buyer })
-      .then((res) => res.json())
-      .catch((error) => {
-        // TODO handle error
-      })
-  }
 
   const toggleDisconnect = () => {
     setShowModal(!showModal)

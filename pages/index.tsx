@@ -22,15 +22,17 @@ import { FAQ } from 'components/FAQ'
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
-import ButtonLoader from './buttonLoader'
+import MintButton, { MintStatus } from './mintButton'
+
+class ServerError extends Error {}
 
 export default function Index() {
 
   const { status, availableConnections, connect, disconnect } = useWallet()
 
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
-  const [txError, setTxError] = React.useState<string | null>(null)
   const [showModal, setShowModal] = React.useState(false)
+
 
   const connectedWallet = useConnectedWallet()
 
@@ -39,18 +41,18 @@ export default function Index() {
       .post('/mint', { buyer })
       .then((res) => res.json())
       .catch((error) => {
-        // TODO handle error
+        throw new ServerError()
       })
   }
 
   const toggleDisconnect = () => {
     setShowModal(!showModal)
   }
-
-  const handleClickMint = () => {
+  // new Promise<boolean | string>((resolve, reject) 
+  const handleClickMint = () => 
+  new Promise<boolean | string>((resolve, reject) => {
     if (connectedWallet) {
       setTxResult(null)
-      setTxError(null)
 
       const buyer = connectedWallet.walletAddress
       console.log('buyer', buyer)
@@ -60,7 +62,7 @@ export default function Index() {
       const fee = new Fee(1000000 * 10, '8350000uluna')
 
       // TODO switch to pay btwn luna or uust depending on what user chooses
-      console.log('posting...')
+      console.log('Posting...')
       connectedWallet
         .post({
           fee: fee,
@@ -75,32 +77,34 @@ export default function Index() {
           console.log('transferred.')
           setTxResult(nextTxResult)
 
-          const res = mint(buyer)
-          await res
+          const res = await mint(buyer)
+          resolve(true)
+
         })
         .catch((error: unknown) => {
-          console.log('error!')
-          console.log(error)
           if (error instanceof UserDenied) {
-            setTxError('User Denied')
+            reject('Error: User Denied')
           } else if (error instanceof CreateTxFailed) {
-            setTxError('Create Tx Failed: ' + error.message)
+            reject('Error: Failed to create transaction. Check that you have sufficient funds in your wallet.')
+            console.log(error.message)
           } else if (error instanceof TxFailed) {
-            setTxError('Tx Failed: ' + error.message)
+            reject('Error: Transaction Failed. Check that your wallet is on the right network.')
           } else if (error instanceof Timeout) {
-            setTxError('Timeout')
+            reject('Error: Timeout')
           } else if (error instanceof TxUnspecifiedError) {
-            setTxError('Unspecified Error: ' + error.message)
+            reject('Error: [Unspecified Error] Please contact the administrator')
+            console.log(error.message)
+          } else if (error instanceof ServerError) {
+            reject('Error: [Server Error] Please contact the administrator')
           } else {
-            setTxError(
-              'Unknown Error: ' +
-                (error instanceof Error ? error.message : String(error))
-            )
+            reject('Error: [Unknown Error] Please try again')
+            console.log(error instanceof Error ? error.message : String(error))
           }
+
         })
     }
-    console.log("Finished mint..")
   }
+  )
 
   const abbreviateWalletAddress = (address: string) => {
     return address.length > 12
@@ -158,7 +162,7 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
-              <ButtonLoader onClick={handleClickMint} buttonText='Mint!'/>
+              <MintButton onClick={handleClickMint}/>
             </>
           )}
 
