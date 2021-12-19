@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { Fee, MsgSend } from '@terra-money/terra.js'
+import { Fee, MsgSend, TxError } from '@terra-money/terra.js'
 
 import {
   useWallet,
@@ -22,7 +22,9 @@ import { FAQ } from 'components/FAQ'
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
-import MintButton, { MintStatus } from './mintButton'
+import { NftTokens } from 'lib/types'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 class ServerError extends Error {}
 
@@ -30,8 +32,10 @@ export default function Index() {
 
   const { status, availableConnections, connect, disconnect } = useWallet()
 
+  const [txError, setTxError] = React.useState<string | null>(null)
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [showModal, setShowModal] = React.useState(false)
+  const [mintedToken, setMintedToken] = React.useState<boolean>(false)
 
 
   const connectedWallet = useConnectedWallet()
@@ -48,10 +52,11 @@ export default function Index() {
   const toggleDisconnect = () => {
     setShowModal(!showModal)
   }
-  // new Promise<boolean | string>((resolve, reject) 
-  const handleClickMint = () => 
-  new Promise<boolean | string>((resolve, reject) => {
+
+  const handleClickMint = () => {
+    const toastId = toast.loading("Transaction Pending...")
     if (connectedWallet) {
+      setTxError(null)
       setTxResult(null)
 
       const buyer = connectedWallet.walletAddress
@@ -78,33 +83,35 @@ export default function Index() {
           setTxResult(nextTxResult)
 
           const res = await mint(buyer)
-          resolve(true)
-
+          await res
+          toast.update(toastId, { render: "Transaction Successful", type: "success", isLoading: false, autoClose: 10000});
         })
         .catch((error: unknown) => {
+          let error_msg: string = ''
           if (error instanceof UserDenied) {
-            reject('Error: User Denied')
+            error_msg = 'Error: User Denied'
           } else if (error instanceof CreateTxFailed) {
-            reject('Error: Failed to create transaction. Check that you have sufficient funds in your wallet.')
+            error_msg = 'Error: Failed to create transaction. Check that you have sufficient funds in your wallet.'
             console.log(error.message)
           } else if (error instanceof TxFailed) {
-            reject('Error: Transaction Failed. Check that your wallet is on the right network.')
+            error_msg = 'Error: Transaction Failed. Check that your wallet is on the right network.'
           } else if (error instanceof Timeout) {
-            reject('Error: Timeout')
+            error_msg = 'Error: Timeout'
           } else if (error instanceof TxUnspecifiedError) {
-            reject('Error: [Unspecified Error] Please contact the administrator')
+            error_msg = 'Error: [Unspecified Error] Please contact the administrator'
             console.log(error.message)
           } else if (error instanceof ServerError) {
-            reject('Error: [Server Error] Please contact the administrator')
+            error_msg = 'Error: [Server Error] Please contact the administrator'
           } else {
-            reject('Error: [Unknown Error] Please try again')
+            error_msg = 'Error: [Unknown Error] Please try again'
             console.log(error instanceof Error ? error.message : String(error))
-          }
-
+          } 
+          toast.update(toastId, { render: `${error_msg}`, type: "error", isLoading: false, autoClose: 10000});
+          setTxError(error_msg)
         })
     }
   }
-  )
+
 
   const abbreviateWalletAddress = (address: string) => {
     return address.length > 12
@@ -114,6 +121,17 @@ export default function Index() {
 
   return (
     <Page>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        />
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
         <div className='flex flex-col items-center justify-center space-y-12'>
           <h2 className='font-bold text-3xl text-blue-700'>
@@ -162,7 +180,13 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
-              <MintButton onClick={handleClickMint}/>
+                <button 
+                className="inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" 
+                onClick={() => {handleClickMint()}}
+                >
+                  Mint!
+                  
+                </button>
             </>
           )}
 
