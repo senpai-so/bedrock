@@ -45,6 +45,10 @@ export default function Index() {
     setShowModal(!showModal)
   }
 
+  const adjustGasLimit = (gasLimit: number) => {
+    return gasLimit * 1.25
+  }
+
   const handleClickMint = async () => {
     if (connectedWallet) {
       setTxResult(null)
@@ -55,13 +59,14 @@ export default function Index() {
       console.log('owner', ownerAddress)
 
       // TODO use proper fee
-      const fee = new Fee(1000000 * 0.01133, '11330uluna')
+      // const gasLimit = 1000000 * adjustGasLimit(0.01133)
+      // const fee = new Fee(gasLimit, '11330uluna')
 
       // TODO switch to pay btwn luna or uust depending on what user chooses
       console.log('posting...')
       connectedWallet
         .post({
-          fee: fee,
+          // fee: fee,
           msgs: [
             new MsgSend(buyer, ownerAddress, {
               // uusd: toUUST(1)
