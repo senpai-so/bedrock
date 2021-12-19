@@ -30,7 +30,7 @@ class ServerError extends Error {}
 
 type MintResponse = {
   success: boolean
-  token_id?: string | null
+  tokenId?: string | null
   error?: string
 }
 
@@ -87,15 +87,20 @@ export default function Index() {
           console.log('transferred.')
           setTxResult(nextTxResult)
 
+          const res = mint(buyer)
+          await res
           await mint(buyer).then((res) => {
-            if (res?.token_id) setMintedTokenId(res.token_id)
-          })
-          toast.update(toastId, {
-            render: 'Transaction Successful',
-            type: 'success',
-            isLoading: false,
-            closeOnClick: true,
-            autoClose: 7000
+            toast.update(toastId, {
+              render: 'Transaction Successful',
+              type: 'success',
+              isLoading: false,
+              closeOnClick: true,
+              autoClose: 7000
+            })
+            if (res?.tokenId) {
+              setMintedTokenId(res.tokenId)
+            }
+            console.log('minted token', mintedTokenId)
           })
         })
         .catch((error: unknown) => {
