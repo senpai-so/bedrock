@@ -100,7 +100,6 @@ export default function Index() {
             if (res?.tokenId) {
               setMintedTokenId(res.tokenId)
             }
-            console.log('minted token', mintedTokenId)
           })
         })
         .catch((error: unknown) => {
