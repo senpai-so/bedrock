@@ -35,14 +35,12 @@ type MintResponse = {
 }
 
 export default function Index() {
-
   const { status, availableConnections, connect, disconnect } = useWallet()
 
   const [txError, setTxError] = React.useState<string | null>(null)
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [showModal, setShowModal] = React.useState(false)
   const [mintedTokenId, setMintedTokenId] = React.useState<string | null>(null)
-
 
   const connectedWallet = useConnectedWallet()
 
@@ -60,7 +58,7 @@ export default function Index() {
   }
 
   const handleClickMint = () => {
-    const toastId = toast.loading("Transaction Pending...")
+    const toastId = toast.loading('Transaction Pending...')
 
     if (connectedWallet) {
       setTxError(null)
@@ -92,34 +90,48 @@ export default function Index() {
           await mint(buyer).then((res) => {
             if (res?.token_id) setMintedTokenId(res.token_id)
           })
-          toast.update(toastId, { render: "Transaction Successful", type: "success", isLoading: false, closeOnClick:true, autoClose: 7000});
+          toast.update(toastId, {
+            render: 'Transaction Successful',
+            type: 'success',
+            isLoading: false,
+            closeOnClick: true,
+            autoClose: 7000
+          })
         })
         .catch((error: unknown) => {
-          let error_msg: string = ''
+          let error_msg = ''
           if (error instanceof UserDenied) {
             error_msg = 'Error: User Denied'
           } else if (error instanceof CreateTxFailed) {
-            error_msg = 'Error: Failed to create transaction. Check that you have sufficient funds in your wallet.'
+            error_msg =
+              'Error: Failed to create transaction. Check that you have sufficient funds in your wallet.'
             console.log(error.message)
           } else if (error instanceof TxFailed) {
-            error_msg = 'Error: Transaction Failed. Check that your wallet is on the right network.'
+            error_msg =
+              'Error: Transaction Failed. Check that your wallet is on the right network.'
           } else if (error instanceof Timeout) {
             error_msg = 'Error: Timeout'
           } else if (error instanceof TxUnspecifiedError) {
-            error_msg = 'Error: [Unspecified Error] Please contact the administrator'
+            error_msg =
+              'Error: [Unspecified Error] Please contact the administrator'
             console.log(error.message)
           } else if (error instanceof ServerError) {
             error_msg = 'Error: [Server Error] Please contact the administrator'
           } else {
             error_msg = 'Error: [Unknown Error] Please try again'
             console.log(error instanceof Error ? error.message : String(error))
-          } 
-          toast.update(toastId, { render: `${error_msg}`, type: "error", isLoading: false, closeOnClick: true, autoClose: 7000});
+          }
+          toast.update(toastId, {
+            render: `${error_msg}`,
+            type: 'error',
+            isLoading: false,
+            closeOnClick: true,
+            autoClose: 7000
+          })
           setTxError(error_msg)
         })
     }
   }
-
 
   const abbreviateWalletAddress = (address: string) => {
     return address.length > 12
@@ -130,7 +142,7 @@ export default function Index() {
   return (
     <Page>
       <ToastContainer
-        position="top-right"
+        position='top-right'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -139,7 +151,7 @@ export default function Index() {
         pauseOnFocusLoss
         draggable
         pauseOnHover={false}
-        />
+      />
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
         <div className='flex flex-col items-center justify-center space-y-12'>
           <h2 className='font-bold text-3xl text-blue-700'>
@@ -188,17 +200,18 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
-              { mintedTokenId? 
-              <FinishMintComponent token_id={mintedTokenId}/>
-               :
-                <button 
-                className="inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" 
-                onClick={() => {handleClickMint()}}
+              {mintedTokenId ? (
+                <FinishMintComponent token_id={mintedTokenId} />
+              ) : (
+                <button
+                  className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                  onClick={() => {
+                    handleClickMint()
+                  }}
                 >
                   Mint!
-                  
                 </button>
-              }
+              )}
             </>
           )}
 

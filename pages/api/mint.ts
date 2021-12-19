@@ -50,7 +50,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<MintResponse>
 ) {
-  
   if (req.method === 'POST') {
     const { buyer } = req.body
 

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import {
   useWallet,
   useConnectedWallet,
-  WalletStatus,
+  WalletStatus
 } from '@terra-money/wallet-provider'
 
 import { Page } from 'components/Page'
