@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { Fee, MsgSend } from '@terra-money/terra.js'
 
@@ -22,22 +23,32 @@ import { FAQ } from 'components/FAQ'
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
+import { NftTokens } from 'lib/types'
+
+type MintResponse = {
+  success: boolean
+  token?: NftTokens | null
+  error?: string
+}
 
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
 
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [txError, setTxError] = React.useState<string | null>(null)
+  const [mintedToken, setMintedToken] = React.useState<NftTokens | null>(null)
+
   const [showModal, setShowModal] = React.useState(false)
 
   const connectedWallet = useConnectedWallet()
 
-  const mint = (buyer: string) => {
+  const mint = (buyer: string): Promise<void | MintResponse> => {
     return api
       .post('/mint', { buyer })
       .then((res) => res.json())
       .catch((error) => {
         // TODO handle error
+        console.log('Minting failed with ', error)
       })
   }
 
@@ -78,8 +89,9 @@ export default function Index() {
           console.log('transferred.')
           setTxResult(nextTxResult)
 
-          const res = mint(buyer)
-          await res
+          await mint(buyer).then((res) => {
+            if (res?.token) setMintedToken(res.token)
+          })
         })
         .catch((error: unknown) => {
           console.log('error!')
@@ -110,6 +122,9 @@ export default function Index() {
       : address
   }
 
+  const isProperImage = (imageUri: string) =>
+    imageUri.startsWith('http://') || imageUri.startsWith('https://')
+
   return (
     <Page>
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
@@ -118,18 +133,18 @@ export default function Index() {
             Exclusive 1st Drop
           </h2>
 
-          <div>
-            <Image
-              className='rounded-xl'
-              src='/LooniesGif.gif'
-              height='400'
-              width='400'
-              alt='LooniesGif'
-            />
-          </div>
-
           {status === WalletStatus.WALLET_NOT_CONNECTED && (
             <>
+              <div>
+                <Image
+                  className='rounded-xl'
+                  src='/LooniesGif.gif'
+                  height='400'
+                  width='400'
+                  alt='LooniesGif'
+                />
+              </div>
+
               {availableConnections
                 .filter((_) => _.type === 'EXTENSION')
                 .map(({ type, name, icon, identifier = '' }) => (
@@ -148,11 +163,23 @@ export default function Index() {
                     Connect Wallet
                   </button>
                 ))}
+
+              <FAQ />
             </>
           )}
 
-          {status === WalletStatus.WALLET_CONNECTED && (
+          {status === WalletStatus.WALLET_CONNECTED && !mintedToken && (
             <>
+              <div>
+                <Image
+                  className='rounded-xl'
+                  src='/LooniesGif.gif'
+                  height='400'
+                  width='400'
+                  alt='LooniesGif'
+                />
+              </div>
+
               <div
                 className='border cursor-pointer border-1 px-4 py-2 sm:text-lg font-medium border-gray-300 rounded-lg text-gray-700'
                 onClick={() => toggleDisconnect()}
@@ -160,6 +187,7 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
+
               <button
                 className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onClick={() => handleClickMint()}
@@ -169,7 +197,42 @@ export default function Index() {
             </>
           )}
 
-          <FAQ />
+          {status === WalletStatus.WALLET_CONNECTED && mintedToken && (
+            <>
+              <div>
+                <Image
+                  className='rounded-xl'
+                  src={
+                    isProperImage(mintedToken.image_uri)
+                      ? mintedToken.image_uri
+                      : '/LooniesGif.gif'
+                  }
+                  height='400'
+                  width='400'
+                  alt='LooniesGif'
+                />
+              </div>
+
+              <div
+                className='border cursor-pointer border-1 px-4 py-2 sm:text-lg font-medium border-gray-300 rounded-lg text-gray-700'
+                onClick={() => toggleDisconnect()}
+              >
+                🧧{' '}
+                {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
+              </div>
+
+              <p className='text-xl text-center font-bold px-8 rounded-2xl '>
+                <span className='mr-2'>🎉 </span> Congrats! 🎉 <br />
+                You just minted your Loonie
+              </p>
+
+              <Link href={`/${mintedToken.token_id}`}>
+                <a className='inline-flex items-center px-6 py-3 underline text-xl font-bold rounded-2xl text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'>
+                  <span className='mr-2'>View your NFT!</span>🚀
+                </a>
+              </Link>
+            </>
+          )}
 
           {showModal && (
             <Modal
