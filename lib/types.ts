@@ -31,3 +31,15 @@ export interface Extension {
 export interface OwnerOf {
   owner: string
 }
+
+// Prisma schema
+export interface NftTokens {
+  id: number
+  token_id: string
+  name: string
+  description: string
+  extension_name: string
+  extension_image: string
+  image_uri: string
+  isMinted: boolean
+}

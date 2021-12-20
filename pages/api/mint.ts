@@ -8,22 +8,19 @@ import { toULuna } from '../../lib/utils/currency'
 
 import prisma from '../../lib/prisma'
 import pickRandom from 'pick-random'
+import { NftTokens } from 'lib/types'
 
-type SwapResponse = {
+type MintResponse = {
   success: boolean
+  tokenId?: string | null
   error?: string
 }
 
-// Prisma schema
-interface NftTokens {
-  id: number
-  token_id: string
-  name: string
-  description: string
-  extension_name: string
-  extension_image: string
-  image_uri: string
-  isMinted: () => boolean
+const orUndefined = (token: NftTokens | null) => {
+  if (token) return token
+  if (token === null) {
+    return undefined
+  }
 }
 
 async function get_random_non_minted_nft() {
@@ -51,7 +48,7 @@ async function save_mint_to_db(token_id?: string) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<SwapResponse>
+  res: NextApiResponse<MintResponse>
 ) {
   if (req.method === 'POST') {
     const { buyer } = req.body
@@ -69,11 +66,9 @@ export default async function handler(
 
     const token = await get_random_non_minted_nft()
 
-    console.log(token)
     const lcd = await getLCD()
     const mk = new MnemonicKey({ mnemonic })
     const signer = lcd.wallet(mk)
-    console.log('Signer', signer)
 
     console.log('ownerAddress', ownerAddress)
     console.log('contractAddress', contractAddress)
@@ -112,10 +107,17 @@ export default async function handler(
       })
 
     console.log('mint tx', tx)
-    const result = await lcd.tx.broadcast(tx)
-    console.log(result)
+    try {
+      const result = await lcd.tx.broadcast(tx)
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: String(error)
+      })
+      return
+    }
 
-    res.status(200).json({ success: true })
+    res.status(200).json({ success: true, tokenId: token?.token_id })
 
     await save_mint_to_db(token?.token_id)
 

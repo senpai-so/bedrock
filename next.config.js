@@ -2,6 +2,11 @@
 module.exports = {
   reactStrictMode: false,
   images: {
-    domains: ['assets.terra.money', 'localhost', 'loonies.world']
+    domains: [
+      'assets.terra.money',
+      'localhost',
+      'loonies.world',
+      'dl.airtable.com'
+    ]
   }
 }

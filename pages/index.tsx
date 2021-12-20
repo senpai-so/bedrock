@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { Fee, MsgSend } from '@terra-money/terra.js'
+import { Fee, MsgSend, TxError } from '@terra-money/terra.js'
 
 import {
   useWallet,
@@ -22,37 +22,50 @@ import { FAQ } from 'components/FAQ'
 import api from 'lib/utils/api-client'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import FinishMintComponent from 'src/finishMintComponent'
+
+class ServerError extends Error {}
+
+type MintResponse = {
+  success: boolean
+  tokenId?: string | null
+  error?: string
+}
 
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
 
-  const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [txError, setTxError] = React.useState<string | null>(null)
+  const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [showModal, setShowModal] = React.useState(false)
+  const [mintedTokenId, setMintedTokenId] = React.useState<string | null>(null)
 
   const connectedWallet = useConnectedWallet()
 
-  const mint = (buyer: string) => {
+  const mint = (buyer: string): Promise<void | MintResponse> => {
     return api
       .post('/mint', { buyer })
       .then((res) => res.json())
       .catch((error) => {
-        // TODO handle error
+        throw new ServerError()
       })
   }
 
   const toggleDisconnect = () => {
     setShowModal(!showModal)
   }
-
+  
   const adjustGasLimit = (gasLimit: number) => {
     return gasLimit * 1.25
   }
 
-  const handleClickMint = async () => {
+  const handleClickMint = () => {
+    const toastId = toast.loading('Transaction Pending...')
     if (connectedWallet) {
-      setTxResult(null)
       setTxError(null)
+      setTxResult(null)
 
       const buyer = connectedWallet.walletAddress
       console.log('buyer', buyer)
@@ -63,7 +76,7 @@ export default function Index() {
       // const fee = new Fee(gasLimit, '11330uluna')
 
       // TODO switch to pay btwn luna or uust depending on what user chooses
-      console.log('posting...')
+      console.log('Posting...')
       connectedWallet
         .post({
           // fee: fee,
@@ -80,26 +93,50 @@ export default function Index() {
 
           const res = mint(buyer)
           await res
+          await mint(buyer).then((res) => {
+            toast.update(toastId, {
+              render: 'Transaction Successful',
+              type: 'success',
+              isLoading: false,
+              closeOnClick: true,
+              autoClose: 7000
+            })
+            if (res?.tokenId) {
+              setMintedTokenId(res.tokenId)
+            }
+          })
         })
         .catch((error: unknown) => {
-          console.log('error!')
-          console.log(error)
+          let error_msg = ''
           if (error instanceof UserDenied) {
-            setTxError('User Denied')
+            error_msg = 'Error: User Denied'
           } else if (error instanceof CreateTxFailed) {
-            setTxError('Create Tx Failed: ' + error.message)
+            error_msg =
+              'Error: Failed to create transaction. Check that you have sufficient funds in your wallet.'
+            console.log(error.message)
           } else if (error instanceof TxFailed) {
-            setTxError('Tx Failed: ' + error.message)
+            error_msg =
+              'Error: Transaction Failed. Check that your wallet is on the right network.'
           } else if (error instanceof Timeout) {
-            setTxError('Timeout')
+            error_msg = 'Error: Timeout'
           } else if (error instanceof TxUnspecifiedError) {
-            setTxError('Unspecified Error: ' + error.message)
+            error_msg =
+              'Error: [Unspecified Error] Please contact the administrator'
+            console.log(error.message)
+          } else if (error instanceof ServerError) {
+            error_msg = 'Error: [Server Error] Please contact the administrator'
           } else {
-            setTxError(
-              'Unknown Error: ' +
-                (error instanceof Error ? error.message : String(error))
-            )
+            error_msg = 'Error: [Unknown Error] Please try again'
+            console.log(error instanceof Error ? error.message : String(error))
           }
+          toast.update(toastId, {
+            render: `${error_msg}`,
+            type: 'error',
+            isLoading: false,
+            closeOnClick: true,
+            autoClose: 7000
+          })
+          setTxError(error_msg)
         })
     }
   }
@@ -112,6 +149,17 @@ export default function Index() {
 
   return (
     <Page>
+      <ToastContainer
+        position='top-right'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+      />
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
         <div className='flex flex-col items-center justify-center space-y-12'>
           <h2 className='font-bold text-3xl text-blue-700'>
@@ -160,12 +208,18 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
-              <button
-                className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                onClick={() => handleClickMint()}
-              >
-                <span className='mr-2'>🌙 </span> Mint
-              </button>
+              {mintedTokenId ? (
+                <FinishMintComponent token_id={mintedTokenId} />
+              ) : (
+                <button
+                  className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                  onClick={() => {
+                    handleClickMint()
+                  }}
+                >
+                  Mint!
+                </button>
+              )}
             </>
           )}
 
