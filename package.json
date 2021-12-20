@@ -12,7 +12,8 @@
     "test:lint": "eslint . --ext ts,tsx",
     "test:prettier": "prettier '**/*.{js,jsx,ts,tsx,json}' --check",
     "run:prettier": "prettier --write . ",
-    "run:metadataFromAirtable": "ts-node -P ./tsconfig.commonjs.json -r tsconfig-paths/register ./scripts/metadataFromAirtable.ts"
+    "run:metadataFromAirtable": "ts-node -P ./tsconfig.commonjs.json -r tsconfig-paths/register ./scripts/metadataFromAirtable.ts",
+    "run:getNftFromPrisma": "ts-node -P ./tsconfig.commonjs.json -r tsconfig-paths/register ./scripts/getNftFromPrisma.ts"
   },
   "dependencies": {
     "@ethersproject/units": "^5.5.0",
