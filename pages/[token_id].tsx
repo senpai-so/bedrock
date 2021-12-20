@@ -26,7 +26,7 @@ export default function Index() {
   const [showModal, setShowModal] = React.useState(false)
 
   const router = useRouter()
-  const { token_id } = router.query
+  const { token_id_given } = router.query
 
   const connectedWallet = useConnectedWallet()
 
@@ -73,6 +73,15 @@ export default function Index() {
         <>
           <h2>You are not the owner of this NFT!</h2>
           <p>You need to be the owner to view this</p>
+          <div
+            className='border cursor-pointer px-4 py-2 sm:text-lg border-gray-300 rounded-lg text-gray-700'
+            onClick={() => toggleDisconnect()}
+          >
+            🧧{' '}
+            <span className='px-3 py-2 font-medium'>
+              {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
+            </span>
+          </div>
         </>
       )
     }
@@ -85,7 +94,7 @@ export default function Index() {
           className='border cursor-pointer px-4 py-2 sm:text-lg border-gray-300 rounded-lg text-gray-700'
           onClick={() => toggleDisconnect()}
         >
-          Owner 🧧{' '}
+          🧧{' '}
           <span className='px-3 py-2 font-medium'>
             {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
           </span>
@@ -100,7 +109,7 @@ export default function Index() {
       const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
         contractAddress,
         {
-          owner_of: { token_id: token_id }
+          owner_of: { token_id: tokenId }
         }
       )) as unknown as OwnerOf
 
@@ -108,7 +117,7 @@ export default function Index() {
         const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
           contractAddress,
           {
-            nft_info: { token_id: token_id }
+            nft_info: { token_id: tokenId }
           }
         )
         console.log(nftInfo)
@@ -116,10 +125,10 @@ export default function Index() {
       }
     }
     if (status === WalletStatus.WALLET_CONNECTED) {
-      const tokenId = token_id as string
+      const tokenId = token_id_given as string
       fetchSetNFTData(tokenId)
     }
-  }, [connectedWallet?.walletAddress, status, token_id])
+  }, [connectedWallet?.walletAddress, status, token_id_given])
 
   return (
     <Page>

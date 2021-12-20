@@ -58,7 +58,7 @@ export const Modal: React.FC<{
                     />
                   </div>
 
-                  <p className='text-lg text-blue-500'>abc{walletAddress}</p>
+                  <p className='text-lg text-blue-500'>{walletAddress}</p>
                 </div>
                 <div className='mt-3 text-center sm:mt-5'>
                   <Dialog.Title
