@@ -202,7 +202,7 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
-                <FinishMintComponent token_id="3eepQFk2L8" />
+              <FinishMintComponent token_id='3eepQFk2L8' />
               {/* {mintedTokenId ? (
                 <FinishMintComponent token_id={mintedTokenId} />
               ) : (

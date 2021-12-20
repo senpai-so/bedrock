@@ -13,6 +13,7 @@ export default class FinishMintComponent extends Component<FinishMintProps> {
           <span className='mr-2'> 🎉 Congrats! 🎉</span>
           <br />
           You just minted your Loonie!
+          <br />
           <Link href={`/${this.props.token_id}`}>
             <a className='inline-flex items-center px-6 py-3 underline text-xl font-bold rounded-2xl text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'>
               <span className='mr-2'>View your NFT!🚀</span>
