@@ -8,7 +8,7 @@ import { toULuna } from '../../lib/utils/currency'
 
 import { PrismaClient } from '@prisma/client'
 import pickRandom from 'pick-random'
-import { NftToken } from 'lib/types'
+import { NftToken } from '../../lib/types'
 
 const prisma = new PrismaClient()
 
@@ -73,27 +73,21 @@ export default async function handler(
     console.log('ownerAddress', ownerAddress)
     console.log('contractAddress', contractAddress)
 
-    const msg = new MsgExecuteContract(
-      ownerAddress,
-      contractAddress,
-      {
-        mint: {
-          token_id: token?.token_id,
-          owner: buyer,
+    const msg = new MsgExecuteContract(ownerAddress, contractAddress, {
+      mint: {
+        token_id: token?.token_id,
+        owner: buyer,
+        name: token?.name,
+        description: token?.description,
+        image: token?.image_uri,
+        extension: {
           name: token?.name,
-          description: token?.description,
           image: token?.image_uri,
-          extension: {
-            name: token?.name,
-            image: token?.image_uri,
-            description: token?.description,
-            attributes: token?.attributes
-          }
+          description: token?.description,
+          attributes: token?.attributes
         }
-      },
-      // TODO use the correct gas price
-      { uluna: toULuna(1) }
-    )
+      }
+    })
 
     console.log(msg)
 

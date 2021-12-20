@@ -21,7 +21,7 @@ import { FAQ } from 'components/FAQ'
 
 import api from 'lib/utils/api-client'
 import { MintResponse } from 'pages/api/mint'
-import { ownerAddress } from 'lib/config'
+import { ownerAddress, mintFeeLuna } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -65,6 +65,7 @@ export default function Index() {
       const buyer = connectedWallet.walletAddress
       console.log('buyer', buyer)
       console.log('owner', ownerAddress)
+      console.log('mint fee', mintFeeLuna)
 
       // TODO use proper fee
       // const gasLimit = 1000000 * adjustGasLimit(0.01133)
@@ -78,7 +79,7 @@ export default function Index() {
           msgs: [
             new MsgSend(buyer, ownerAddress, {
               // uusd: toUUST(1)
-              uluna: toULuna(1)
+              uluna: toULuna(mintFeeLuna)
             })
           ]
         })
@@ -97,7 +98,6 @@ export default function Index() {
             if (res?.tokenId) {
               setMintedTokenId(res.tokenId)
             }
-            console.log('Minted token', mintedTokenId)
           })
         })
         .catch((error: unknown) => {

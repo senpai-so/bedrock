@@ -36,6 +36,11 @@ export const ownerAddress =
   process.env.NEXT_PUBLIC_SIGNER_WALLET_ADDRESS ||
   ''
 
+export const mintFeeLuna =
+  Number(process.env.MINT_FEE_LUNA) ||
+  Number(process.env.NEXT_MINT_FEE_LUNA) ||
+  0.33
+
 export function getEnv(
   key: string,
   defaultValue?: string,
