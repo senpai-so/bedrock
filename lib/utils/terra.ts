@@ -39,6 +39,8 @@ export async function getLCD() {
   console.log('is preview', isPreview)
   console.log(process.env.NEXT_IS_PREVIEW)
   console.log(process.env.NODE_ENV)
+  console.log(process.env.NEXT_PUBLIC_VERCEL_ENV)
+  console.log(process.env.VERCEL_ENV)
   const lcdUrl = getLcdUrl()
   const chainID = getChainID()
   const gasPrices = await getGasPrices()
