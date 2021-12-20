@@ -35,7 +35,7 @@ export interface OwnerOf {
 // Prisma schema
 export interface NftToken {
   id: number
-  tokenId: string
+  token_id: string
   name: string
   description: string
   attributes: Array<Map<string, string>>
