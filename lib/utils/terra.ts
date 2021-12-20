@@ -1,6 +1,6 @@
 import { LCDClient, Coins } from '@terra-money/terra.js'
 
-import { isDev, isPreview } from 'lib/config'
+import { isDev, isPreview } from '../config'
 
 const localLcdUrl = 'http://localhost:1317'
 const localFcdUrl = 'http://localhost:3060'
