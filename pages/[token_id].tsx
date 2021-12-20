@@ -106,8 +106,6 @@ export default function Index() {
   useEffect(() => {
     async function fetchSetNFTData(tokenId: string) {
       const lcd = await getLCD()
-      console.log('token_id', tokenId)
-      console.log('wallet add', connectedWallet?.walletAddress)
       const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
         contractAddress,
         {
@@ -122,7 +120,6 @@ export default function Index() {
             nft_info: { token_id: tokenId }
           }
         )
-        console.log(nftInfo)
         setNFTInfo(nftInfo)
       }
     }

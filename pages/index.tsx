@@ -202,8 +202,7 @@ export default function Index() {
                 🧧{' '}
                 {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
               </div>
-              <FinishMintComponent token_id='3eepQFk2L8' />
-              {/* {mintedTokenId ? (
+              {mintedTokenId ? (
                 <FinishMintComponent token_id={mintedTokenId} />
               ) : (
                 <button
@@ -214,7 +213,7 @@ export default function Index() {
                 >
                   Mint!
                 </button>
-              )} */}
+              )}
             </>
           )}
 
