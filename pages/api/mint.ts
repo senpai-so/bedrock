@@ -6,41 +6,41 @@ import { getLCD } from '../../lib/utils/terra'
 import { mnemonic, ownerAddress, contractAddress } from '../../lib/config'
 import { toULuna } from '../../lib/utils/currency'
 
-import prisma from '../../lib/prisma'
+import { PrismaClient } from '@prisma/client'
 import pickRandom from 'pick-random'
-import { NftTokens } from 'lib/types'
+import { NftToken } from 'lib/types'
 
-type MintResponse = {
+const prisma = new PrismaClient()
+
+export type MintResponse = {
   success: boolean
   tokenId?: string | null
   error?: string
 }
 
-const orUndefined = (token: NftTokens | null) => {
-  if (token) return token
-  if (token === null) {
-    return undefined
-  }
-}
-
 async function get_random_non_minted_nft() {
-  const tokensAvailable: NftTokens[] = (await prisma.nftTokens.findMany({
-    where: { isMinted: false },
+  const tokensAvailable: NftToken[] = (await prisma.nftToken.findMany({
+    where: { is_minted: false },
     select: { id: true }
-  })) as NftTokens[]
+  })) as NftToken[]
 
   const random_token = pickRandom(tokensAvailable)[0]
-  const full_token = await prisma.nftTokens.findUnique({
-    where: { id: random_token.id }
+  const full_token = await prisma.nftToken.findUnique({
+    where: { id: random_token.id },
+    include: {
+      attributes: {
+        select: { trait_type: true, value: true }
+      }
+    }
   })
   return full_token
 }
 
-async function save_mint_to_db(token_id?: string) {
-  if (token_id) {
-    await prisma.nftTokens.update({
-      where: { token_id: token_id },
-      data: { isMinted: true }
+async function save_mint_to_db(tokenId?: string) {
+  if (tokenId) {
+    await prisma.nftToken.update({
+      where: { token_id: tokenId },
+      data: { is_minted: true }
     })
   }
   return
@@ -84,8 +84,10 @@ export default async function handler(
           description: token?.description,
           image: token?.image_uri,
           extension: {
-            name: token?.extension_name,
-            image: token?.extension_image
+            name: token?.name,
+            image: token?.image_uri,
+            description: token?.description,
+            attributes: token?.attributes
           }
         }
       },
@@ -126,5 +128,6 @@ export default async function handler(
 
   // catch-all
   res.status(404).json({ success: false, error: 'NOT FOUND' })
+  prisma.$disconnect()
   return
 }

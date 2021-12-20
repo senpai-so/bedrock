@@ -33,13 +33,12 @@ export interface OwnerOf {
 }
 
 // Prisma schema
-export interface NftTokens {
+export interface NftToken {
   id: number
   token_id: string
   name: string
   description: string
-  extension_name: string
-  extension_image: string
+  attributes: Array<Map<string, string>>
   image_uri: string
   isMinted: boolean
 }

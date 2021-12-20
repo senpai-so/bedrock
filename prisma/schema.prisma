@@ -10,13 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model NftTokens {
-  id                Int              @default(autoincrement()) @id
-  token_id          String           @unique
-  name              String
-  description       String
-  extension_name    String
-  extension_image   String
-  image_uri         String
-  isMinted          Boolean          @default(false)
+model NftToken {
+  id           Int     @default(autoincrement()) @unique
+  token_id     String  @id @unique
+  name         String
+  description  String
+  attributes   Trait[]
+  image_uri    String
+  is_minted    Boolean @default(false)
+}
+
+model Trait {
+  id                 Int       @id @default(autoincrement())
+  trait_type         String
+  value              String
+  nft_token          NftToken? @relation(fields: [nft_token_token_id], references: [token_id])
+  nft_token_token_id String?
 }
