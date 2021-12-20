@@ -86,8 +86,6 @@ export default function Index() {
           console.log('transferred.')
           setTxResult(nextTxResult)
 
-          const res = mint(buyer)
-          await res
           await mint(buyer).then((res) => {
             toast.update(toastId, {
               render: 'Transaction Successful',
