@@ -1,6 +1,6 @@
 import { LCDClient, Coins } from '@terra-money/terra.js'
 
-import { isDev, isPreview } from '../config'
+import { isDev, isPreview } from 'lib/config'
 
 const localLcdUrl = 'http://localhost:1317'
 const localFcdUrl = 'http://localhost:3060'
@@ -36,6 +36,7 @@ export async function getGasPrices() {
 }
 
 export async function getLCD() {
+  console.log('is preview', isPreview)
   const lcdUrl = getLcdUrl()
   const chainID = getChainID()
   const gasPrices = await getGasPrices()

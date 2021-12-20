@@ -2,7 +2,7 @@ export const isServer = typeof window === 'undefined'
 export const isDev =
   process.env.NODE_ENV === 'development' || !process.env.NODE_ENV
 export const isPreview =
-  process.env.NODE_ENV !== 'development' && process.env.IS_PREVIEW
+  process.env.NODE_ENV !== 'development' && process.env.NEXT_IS_PREVIEW
 
 export const domain = getEnv('DOMAIN', 'loonies.world')
 export const port = getEnv('PORT', '3000')
