@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import Airtable from 'airtable'
 import { Attachment } from 'airtable'
 import { AirtableBase } from 'airtable/lib/airtable_base'
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
 dotenv.config({ path: '.env.local' })
 
@@ -13,38 +13,51 @@ interface TraitRecordInput {
   value: string
 }
 
-function createTraitRecord(config: TraitRecordInput): { trait_type: string; value: string } {
+function createTraitRecord(config: TraitRecordInput): {
+  trait_type: string
+  value: string
+} {
   return {
     trait_type: config.trait_type || '',
-    value: config.value || '',
-  };
+    value: config.value || ''
+  }
 }
 
 interface TraitCreateManyEnvelope {
-  data: Array<TraitRecordInput>;
+  data: Array<TraitRecordInput>
   skipDuplicates?: boolean
 }
 
-function createTraitCreateManyEnvelope(config: TraitCreateManyEnvelope): { data: Array<TraitRecordInput>; skipDuplicates: boolean } {
+function createTraitCreateManyEnvelope(config: TraitCreateManyEnvelope): {
+  data: Array<TraitRecordInput>
+  skipDuplicates: boolean
+} {
   return {
     data: config.data || [],
-    skipDuplicates: config.skipDuplicates || true,
-  };
+    skipDuplicates: config.skipDuplicates || true
+  }
 }
 
-function generateTraitsListFromAirtableRecord(traits: Map<string, Array<string>>) {
-  let attributes_data: Array<TraitRecordInput> = [];
+function generateTraitsListFromAirtableRecord(
+  traits: Map<string, Array<string>>
+) {
+  let attributes_data: Array<TraitRecordInput> = []
   traits.forEach((value: Array<string>, key: string) => {
     if (value) {
       for (let i = 0; i < value.length; i++) {
-        attributes_data.push(createTraitRecord({trait_type: key, value: value[i]}))
+        attributes_data.push(
+          createTraitRecord({ trait_type: key, value: value[i] })
+        )
       }
     }
-  });
+  })
 
-  let envelope = createTraitCreateManyEnvelope({ data: attributes_data, skipDuplicates: true}) as TraitCreateManyEnvelope
+  let envelope = createTraitCreateManyEnvelope({
+    data: attributes_data,
+    skipDuplicates: true
+  }) as TraitCreateManyEnvelope
 
-  return  envelope
+  return envelope
 }
 
 function getAirtableClient(baseId: string): AirtableBase {
@@ -56,12 +69,10 @@ function getAirtableClient(baseId: string): AirtableBase {
   return base
 }
 
-// eslint-disable-next-line prettier/prettier
 ;(async (connection) => {
   console.log('Connecting to Airtable')
 
-  let prisma: PrismaClient;
-  prisma = new PrismaClient();
+  const prisma = new PrismaClient()
 
   // Keeping in here as it's not rly a secret
   const looniesMetadataAirtableId = 'appn2XbAF0nNuS6de'
@@ -75,15 +86,17 @@ function getAirtableClient(baseId: string): AirtableBase {
     .eachPage(
       async (records, fetchNextPage) => {
         records.forEach(async (record) => {
-          const token_id = record.fields['token_id'] as string;
-          const name = record.fields['name'] as string;
+          const token_id = record.fields['token_id'] as string
+          const name = record.fields['name'] as string
           const description = record.fields['description']
             ? (record.fields['description'] as string)
-            : '';
-          const image = record.fields["image (auto-filled; don't need to fill)"] as Attachment[];
-          const image_url = image ? image[0]['url'] : 'No image url found';
+            : ''
+          const image = record.fields[
+            "image (auto-filled; don't need to fill)"
+          ] as Attachment[]
+          const image_url = image ? image[0]['url'] : 'No image url found'
 
-          let traits = new Map<string, Array<string>>();
+          let traits = new Map<string, Array<string>>()
           traits.set('Background', record.fields['Background'] as Array<string>)
           traits.set('Body', record.fields['Body'] as Array<string>)
           traits.set('Eyes', record.fields['Eyes'] as Array<string>)
@@ -100,11 +113,11 @@ function getAirtableClient(baseId: string): AirtableBase {
                 name: name,
                 description: description,
                 attributes: {
-                  createMany: (allTraitsOfToken)
+                  createMany: allTraitsOfToken
                 },
                 image_uri: image_url
               }
-            });
+            })
           } else {
             await prisma.nftToken.create({
               data: {
@@ -113,16 +126,15 @@ function getAirtableClient(baseId: string): AirtableBase {
                 description: description,
                 image_uri: image_url
               }
-            });
+            })
           }
-        });
+        })
 
-        fetchNextPage();
+        fetchNextPage()
       },
       (err: Error) => {
-        if (err)
-          console.error(err);
+        if (err) console.error(err)
       }
     )
-    prisma.$disconnect();
+  prisma.$disconnect()
 })()

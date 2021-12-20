@@ -20,6 +20,7 @@ import { Modal } from 'components/Modal'
 import { FAQ } from 'components/FAQ'
 
 import api from 'lib/utils/api-client'
+import { MintResponse } from 'pages/api/mint'
 import { ownerAddress } from 'lib/config'
 import { toUUST, toULuna } from 'lib/utils/currency'
 import { toast, ToastContainer } from 'react-toastify'
@@ -27,12 +28,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import FinishMintComponent from 'src/finishMintComponent'
 
 class ServerError extends Error {}
-
-type MintResponse = {
-  success: boolean
-  tokenId?: string | null
-  error?: string
-}
 
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
@@ -56,7 +51,7 @@ export default function Index() {
   const toggleDisconnect = () => {
     setShowModal(!showModal)
   }
-  
+
   const adjustGasLimit = (gasLimit: number) => {
     return gasLimit * 1.25
   }
@@ -104,6 +99,7 @@ export default function Index() {
             if (res?.tokenId) {
               setMintedTokenId(res.tokenId)
             }
+            console.log('Minted token', mintedTokenId)
           })
         })
         .catch((error: unknown) => {

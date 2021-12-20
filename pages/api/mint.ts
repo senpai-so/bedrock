@@ -6,41 +6,41 @@ import { getLCD } from '../../lib/utils/terra'
 import { mnemonic, ownerAddress, contractAddress } from '../../lib/config'
 import { toULuna } from '../../lib/utils/currency'
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 import pickRandom from 'pick-random'
 import { NftToken } from 'lib/types'
 
-let prisma: PrismaClient;
+const prisma = new PrismaClient()
 
-type MintResponse = {
+export type MintResponse = {
   success: boolean
   tokenId?: string | null
   error?: string
 }
 
 async function get_random_non_minted_nft() {
-  const tokensAvailable: NftToken[] = await prisma.nftToken.findMany({
-    where: { isMinted: false },
+  const tokensAvailable: NftToken[] = (await prisma.nftToken.findMany({
+    where: { is_minted: false },
     select: { id: true }
-  }) as NftToken[]
+  })) as NftToken[]
 
   const random_token = pickRandom(tokensAvailable)[0]
   const full_token = await prisma.nftToken.findUnique({
     where: { id: random_token.id },
     include: {
       attributes: {
-        select: { traitType: true, value: true },
-      },
-  }
+        select: { trait_type: true, value: true }
+      }
+    }
   })
   return full_token
 }
 
-async function save_mint_to_db(token_id?: string) {
-  if (token_id) {
+async function save_mint_to_db(tokenId?: string) {
+  if (tokenId) {
     await prisma.nftToken.update({
-      where: { tokenId: token_id },
-      data: { isMinted: true }
+      where: { token_id: tokenId },
+      data: { is_minted: true }
     })
   }
   return
@@ -78,16 +78,16 @@ export default async function handler(
       contractAddress,
       {
         mint: {
-          token_id: token?.tokenId,
+          token_id: token?.token_id,
           owner: buyer,
           name: token?.name,
           description: token?.description,
-          image: token?.imageUri,
+          image: token?.image_uri,
           extension: {
             name: token?.name,
-            image: token?.imageUri,
+            image: token?.image_uri,
             description: token?.description,
-            attributes: token?.attributes,
+            attributes: token?.attributes
           }
         }
       },
@@ -97,36 +97,37 @@ export default async function handler(
 
     console.log(msg)
 
-    // // mint part
-    // const tx = await signer
-    //   .createAndSignTx({
-    //     msgs: [msg]
-    //   })
-    //   .catch((error: unknown) => {
-    //     console.log('Error creating and signing transaction')
-    //     console.log(error)
-    //     throw error
-    //   })
+    // mint part
+    const tx = await signer
+      .createAndSignTx({
+        msgs: [msg]
+      })
+      .catch((error: unknown) => {
+        console.log('Error creating and signing transaction')
+        console.log(error)
+        throw error
+      })
 
-    // console.log('mint tx', tx)
-    // try {
-    //   const result = await lcd.tx.broadcast(tx)
-    // } catch (error) {
-    //   res.status(500).json({
-    //     success: false,
-    //     error: String(error)
-    //   })
-    //   return
-    // }
+    console.log('mint tx', tx)
+    try {
+      const result = await lcd.tx.broadcast(tx)
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: String(error)
+      })
+      return
+    }
 
-    // res.status(200).json({ success: true, tokenId: token?.token_id })
+    res.status(200).json({ success: true, tokenId: token?.token_id })
 
-    // await save_mint_to_db(token?.token_id)
+    await save_mint_to_db(token?.token_id)
 
-    // return
+    return
   }
 
   // catch-all
   res.status(404).json({ success: false, error: 'NOT FOUND' })
+  prisma.$disconnect()
   return
 }
