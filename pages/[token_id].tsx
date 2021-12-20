@@ -26,7 +26,7 @@ export default function Index() {
   const [showModal, setShowModal] = React.useState(false)
 
   const router = useRouter()
-  const { token_id_given } = router.query
+  const { token_id } = router.query
 
   const connectedWallet = useConnectedWallet()
 
@@ -106,6 +106,8 @@ export default function Index() {
   useEffect(() => {
     async function fetchSetNFTData(tokenId: string) {
       const lcd = await getLCD()
+      console.log("token_id", tokenId)
+      console.log("wallet add", connectedWallet?.walletAddress)
       const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
         contractAddress,
         {
@@ -125,10 +127,10 @@ export default function Index() {
       }
     }
     if (status === WalletStatus.WALLET_CONNECTED) {
-      const tokenId = token_id_given as string
+      const tokenId = token_id as string
       fetchSetNFTData(tokenId)
     }
-  }, [connectedWallet?.walletAddress, status, token_id_given])
+  }, [connectedWallet?.walletAddress, status, token_id])
 
   return (
     <Page>
