@@ -31,7 +31,7 @@ import { NumTokensResponse } from 'lib/types'
 
 const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
 // The sold out page will show when the num_tokens query to the contract is greater than or equals to this number
-const maxTokensAllowed = 0
+const maxTokensAllowed = 40
 
 class ServerError extends Error {}
 
