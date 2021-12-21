@@ -31,7 +31,7 @@ export default function Index() {
 
   const connectedWallet = useConnectedWallet()
 
-  const imageStyle = 'h-32 w-32 rounded-full mx-auto mb-4'
+  const imageStyle = 'h-32 w-32 rounded-xl mx-auto mb-4'
 
   const toggleDisconnect = () => {
     setShowModal(!showModal)
@@ -107,24 +107,25 @@ export default function Index() {
   useEffect(() => {
     async function fetchSetNFTData(tokenId: string) {
       try {
-              const lcd = await getLCD()
-      const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
-        contractAddress,
-        {
-          owner_of: { token_id: tokenId }
-        }
-      )) as unknown as OwnerOf
-
-      if (ownership.owner === connectedWallet?.walletAddress) {
-        const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
+        const lcd = await getLCD()
+        const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
           contractAddress,
           {
-            nft_info: { token_id: tokenId }
+            owner_of: { token_id: tokenId }
           }
-        )
-        setNFTInfo(nftInfo)
-      }
+        )) as unknown as OwnerOf
+
+        if (ownership.owner === connectedWallet?.walletAddress) {
+          const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
+            contractAddress,
+            {
+              nft_info: { token_id: tokenId }
+            }
+          )
+          setNFTInfo(nftInfo)
+        }
       } catch (error) {
+        console.log(error)
       }
     }
     if (status === WalletStatus.WALLET_CONNECTED) {
