@@ -48,10 +48,10 @@ export default function Index() {
       return (
         <Image
           alt='no nft'
-          src={'/default.svg'}
+          src={'/LASA_pp.png'}
           className={imageStyle}
-          height='32'
-          width='32'
+          height='400'
+          width='400'
         />
       )
     }
@@ -130,62 +130,71 @@ export default function Index() {
   }, [connectedWallet?.walletAddress, status, token_id])
 
   return (
-    <Page>
-      <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
-        <div className='flex flex-col items-center justify-center space-y-4'>
-          <h2 className='font-bold text-3xl text-blue-700'>
-            {nftInfo?.extension.name || 'NFT View Page'}
-          </h2>
+    <div
+      className='h-full'
+      style={{
+        backgroundImage: 'url(/loonies_star_background.png)',
+        backgroundSize: 'cover',
+        height: '100vh'
+      }}
+    >
+      <Page>
+        <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
+          <div className='flex flex-col items-center justify-center space-y-4'>
+            <h2 className='font-bold text-3xl text-blue-700'>
+              {nftInfo?.extension.name || 'NFT View Page'}
+            </h2>
 
-          <p className='text-base text-gray-700'>
-            {nftInfo?.description || `A starry-eyed space cadet`}
-          </p>
+            <p className='text-base text-gray-700'>
+              {nftInfo?.description || ``}
+            </p>
 
-          {status === WalletStatus.WALLET_NOT_CONNECTED && (
-            <>
-              <div>
-                <Image
-                  className='rounded-xl'
-                  src='/LooniesGif.gif'
-                  height='400'
-                  width='400'
-                  alt='LooniesGif'
-                />
-              </div>
+            {status === WalletStatus.WALLET_NOT_CONNECTED && (
+              <>
+                <div>
+                  <Image
+                    className='rounded-xl'
+                    src='/LooniesGif.gif'
+                    height='400'
+                    width='400'
+                    alt='LooniesGif'
+                  />
+                </div>
 
-              {availableConnections
-                .filter((_) => _.type === 'EXTENSION')
-                .map(({ type, name, icon, identifier = '' }) => (
-                  <button
-                    key={'connection-' + type + identifier}
-                    className='inline-flex items-center px-6 py-3 text-blue-700 font-bold rounded-2xl border-2 border-blue-600 bg-white focus:outline-none '
-                    onClick={() => connect(type, identifier)}
-                  >
-                    <Image
-                      src={icon}
-                      alt={name}
-                      width='1em'
-                      height='1em'
-                      className='mr-2'
-                    />
-                    Connect Wallet
-                  </button>
-                ))}
-            </>
-          )}
+                {availableConnections
+                  .filter((_) => _.type === 'EXTENSION')
+                  .map(({ type, name, icon, identifier = '' }) => (
+                    <button
+                      key={'connection-' + type + identifier}
+                      className='inline-flex items-center px-6 py-3 text-blue-700 font-bold rounded-2xl border-2 border-blue-600 bg-white focus:outline-none '
+                      onClick={() => connect(type, identifier)}
+                    >
+                      <Image
+                        src={icon}
+                        alt={name}
+                        width='1em'
+                        height='1em'
+                        className='mr-2'
+                      />
+                      Connect Wallet
+                    </button>
+                  ))}
+              </>
+            )}
 
-          {status === WalletStatus.WALLET_CONNECTED && render()}
+            {status === WalletStatus.WALLET_CONNECTED && render()}
 
-          {showModal && (
-            <Modal
-              action={() => disconnect()}
-              walletAddress={abbreviateWalletAddress(
-                connectedWallet?.walletAddress || ''
-              )}
-            />
-          )}
+            {showModal && (
+              <Modal
+                action={() => disconnect()}
+                walletAddress={abbreviateWalletAddress(
+                  connectedWallet?.walletAddress || ''
+                )}
+              />
+            )}
+          </div>
         </div>
-      </div>
-    </Page>
+      </Page>
+    </div>
   )
 }

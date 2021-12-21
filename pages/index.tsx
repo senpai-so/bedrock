@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import loonies_star_background from './img/loonies_star_background_2.png'
 
 import { Fee, MsgSend, TxError } from '@terra-money/terra.js'
 
