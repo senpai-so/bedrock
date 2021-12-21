@@ -107,25 +107,24 @@ export default function Index() {
   useEffect(() => {
     async function fetchSetNFTData(tokenId: string) {
       try {
-              const lcd = await getLCD()
-      const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
-        contractAddress,
-        {
-          owner_of: { token_id: tokenId }
-        }
-      )) as unknown as OwnerOf
-
-      if (ownership.owner === connectedWallet?.walletAddress) {
-        const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
+        const lcd = await getLCD()
+        const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
           contractAddress,
           {
-            nft_info: { token_id: tokenId }
+            owner_of: { token_id: tokenId }
           }
-        )
-        setNFTInfo(nftInfo)
-      }
-      } catch (error) {
-      }
+        )) as unknown as OwnerOf
+
+        if (ownership.owner === connectedWallet?.walletAddress) {
+          const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
+            contractAddress,
+            {
+              nft_info: { token_id: tokenId }
+            }
+          )
+          setNFTInfo(nftInfo)
+        }
+      } catch (error) {}
     }
     if (status === WalletStatus.WALLET_CONNECTED) {
       const tokenId = token_id as string

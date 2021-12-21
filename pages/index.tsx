@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Image from 'next/image'
 
 import { Fee, MsgSend, TxError } from '@terra-money/terra.js'
@@ -26,6 +26,12 @@ import { toUUST, toULuna } from 'lib/utils/currency'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import FinishMintComponent from 'src/finishMintComponent'
+import { getLCD } from 'lib/utils/terra'
+import { NumTokensResponse } from 'lib/types'
+
+const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
+// The sold out page will show when the num_tokens query to the contract is greater than or equals to this number
+const maxTokensAllowed = 0
 
 class ServerError extends Error {}
 
@@ -36,6 +42,7 @@ export default function Index() {
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [showModal, setShowModal] = React.useState(false)
   const [mintedTokenId, setMintedTokenId] = React.useState<string | null>(null)
+  const [numTokens, setNumTokens] = React.useState<Number>(0)
 
   const connectedWallet = useConnectedWallet()
 
@@ -55,6 +62,22 @@ export default function Index() {
   const adjustGasLimit = (gasLimit: number) => {
     return gasLimit * 1.25
   }
+
+  useEffect(() => {
+    async function fetchCurrentTotalTokens() {
+      try {
+        const lcd = await getLCD()
+        const numTokens = (await lcd.wasm.contractQuery<NumTokensResponse>(
+          contractAddress,
+          { num_tokens: {} }
+        )) as NumTokensResponse
+        setNumTokens(numTokens.count)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchCurrentTotalTokens()
+  }, [])
 
   const handleClickMint = () => {
     const toastId = toast.loading('Transaction Pending...')
@@ -212,6 +235,23 @@ export default function Index() {
                 </div>
                 {mintedTokenId ? (
                   <FinishMintComponent token_id={mintedTokenId} />
+                ) : numTokens >= maxTokensAllowed ? (
+                  <div className='px-4'>
+                    <h1 className='font-bold text-center text-3xl text-red-500'>
+                      {' '}
+                      Sold out!{' '}
+                    </h1>
+                    <br />
+                    <p className='font-bold text-center text-red-500'>
+                      {' '}
+                      Our first drop has sold out.{' '}
+                    </p>
+                    <p className='font-bold text-center text-red-500'>
+                      {' '}
+                      Follow our discord channel to find out when the next drop
+                      will be!{' '}
+                    </p>
+                  </div>
                 ) : (
                   <button
                     className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'

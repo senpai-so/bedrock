@@ -32,6 +32,10 @@ export interface OwnerOf {
   owner: string
 }
 
+export interface NumTokensResponse {
+  count: Number
+}
+
 // Prisma schema
 export interface NftToken {
   id: number
