@@ -13,6 +13,7 @@ import { Modal } from 'components/Modal'
 
 import { getLCD } from 'lib/utils/terra'
 import { NFTTokenItem, OwnerOf } from 'lib/types'
+import Link from 'next/link'
 
 const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
 
@@ -183,7 +184,7 @@ export default function Index() {
             )}
 
             {status === WalletStatus.WALLET_CONNECTED && render()}
-
+            <br />
             {showModal && (
               <Modal
                 action={() => disconnect()}
@@ -192,6 +193,13 @@ export default function Index() {
                 )}
               />
             )}
+            <br />
+            <button
+              className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              onClick={() => router.push('/')}
+            >
+              Back to mint
+            </button>
           </div>
         </div>
       </Page>
