@@ -31,7 +31,7 @@ export default function Index() {
 
   const connectedWallet = useConnectedWallet()
 
-  const imageStyle = 'h-32 w-32 rounded-full mx-auto mb-4'
+  const imageStyle = 'h-32 w-32 rounded-xl mx-auto mb-4'
 
   const toggleDisconnect = () => {
     setShowModal(!showModal)
