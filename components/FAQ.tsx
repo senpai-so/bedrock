@@ -10,7 +10,7 @@ import { EmptyProps } from 'lib/types'
 const faqs = [
   {
     question: 'What are Loonies?',
-    answer: `Loonies are a limited edition collection of 10000 NFTs that live in LASA (Loonies Aeronautics and Space Administration). They’re crazy enough to think they can build rocket ships that fly to different chain networks & are going to prove to other NFTs they can. Their first mission is to fly to the Solana metaverse Desolates (desolate.space)`
+    answer: `Loonies are a limited edition collection of 5000 NFTs that live in LASA (Loonies Aeronautics and Space Administration). They’re crazy enough to think they can build rocket ships that fly to different chain networks & are going to prove to other NFTs they can. Their first mission is to fly to the Solana metaverse Desolates (desolate.space)`
   },
   {
     question: 'How do I buy a Loonie?',
