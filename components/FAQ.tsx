@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     question: 'How do I stay updated on future drops?',
-    answer: `Join our [Discord channel](https://discord.gg/eQRWqApR4A) to stay in the loop and be alerted of future drops 🙌`
+    answer: `Join our [Discord channel](https://discord.com/invite/hS3NAqHsPs) to stay in the loop and be alerted of future drops 🙌`
   }
 ]
 
