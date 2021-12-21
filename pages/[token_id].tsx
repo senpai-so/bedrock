@@ -124,7 +124,9 @@ export default function Index() {
           )
           setNFTInfo(nftInfo)
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     }
     if (status === WalletStatus.WALLET_CONNECTED) {
       const tokenId = token_id as string

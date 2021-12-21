@@ -33,7 +33,7 @@ export interface OwnerOf {
 }
 
 export interface NumTokensResponse {
-  count: Number
+  count: number
 }
 
 // Prisma schema

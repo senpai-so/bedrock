@@ -42,7 +42,7 @@ export default function Index() {
   const [txResult, setTxResult] = React.useState<TxResult | null>(null)
   const [showModal, setShowModal] = React.useState(false)
   const [mintedTokenId, setMintedTokenId] = React.useState<string | null>(null)
-  const [numTokens, setNumTokens] = React.useState<Number>(0)
+  const [numTokens, setNumTokens] = React.useState<number>(0)
 
   const connectedWallet = useConnectedWallet()
 
