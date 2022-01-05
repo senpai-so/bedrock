@@ -1,3 +1,0 @@
-name: timestamp-nano
-ui: mocha-bdd
-html: "test/zuul/zuul.html"
