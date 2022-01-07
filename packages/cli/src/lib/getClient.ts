@@ -21,9 +21,9 @@ export const getClient = async (env: string): Promise<LCDClient> => {
       break;
     default:
       console.log("Invalid value for \'env\'");
-      console.log("Using values for testnet");
-      url = VARS.TESTNET_URL;
-      chainId = VARS.TESTNET_CHAIN_ID;
+      console.log("Using values for local");
+      url = VARS.LOCALTERRA_URL;
+      chainId = VARS.LOCALTERRA_CHAIN_ID;
       break;
   }
   console.log("Creating client");

@@ -18,27 +18,29 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "e",
         demandOption: true,
-        description: "Chain environment"
+        description: "Chain environment",
+        choices: ["local", "testnet", "mainnet"],
       },
       cred: {
         type: "string",
         alias: "m",
         demandOption: true,
-        description: "Path to mnemonic"
+        description: "Path to mnemonic file"
       },
       config: {
         type: "string",
-        alias: "cp",
+        alias: "o",
         demandOption: true,
-        description: "Config file path"
+        description: "Path to config file"
       },
-      cache: {
-        type: "string",
-        alias: "c",
-        demandOption: true,
-        description: "Cache path"
-      }
+      // cache: {
+      //   type: "string",
+      //   alias: "a",
+      //   demandOption: true,
+      //   description: "Cache name"
+      // }
     })
+    // .example("$0 upload ./assets -e local -m ./mnemonic -cp ./config.json -c cache", "Upload assets and mint contract")
   })
   .command("verify", "verifies successful upload", yargs => {
     yargs.options({
@@ -46,7 +48,8 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "e",
         demandOption: true,
-        description: "Chain environment"
+        description: "Chain environment",
+        choices: ["local", "testnet", "mainnet"],
       },
       cred: {
         type: "string",
@@ -54,12 +57,12 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Path to mnemonic"
       },
-      cache: {
-        type: "string",
-        alias: "c",
-        demandOption: true,
-        description: "Cache path"
-      }
+      // cache: {
+      //   type: "string",
+      //   alias: "a",
+      //   demandOption: true,
+      //   description: "Cache name"
+      // }
     })
   })
   .command("mint", "mints a single NFT", yargs => {
@@ -68,7 +71,8 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "e",
         demandOption: true,
-        description: "Chain environment"
+        description: "Chain environment",
+        choices: ["local", "testnet", "mainnet"],
       },
       cred: {
         type: "string",
@@ -76,12 +80,12 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Path to mnemonic"
       },
-      cache: {
-        type: "string",
-        alias: "c",
-        demandOption: true,
-        description: "Cache path"
-      }
+      // cache: {
+      //   type: "string",
+      //   alias: "a",
+      //   demandOption: true,
+      //   description: "Cache name"
+      // }
     })
   })
   .command("mint-multiple", "mints multiple NFTs", yargs => {
@@ -95,7 +99,8 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "e",
         demandOption: true,
-        description: "Chain environment"
+        description: "Chain environment",
+        choices: ["local", "testnet", "mainnet"],
       },
       cred: {
         type: "string",
@@ -103,12 +108,12 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Path to mnemonic"
       },
-      cache: {
-        type: "string",
-        alias: "c",
-        demandOption: true,
-        description: "Cache path"
-      }
+      // cache: {
+      //   type: "string",
+      //   alias: "a",
+      //   demandOption: true,
+      //   description: "Cache name"
+      // }
     })
   })
   .command("update", "updates owner address or config", yargs => {
@@ -122,7 +127,8 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "e",
         demandOption: true,
-        description: "Chain environment"
+        description: "Chain environment",
+        choices: ["local", "testnet", "mainnet"],
       },
       cred: {
         type: "string",
@@ -136,12 +142,12 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Config file path"
       },
-      cache: {
-        type: "string",
-        alias: "a",
-        demandOption: true,
-        description: "Cache path"
-      }
+      // cache: {
+      //   type: "string",
+      //   alias: "a",
+      //   demandOption: true,
+      //   description: "Cache name"
+      // }
     })
   })
   .help()
@@ -153,7 +159,8 @@ const main = async () => {
   const command = args._[0];
   const env = args.e as string;
   const mnemonic = args.m as string;
-  const cache = args.c as string;
+  const config = args.o as string;
+  const cache = "cache"; //args.a as string;
 
   if (typeof command === "string" && command === "upload") {
     const path = args._[1] as string;
@@ -161,7 +168,7 @@ const main = async () => {
   } else if (typeof command === "string" && command === "mint") {
     await mint(env, mnemonic, cache);
   }
-  process.exit(0);
+  process.exit(0); // ensure smooth exit
 }
 
 main();
