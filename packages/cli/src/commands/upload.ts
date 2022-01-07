@@ -66,10 +66,12 @@ export const upload = async (
     const key = new MnemonicKey({mnemonic: mPhrase});
     const wallet = terra.wallet(key);
 
-    const length = assets.length;
-
     // Create contract
-    const contract_address = await createContract(wallet, terra, length); // replace last 2 values
+    if (assets.length == 0) {
+      throw new Error("Asset folder must contain 1 or more correctly formatted assets. \
+      Please ensure the assets are correctly formatted.");
+    }
+    const contract_address = await createContract(wallet, terra, assets.length);
     cacheContent.program = {...cacheContent.program, contract_address: contract_address }
     saveCache(cacheName, env, cacheContent);
 }
