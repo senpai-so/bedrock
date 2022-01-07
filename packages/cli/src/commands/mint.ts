@@ -1,8 +1,10 @@
-import { Coins, isTxError, LCDClient, LCDClientConfig, MnemonicKey, MsgExecuteContract, RawKey } from "@terra-money/terra.js"
-import { create } from 'ipfs-core';
+import { isTxError, LCDClient, MnemonicKey, MsgExecuteContract } from "@terra-money/terra.js"
+import fs from 'fs';
+
+import { getClient } from '../lib/getClient';
 import { CacheContent, loadCache, saveCache } from "../utils/cache";
 import { Manifest } from "./upload";
-import fs from 'fs';
+
 
 export const mint = async (
   env: string,
@@ -34,11 +36,7 @@ export const mint = async (
   };
 
   // Load wallet & LCD client 
-  const terra = new LCDClient({
-    URL: 'http://localhost:1317',
-    chainID: 'localterra', //isTest ? 'soju-0013' : 'columbus-5',
-  });
-
+  const terra = await getClient(env);
   const mPhrase = fs.readFileSync(mnemonic).toString();
   const key = new MnemonicKey({mnemonic: mPhrase});
   const wallet = terra.wallet(key);

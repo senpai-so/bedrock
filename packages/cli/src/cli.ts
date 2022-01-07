@@ -2,6 +2,7 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+
 import { mint } from './commands/mint';
 import { upload } from './commands/upload';
 
@@ -145,8 +146,6 @@ const argv = yargs(hideBin(process.argv))
   })
   .help()
   .parse();
-
-// Figure out how to handle async here
 
 const main = async () => {
   const args = await argv;

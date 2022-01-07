@@ -1,10 +1,11 @@
 import { IPFS, create } from 'ipfs-core';
-import { isTxError, LCDClient, MnemonicKey, LocalTerra, MsgInstantiateContract, MsgStoreCode, RawKey, Wallet } from '@terra-money/terra.js';
+import { isTxError, LCDClient, MnemonicKey, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
 
 import fs from 'fs';
 import path from 'path';
 
-import { CacheContent, loadCache, saveCache } from '../utils/cache';
+import { CacheContent, saveCache } from '../utils/cache';
+import { getClient } from '../lib/getClient';
 
 // Types
 
@@ -47,7 +48,7 @@ export const upload = async (
   cacheName: string,
   env: string,
   path: string, 
-  mnemonic: string,
+  mnemonicPath: string,
   ) => {
     const node = await create();
     const cacheContent: CacheContent = { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
@@ -58,12 +59,8 @@ export const upload = async (
     saveCache(cacheName, env, cacheContent);
 
     // Load user creds
-    const terra = new LCDClient({
-      URL: "http://localhost:1317",//'https://lcd.terra.dev',
-      chainID: 'localterra', //isTest ? 'soju-0013' : 'columbus-5',
-    });
-    
-    const mPhrase = fs.readFileSync(mnemonic).toString();
+    const terra = await getClient(env);
+    const mPhrase = fs.readFileSync(mnemonicPath).toString();
     console.log(mPhrase);
 
     const key = new MnemonicKey({mnemonic: mPhrase});
