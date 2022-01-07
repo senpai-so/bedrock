@@ -1,4 +1,5 @@
 import { isTxError, LCDClient, MnemonicKey, MsgExecuteContract } from "@terra-money/terra.js"
+import { INSPECT_MAX_BYTES } from "buffer";
 import fs from 'fs';
 
 import { getClient } from '../lib/getClient';
@@ -23,17 +24,15 @@ export const mint = async (
   // Select our NFT to mint
   // need to randomly select the NFTs
   let mintMsg: Manifest = { token_id: "", name: "", token_uri: undefined, owner: undefined };
-  for (const item of cacheContent.items) {
-    if (!cacheContent.program.tokens_minted.includes(item.token_id)) {
-      mintMsg = item;
-      break;
-    }
-  }
-  // no assets left to mint
-  if (mintMsg.token_id == "" || mintMsg.name == "") {
+  const newAssets = cacheContent.items.filter(x => !cacheContent.program.tokens_minted.includes(x.token_id));
+
+  if (newAssets.length === 0) {
     console.log("No NFTs left to mint :(")
     return;
-  };
+  }
+
+  const idx = Math.floor(Math.random() * newAssets.length) // random idx 
+  mintMsg = cacheContent.items[idx];
 
   // Load wallet & LCD client 
   const terra = await getClient(env);
