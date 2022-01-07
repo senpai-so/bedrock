@@ -1,0 +1,21 @@
+{
+  "manifest": {
+    "token_id": "LTSXt6ZxAG",
+    "name": "loonies3"
+  },
+  "metadata": {
+    "description": "OG loonie",
+    "name": "loonie3",
+    "image": "",
+    "attributes": [
+      { "trait_type": "Type", "value": "pedestrian" },
+      { "trait_type": "Background", "value": "yellow cosmos" },
+      { "trait_type": "Body", "value": "yellow" },
+      { "trait_type": "Eyes", "value": "reading" },
+      { "trait_type": "Mouth", "value": "blowing bubble" },
+      { "trait_type": "Headwear", "value": "pot head" },
+      { "trait_type": "Outfit", "value": "space suit" },
+      { "trait_type": "Items", "value": "map" }
+    ]
+  }
+}
