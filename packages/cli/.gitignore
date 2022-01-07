@@ -2,8 +2,6 @@
 
 # dependencies
 /node_modules
-# /.pnp
-# .pnp.js
 
 # cache
 *-cache.json
@@ -26,6 +24,9 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# keys
+*.mn
 
 # vercel
 .vercel
