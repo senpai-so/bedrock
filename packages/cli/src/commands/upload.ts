@@ -61,7 +61,9 @@ export const upload = async (
     // Load user creds
     const terra = await getClient(env);
     const mPhrase = fs.readFileSync(mnemonicPath).toString();
-    console.log(mPhrase);
+
+    console.log("terra url", terra.config.URL);
+    console.log("terra chain", terra.config.chainID);
 
     const key = new MnemonicKey({mnemonic: mPhrase});
     const wallet = terra.wallet(key);
@@ -92,7 +94,7 @@ const ipfsUpload = async (node: IPFS, dirPath: string) => {
   
   const assets: Manifest[] = [];
 
-  for (const fName of names) {
+  for (const fName of Array.from(names)) {
 
     // Upload media to IPFS
     const media = fs.readFileSync(path.join(dirPath, fName + IMG_TYPE)).toString()

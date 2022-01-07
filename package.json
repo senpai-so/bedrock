@@ -44,6 +44,7 @@
     "@web3-react/walletlink-connector": "^6.2.8",
     "airtable": "^0.11.1",
     "classnames": "^2.3.1",
+    "cli": "./packages/cli/",
     "dotenv": "^10.0.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-config-standard-react": "^11.0.1",

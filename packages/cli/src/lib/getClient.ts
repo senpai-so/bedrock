@@ -26,11 +26,13 @@ export const getClient = async (env: string): Promise<LCDClient> => {
       chainId = VARS.TESTNET_CHAIN_ID;
       break;
   }
-
+  console.log("Creating client");
+  console.log("url", url)
+  console.log("chainId", chainId)
   client = new LCDClient({
     URL: url,
     chainID: chainId
-  })
+  });
 
   return client
 }
