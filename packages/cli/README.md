@@ -8,11 +8,11 @@ yarn
 ```
 3. Compile TypeScript to JavaScript
 ```
-npx tsc
+yarn build
 ```
 4. Upload contract
 ```
-node ./build/cli.js upload ./assets -e localterra -m ./mnemonic.txt --cp config -c cache
+node ./build/src/cli.js upload ./assets -e localterra -m ./mnemonic.txt -o config -a cache
 ```
 
 e.g. metadata:
@@ -41,5 +41,5 @@ e.g. metadata:
 ```
 5. Mint NFT
 ```
-node ./build/cli.js mint -e localterra -m ./mnemonic.txt -c cache
+node ./build/src/cli.js mint -e localterra -m ./mnemonic.txt -a cache
 ```
