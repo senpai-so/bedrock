@@ -1,14 +1,20 @@
 import fs from 'fs';
 import path from 'path';
+import { Manifest } from '../commands/upload';
 // import { CACHE_PATH } from './constants';
 
 const CACHE_PATH = "./"; // CHANGE
 
+type Program = {
+  contract_address: string | undefined;
+  tokens_minted: string[];
+}
+
 export type CacheContent = { 
-  program: Object,
-  items: Object,
-  env: string | undefined,
-  cacheName: string | undefined,
+  program: Program;
+  items: Manifest[] | undefined;
+  env: string | undefined;
+  cacheName: string | undefined;
 }
 
 export function cachePath(
@@ -24,7 +30,6 @@ export function loadCache(
   cacheName: string,
   env: string,
   cPath: string = CACHE_PATH,
-  legacy: boolean = false,
 ): CacheContent | undefined {
   const path = cachePath(env, cacheName, cPath);
 

@@ -2,6 +2,7 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { mint } from './commands/mint';
 import { upload } from './commands/upload';
 
 
@@ -20,9 +21,9 @@ const argv = yargs(hideBin(process.argv))
       },
       cred: {
         type: "string",
-        alias: "k",
+        alias: "m",
         demandOption: true,
-        description: "Credential key path"
+        description: "Path to mnemonic"
       },
       config: {
         type: "string",
@@ -48,9 +49,9 @@ const argv = yargs(hideBin(process.argv))
       },
       cred: {
         type: "string",
-        alias: "k",
+        alias: "m",
         demandOption: true,
-        description: "Credential key path"
+        description: "Path to mnemonic"
       },
       cache: {
         type: "string",
@@ -70,9 +71,9 @@ const argv = yargs(hideBin(process.argv))
       },
       cred: {
         type: "string",
-        alias: "k",
+        alias: "m",
         demandOption: true,
-        description: "Credential key path"
+        description: "Path to mnemonic"
       },
       cache: {
         type: "string",
@@ -97,9 +98,9 @@ const argv = yargs(hideBin(process.argv))
       },
       cred: {
         type: "string",
-        alias: "k",
+        alias: "m",
         demandOption: true,
-        description: "Credential key path"
+        description: "Path to mnemonic"
       },
       cache: {
         type: "string",
@@ -124,9 +125,9 @@ const argv = yargs(hideBin(process.argv))
       },
       cred: {
         type: "string",
-        alias: "k",
+        alias: "m",
         demandOption: true,
-        description: "Credential key path"
+        description: "Path to mnemonic"
       },
       config: {
         type: "string",
@@ -149,19 +150,19 @@ const argv = yargs(hideBin(process.argv))
 
 const main = async () => {
   const args = await argv;
-  console.log(args);
 
   const command = args._[0];
   const env = args.e as string;
-  const creds = args.k;
+  const mnemonic = args.m as string;
   const cache = args.c as string;
 
   if (typeof command === "string" && command === "upload") {
     const path = args._[1] as string;
-    upload(cache, env, path);
+    await upload(cache, env, path, mnemonic);
   } else if (typeof command === "string" && command === "mint") {
-    // Mint NFT
+    await mint(env, mnemonic, cache);
   }
+  process.exit(0);
 }
 
 main();
