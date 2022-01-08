@@ -8,16 +8,40 @@ yarn
 ```
 3. Compile TypeScript to JavaScript
 ```
-npx tsc
+yarn build
 ```
-4. Upload contract
+4. Link bin to use 'bedrock'
 ```
-node ./build/cli.js upload ./assets -e localterra -m ./mnemonic.txt --cp config -c cache
+npm link
+```
+5. Upload contract
+```
+bedrock upload ./assets -e localterra -m ./mnemonic.txt -o config -a cache
+```
+6. Mint NFT
+```
+bedrock mint -e localterra -m ./mnemonic.txt -a cache
 ```
 
-e.g. metadata:
+## Formatting
+
+### Assets
+For uploading, assets should be structured using `<assetKey>` pairs. Each pair should have a media file and a metadata file.
+e.g.
 ```
-  {
+assets
+  0.jpg   <--- media
+  0.json  <--- metadata
+  1.jpg
+  1.json
+  2.jpg
+  2.json
+  ...
+```
+Metadata must follow [OpenSea Metadata Standards](https://docs.opensea.io/docs/metadata-standards) in order to be properly indexed.
+e.g.
+```
+{
   "manifest": {
     "token_id": "to0HpOKp8F",
     "name": "loonies1"
@@ -38,8 +62,4 @@ e.g. metadata:
     ]
   }
 }
-```
-5. Mint NFT
-```
-node ./build/cli.js mint -e localterra -m ./mnemonic.txt -c cache
 ```
