@@ -26,9 +26,7 @@ export const getClient = async (env: string): Promise<LCDClient> => {
       chainId = VARS.LOCALTERRA_CHAIN_ID;
       break;
   }
-  console.log("Creating client");
-  console.log("url", url)
-  console.log("chainId", chainId)
+  
   client = new LCDClient({
     URL: url,
     chainID: chainId

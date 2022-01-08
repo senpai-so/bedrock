@@ -62,9 +62,6 @@ export const upload = async (
     const terra = await getClient(env);
     const mPhrase = fs.readFileSync(mnemonicPath).toString();
 
-    console.log("terra url", terra.config.URL);
-    console.log("terra chain", terra.config.chainID);
-
     const key = new MnemonicKey({mnemonic: mPhrase});
     const wallet = terra.wallet(key);
 
@@ -80,6 +77,8 @@ export const upload = async (
 
 
 const ipfsUpload = async (node: IPFS, dirPath: string) => {
+
+  console.log() // Break line before upload logs
 
   const uploadToIpfs = async (source: any) => {
     const { cid } = await node.add(source).catch();
@@ -100,22 +99,19 @@ const ipfsUpload = async (node: IPFS, dirPath: string) => {
     const media = fs.readFileSync(path.join(dirPath, fName + IMG_TYPE)).toString()
     const mediaHash = await uploadToIpfs(media);
     const mediaUrl = `https://ipfs.io/ipfs/${mediaHash}`;
-    console.log('mediaUrl:', mediaUrl);
 
     // Read metadata & manifest from the input
     const input: Input = JSON.parse(fs.readFileSync(path.join(dirPath, fName + '.json')).toString());
-    console.log("Input:", input)
     const metadata: Metadata = input.metadata;
-    console.log("Metadata:", metadata);
     metadata.image = mediaUrl;
 
     // Upload metadata to IPFS
     const metadataHash = await uploadToIpfs(Buffer.from(JSON.stringify(metadata)));
     const metadataUrl = `https://ipfs.io/ipfs/${metadataHash}`;
-    console.log("metadataUrl:", metadataUrl);
 
     // Store token details
     assets.push(input.manifest);
+    console.log("Uploaded", metadata.name);
   };
 
   return assets
@@ -127,6 +123,8 @@ const createContract = async (
   tokenSupply: number
   ): Promise<string> => {
 
+  console.log() // Break line before contract logs
+
   // Upload code for contract
   const storeCode = new MsgStoreCode(
     wallet.key.accAddress,
@@ -134,7 +132,7 @@ const createContract = async (
   );
   const storeCodeTx = await wallet.createAndSignTx({ msgs: [storeCode] });
   const storeCodeTxResult = await terra.tx.broadcast(storeCodeTx);
-  console.log("storeCodeTxResult:", storeCodeTxResult);
+
   if (isTxError(storeCodeTxResult)) {
     throw new Error(
       `store code failed. code: ${storeCodeTxResult.code}, codespace: ${storeCodeTxResult.codespace}, raw_log: ${storeCodeTxResult.raw_log}`
@@ -146,8 +144,6 @@ const createContract = async (
   const collectionName = "Loonies";
   const collectionSymbol = "LANA";
 
-  console.log("tokenSupply", tokenSupply);
-
   // Use uploaded code to create a new contract
   const instantiate = new MsgInstantiateContract(
     wallet.key.accAddress,
@@ -157,14 +153,14 @@ const createContract = async (
   )
   const instantiateTx = await wallet.createAndSignTx({ msgs: [instantiate] });
   const instantiateTxResult = await terra.tx.broadcast(instantiateTx);
-  console.log("instantiateTxResult:", instantiateTxResult);
+
   if (isTxError(instantiateTxResult)) {
     throw new Error(
       `instantiate failed. code: ${instantiateTxResult.code}, codespace: ${instantiateTxResult.codespace}, raw_log: ${instantiateTxResult.raw_log}`
     );
   }
   const { instantiate_contract: { contract_address } } = instantiateTxResult.logs[0].eventsByType;
-  console.log("Contract instantiated.")
+  console.log("Contract instantiated")
   console.log("Contract address:", contract_address);
 
   return contract_address[0];

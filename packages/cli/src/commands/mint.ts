@@ -65,6 +65,5 @@ export const mint = async (
   saveCache(cacheName, env, cacheContent);
   console.log("Successfully minted new NFT!")
 
-  const { wasm: { token_id } } = executeTxResult.logs[0].eventsByType;
-  console.log("token_id:", token_id);
+  const { executeContract, from_contract, message, wasm: { token_id } } = executeTxResult.logs[0].eventsByType;
 }
