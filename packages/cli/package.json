@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/crypto-js": "^4.1.0",
     "@types/node": "^17.0.6",
     "@types/yargs": "^17.0.8",
     "pkg": "^5.5.1",

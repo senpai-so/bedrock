@@ -1,0 +1,21 @@
+{
+  "manifest": {
+    "token_id": "PbiHuvq69L",
+    "name": "loonie8"
+  },
+  "metadata": {
+    "description": "OG loonie",
+    "name": "loonie8",
+    "image": "",
+    "attributes": [
+      { "trait_type": "Type", "value": "pedestrian" },
+      { "trait_type": "Background", "value": "deep space" },
+      { "trait_type": "Body", "value": "yellow" },
+      { "trait_type": "Eyes", "value": "reading" },
+      { "trait_type": "Mouth", "value": "loonie smile" },
+      { "trait_type": "Headwear", "value": "construction helmet,earring" },
+      { "trait_type": "Outfit", "value": "green turtleneck sweater" },
+      { "trait_type": "Items", "value": "map" }
+    ]
+  }
+}

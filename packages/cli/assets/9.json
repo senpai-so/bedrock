@@ -1,0 +1,21 @@
+{
+  "manifest": {
+    "token_id": "u1igrDjZw5",
+    "name": "loonie9"
+  },
+  "metadata": {
+    "description": "OG loonie",
+    "name": "loonie9",
+    "image": "",
+    "attributes": [
+      { "trait_type": "Type", "value": "pedestrian" },
+      { "trait_type": "Background", "value": "bubbles,blue cosmos" },
+      { "trait_type": "Body", "value": "green" },
+      { "trait_type": "Eyes", "value": "wide eyed,glasses" },
+      { "trait_type": "Mouth", "value": "blowing bubble" },
+      { "trait_type": "Headwear", "value": "lamp,glasses" },
+      { "trait_type": "Outfit", "value": "yellow raincoat" },
+      { "trait_type": "Items", "value": "" }
+    ]
+  }
+}

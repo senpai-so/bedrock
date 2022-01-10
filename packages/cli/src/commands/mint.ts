@@ -1,15 +1,20 @@
-import { isTxError, LCDClient, MnemonicKey, MsgExecuteContract } from "@terra-money/terra.js"
-import { INSPECT_MAX_BYTES } from "buffer";
+import { isTxError, LCDClient, MnemonicKey, MsgExecuteContract, RawKey } from "@terra-money/terra.js"
+import { create } from 'ipfs-core';
+import axios from 'axios';
+// const terminalImage = require('terminal-image');
+
 import fs from 'fs';
 
 import { getClient } from '../lib/getClient';
 import { CacheContent, loadCache, saveCache } from "../utils/cache";
-import { Manifest } from "./upload";
+import { Manifest, Metadata } from "./upload";
+import { encryptedToRawKey } from "../utils/keys";
 
 
 export const mint = async (
   env: string,
-  mnemonic: string,
+  pk: string,
+  pass: string,
   cacheName: string,
 ) => {
   // Choose next asset
@@ -36,8 +41,7 @@ export const mint = async (
 
   // Load wallet & LCD client 
   const terra = await getClient(env);
-  const mPhrase = fs.readFileSync(mnemonic).toString();
-  const key = new MnemonicKey({mnemonic: mPhrase});
+  const key = encryptedToRawKey(pk, pass);
   const wallet = terra.wallet(key);
   mintMsg.owner = wallet.key.accAddress;
 
@@ -65,5 +69,8 @@ export const mint = async (
   saveCache(cacheName, env, cacheContent);
   console.log("Successfully minted new NFT!")
 
-  const { executeContract, from_contract, message, wasm: { token_id } } = executeTxResult.logs[0].eventsByType;
+  const { wasm: { token_id } } = executeTxResult.logs[0].eventsByType;
+
+  console.log("token_id:", token_id[0]);
+  console.log("txhash:", executeTxResult.txhash);
 }
