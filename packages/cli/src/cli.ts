@@ -21,11 +21,17 @@ const argv = yargs(hideBin(process.argv))
         description: "Chain environment",
         choices: ["local", "testnet", "mainnet"],
       },
-      cred: {
+      key: {
         type: "string",
-        alias: "m",
+        alias: "k",
         demandOption: true,
-        description: "Path to mnemonic file"
+        description: "Private key from Terra Station"
+      },
+      pass: {
+        type: "string",
+        alias: "p",
+        demandOption: true,
+        description: "Password for Terra Station"
       },
       config: {
         type: "string",
@@ -33,12 +39,6 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Path to config file"
       },
-      // cache: {
-      //   type: "string",
-      //   alias: "a",
-      //   demandOption: true,
-      //   description: "Cache name"
-      // }
     })
     // .example("$0 upload ./assets -e local -m ./mnemonic -cp ./config.json -c cache", "Upload assets and mint contract")
   })
@@ -51,18 +51,18 @@ const argv = yargs(hideBin(process.argv))
         description: "Chain environment",
         choices: ["local", "testnet", "mainnet"],
       },
-      cred: {
+      key: {
         type: "string",
-        alias: "m",
+        alias: "k",
         demandOption: true,
-        description: "Path to mnemonic"
+        description: "Private key from Terra Station"
       },
-      // cache: {
-      //   type: "string",
-      //   alias: "a",
-      //   demandOption: true,
-      //   description: "Cache name"
-      // }
+      pass: {
+        type: "string",
+        alias: "p",
+        demandOption: true,
+        description: "Password for Terra Station"
+      },
     })
   })
   .command("mint", "mints a single NFT", yargs => {
@@ -74,18 +74,18 @@ const argv = yargs(hideBin(process.argv))
         description: "Chain environment",
         choices: ["local", "testnet", "mainnet"],
       },
-      cred: {
+      key: {
         type: "string",
-        alias: "m",
+        alias: "k",
         demandOption: true,
-        description: "Path to mnemonic"
+        description: "Private key from Terra Station"
       },
-      // cache: {
-      //   type: "string",
-      //   alias: "a",
-      //   demandOption: true,
-      //   description: "Cache name"
-      // }
+      pass: {
+        type: "string",
+        alias: "p",
+        demandOption: true,
+        description: "Password for Terra Station"
+      },
     })
   })
   .command("mint-multiple", "mints multiple NFTs", yargs => {
@@ -102,18 +102,18 @@ const argv = yargs(hideBin(process.argv))
         description: "Chain environment",
         choices: ["local", "testnet", "mainnet"],
       },
-      cred: {
+      key: {
         type: "string",
-        alias: "m",
+        alias: "k",
         demandOption: true,
-        description: "Path to mnemonic"
+        description: "Private key from Terra Station"
       },
-      // cache: {
-      //   type: "string",
-      //   alias: "a",
-      //   demandOption: true,
-      //   description: "Cache name"
-      // }
+      pass: {
+        type: "string",
+        alias: "p",
+        demandOption: true,
+        description: "Password for Terra Station"
+      },
     })
   })
   .command("update", "updates owner address or config", yargs => {
@@ -130,11 +130,17 @@ const argv = yargs(hideBin(process.argv))
         description: "Chain environment",
         choices: ["local", "testnet", "mainnet"],
       },
-      cred: {
+      key: {
         type: "string",
-        alias: "m",
+        alias: "k",
         demandOption: true,
-        description: "Path to mnemonic"
+        description: "Private key from Terra Station"
+      },
+      pass: {
+        type: "string",
+        alias: "p",
+        demandOption: true,
+        description: "Password for Terra Station"
       },
       config: {
         type: "string",
@@ -142,12 +148,6 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Config file path"
       },
-      // cache: {
-      //   type: "string",
-      //   alias: "a",
-      //   demandOption: true,
-      //   description: "Cache name"
-      // }
     })
   })
   .help()
@@ -158,15 +158,18 @@ const main = async () => {
 
   const command = args._[0];
   const env = args.e as string;
-  const mnemonic = args.m as string;
+  const pk = args.k as string;
+  const pass = args.p as string;
   const config = args.o as string;
   const cache = "cache"; //args.a as string;
 
   if (typeof command === "string" && command === "upload") {
     const path = args._[1] as string;
-    await upload(cache, env, path, mnemonic);
+    await upload(cache, env, path, pk, pass);
   } else if (typeof command === "string" && command === "mint") {
-    await mint(env, mnemonic, cache);
+    await mint(env, pk, pass, cache);
+  } else {
+    console.error("Invalid command");
   }
   process.exit(0); // ensure smooth exit
 }

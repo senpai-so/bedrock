@@ -1,11 +1,12 @@
 import { IPFS, create } from 'ipfs-core';
-import { isTxError, LCDClient, MnemonicKey, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
+import { isTxError, LCDClient, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
 
 import fs from 'fs';
 import path from 'path';
 
 import { CacheContent, saveCache } from '../utils/cache';
 import { getClient } from '../lib/getClient';
+import { encryptedToRawKey } from '../utils/keys';
 
 // Types
 
@@ -48,7 +49,8 @@ export const upload = async (
   cacheName: string,
   env: string,
   path: string, 
-  mnemonicPath: string,
+  pk: string,
+  pass: string,
   ) => {
     const node = await create();
     const cacheContent: CacheContent = { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
@@ -60,9 +62,8 @@ export const upload = async (
 
     // Load user creds
     const terra = await getClient(env);
-    const mPhrase = fs.readFileSync(mnemonicPath).toString();
 
-    const key = new MnemonicKey({mnemonic: mPhrase});
+    const key = encryptedToRawKey(pk, pass);
     const wallet = terra.wallet(key);
 
     // Create contract
@@ -74,7 +75,6 @@ export const upload = async (
     cacheContent.program = {...cacheContent.program, contract_address: contract_address }
     saveCache(cacheName, env, cacheContent);
 }
-
 
 const ipfsUpload = async (node: IPFS, dirPath: string) => {
 
@@ -111,7 +111,6 @@ const ipfsUpload = async (node: IPFS, dirPath: string) => {
 
     // Store token details
     assets.push(input.manifest);
-    console.log("Uploaded", metadata.name);
   };
 
   return assets
@@ -165,3 +164,4 @@ const createContract = async (
 
   return contract_address[0];
 }
+
