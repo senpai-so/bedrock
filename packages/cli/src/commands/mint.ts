@@ -1,14 +1,13 @@
 import { isTxError, LCDClient, MnemonicKey, MsgExecuteContract, RawKey } from "@terra-money/terra.js"
 import { create } from 'ipfs-core';
 import axios from 'axios';
-// const terminalImage = require('terminal-image');
 
 import fs from 'fs';
 
 import { getClient } from '../lib/getClient';
 import { CacheContent, loadCache, saveCache } from "../utils/cache";
-import { Manifest, Metadata } from "./upload";
 import { encryptedToRawKey } from "../utils/keys";
+import { MintMsg } from "../lib/types";
 
 
 export const mint = async (
@@ -27,8 +26,7 @@ export const mint = async (
   }
 
   // Select our NFT to mint
-  // need to randomly select the NFTs
-  let mintMsg: Manifest = { token_id: "", name: "", token_uri: undefined, owner: undefined };
+  let mintMsg: MintMsg = { token_id: "", name: "", token_uri: undefined, owner: undefined };
   const newAssets = cacheContent.items.filter(x => !cacheContent.program.tokens_minted.includes(x.token_id));
 
   if (newAssets.length === 0) {
