@@ -7,38 +7,8 @@ import path from 'path';
 import { CacheContent, saveCache } from '../utils/cache';
 import { getClient } from '../lib/getClient';
 import { encryptedToRawKey } from '../utils/keys';
+import { Input, MintMsg, Metadata } from '../lib/types';
 
-// Types
-
-export type Trait = {
-  trait_type: string;
-  value: string;
-  display_type: string | undefined;
-}
-
-export type Metadata = {
-  animation_url: string | undefined;
-  attributes: Trait[] | undefined;
-  background_color: string | undefined;
-  description: string | undefined;
-  external_url: string | undefined;
-  image: string | undefined;
-  image_data: string | undefined;
-  name: string | undefined;
-  youtube_url: string | undefined;
-}
-
-export type Manifest = {
-  token_id: string;
-  name: string;
-  owner: string | undefined;
-  token_uri: string | undefined;
-}
-
-type Input = {
-  manifest: Manifest;
-  metadata: Metadata;
-};
 
 const IMG_TYPE = ".jpg";
 const WASM_PATH = "../../contracts/rest-nft/contracts/rest-nft-base/rest_nft_base.wasm";
@@ -91,7 +61,7 @@ const ipfsUpload = async (node: IPFS, dirPath: string) => {
     .map( fName => fName.split('.')[0])
   );
   
-  const assets: Manifest[] = [];
+  const assets: MintMsg[] = [];
 
   for (const fName of Array.from(names)) {
 
