@@ -19,9 +19,7 @@ export type Metadata = {
 export type MintMsg = {
   token_id: string;
   owner: string | undefined;
-  name: string;
-  description: string | undefined;
-  image: string | undefined;
+  token_uri: string | undefined;
   extension: Metadata | undefined;
 }
 
@@ -30,14 +28,20 @@ export type Input = {
   metadata: Metadata;
 };
 
+
+type Coin = {
+  amount: string; // Uint128
+  denom: string;
+}
+
 export type InitMsg = {
   name: string;
   symbol: string;
-  price: number; // amount (Uint128)
-  coin: string; // denom (String)
-  max_token_supply: number; // int
+  price: Coin;
   treasury_account: string; 
-  start_date: Date;
-  end_date: Date;
-  minter: string;
+  start_time: number;
+  end_time: number;
+  max_token_count: number;
+  is_mint_public: boolean;
+  // minter: string;
 }

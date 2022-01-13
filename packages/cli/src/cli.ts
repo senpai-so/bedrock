@@ -165,7 +165,7 @@ const main = async () => {
 
   if (typeof command === "string" && command === "upload") {
     const path = args._[1] as string;
-    await upload(cache, env, path, pk, pass);
+    await upload(cache, env, path, pk, pass, config);
   } else if (typeof command === "string" && command === "mint") {
     await mint(env, pk, pass, cache);
   } else {
