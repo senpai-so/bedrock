@@ -28,7 +28,7 @@ library = []
 cw0 = {  version = "0.9.1" }
 cw2 = {  version = "0.9.1" }
 cw721 = {  version = "0.9.2" }
-cw721-base = { path="../../../cw721-base/", version = "0.9.1", features = ["library"] }
+cw721-base = { version = "0.9.1", features = ["library"] }
 cw-storage-plus = "0.8.1"
 terra-cosmwasm = "2.2.0"
 cosmwasm-std = "0.16.0"

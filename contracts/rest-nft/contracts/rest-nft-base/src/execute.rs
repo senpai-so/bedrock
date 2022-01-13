@@ -1,11 +1,11 @@
-use cosmwasm_std::{Deps, DepsMut, Env, MessageInfo, Response};
+use cosmwasm_std::{Deps, DepsMut, Env, MessageInfo, Response, Coin, StdError, BankMsg, Empty};
 
-use cw721_base::state::TokenInfo;
-use cw721_base::MintMsg;
-use rest_nft::state::{Extension, RestNFTContract};
+use cw721_base::state::{TokenInfo, Cw721Contract};
+use rest_nft::msg::MintMsg;
+use rest_nft::state::{/*RestNFTContract,*/ Extension};
 
 use crate::error::ContractError;
-use crate::state::{Config, CONFIG};
+use crate::state::{Config, CONFIG, OWNER};
 
 pub fn execute_burn(
   deps: DepsMut,
@@ -13,7 +13,7 @@ pub fn execute_burn(
   info: MessageInfo,
   token_id: String,
 ) -> Result<Response, ContractError> {
-  let cw721_contract = RestNFTContract::default();
+  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
 
   let token = cw721_contract.tokens.load(deps.storage, &token_id)?;
   // validate send permissions
@@ -34,12 +34,12 @@ pub fn execute_burn(
 }
 
 // Copied private cw721 check here
-fn _check_can_send<T>(
-  cw721_contract: &RestNFTContract,
+fn _check_can_send(
+  cw721_contract: &Cw721Contract<Extension, Empty>,
   deps: Deps,
   env: &Env,
   info: &MessageInfo,
-  token: &TokenInfo<T>,
+  token: &TokenInfo<Extension>,
 ) -> Result<(), ContractError> {
   // owner can send
   if token.owner == info.sender {
@@ -76,10 +76,10 @@ pub fn execute_update(
   _env: Env,
   info: MessageInfo,
   token_id: String,
-  image: Option<String>,
+  token_uri: Option<String>,
   extension: Extension,
 ) -> Result<Response, ContractError> {
-  let cw721_contract = RestNFTContract::default();
+  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
   let minter = cw721_contract.minter.load(deps.storage)?;
   if info.sender != minter {
     return Err(ContractError::Unauthorized {});
@@ -95,7 +95,7 @@ pub fn execute_update(
     .tokens
     .update(deps.storage, &token_id, |token| match token {
       Some(mut token_info) => {
-        token_info.image = image;
+        token_info.token_uri = token_uri;
         token_info.extension = extension;
         Ok(token_info)
       }
@@ -114,7 +114,7 @@ pub fn execute_freeze(
   _env: Env,
   info: MessageInfo,
 ) -> Result<Response, ContractError> {
-  let cw721_contract = RestNFTContract::default();
+  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
   let minter = cw721_contract.minter.load(deps.storage)?;
   if info.sender != minter {
     return Err(ContractError::Unauthorized {});
@@ -135,28 +135,72 @@ pub fn execute_mint(
   deps: DepsMut,
   env: Env,
   info: MessageInfo,
-  mint_msg: MintMsg<Extension>,
+  msg: MintMsg,
 ) -> Result<Response, ContractError> {
-  let cw721_contract = RestNFTContract::default();
+  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
 
+  let owner = OWNER.load(deps.storage)?;
   let config = CONFIG.load(deps.storage)?;
   let current_count = cw721_contract.token_count(deps.storage)?;
 
-  if config.token_supply.is_some() && current_count >= config.token_supply.unwrap() {
+  if current_count >= config.token_supply {
     return Err(ContractError::MaxTokenSupply {});
   }
 
-  let response = cw721_contract.mint(deps, env, info, mint_msg)?;
-  Ok(response)
+  // Check if sender can mint
+    // if not, throw an error
+  if info.sender != owner {
+    if !config.is_mint_public {
+      return Err(ContractError::Unauthorized {});
+    }
+    // If price is set, make sure sender payed enough
+    if config.price.is_some() {
+      check_sufficient_funds(info.funds, config.price.unwrap())?;
+    }
+
+    // Block minting if before start time
+    if config.start_time.is_some() && env.block.time.seconds() < config.start_time.unwrap() {
+      return Err(ContractError::Unauthorized {});
+    }
+
+    // Block minting if after end time
+    if config.end_time.is_some() && env.block.time.seconds() > config.end_time.unwrap() {
+      return Err(ContractError::Unauthorized {});
+    }
+  }
+
+  // Create the NFT
+  let token = TokenInfo::<Extension> {
+    owner: deps.api.addr_validate(&msg.owner)?,
+    approvals: vec![],
+    token_uri: msg.token_uri,
+    extension: msg.extension,
+  };
+  
+  // Update CW721 contract to reflect the new mint
+  cw721_contract
+    .tokens
+    // Ensure token has not been minted
+    .update(deps.storage, &msg.token_id, |old| match old {
+      Some(_) => Err(ContractError::Claimed {}),
+      None => Ok(token),
+    })?;
+  cw721_contract.increment_tokens(deps.storage)?;
+
+  Ok(Response::new()
+    .add_attribute("action", "mint")
+    .add_attribute("minter", info.sender)
+    .add_attribute("token_id", msg.token_id))
 }
 
+// Is minter even used anymore?
 pub fn execute_set_minter(
   deps: DepsMut,
   _env: Env,
   info: MessageInfo,
   new_minter: String,
 ) -> Result<Response, ContractError> {
-  let cw721_contract = RestNFTContract::default();
+  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
   let minter = cw721_contract.minter.load(deps.storage)?;
   if info.sender != minter {
     return Err(ContractError::Unauthorized {});
@@ -166,4 +210,40 @@ pub fn execute_set_minter(
   cw721_contract.minter.save(deps.storage, &new_minter)?;
 
   Ok(Response::new().add_attribute("action", "set_minter"))
+}
+
+// Source: https://github.com/collectxyz/collectxyz-nft-contract/blob/main/contracts/collectxyz-nft-contract/src/execute.rs#L253
+pub fn execute_withdraw(
+  deps: DepsMut,
+  _env: Env,
+  info: MessageInfo,
+  amount: Vec<Coin>
+) -> Result<Response, ContractError> {
+  let owner = OWNER.load(deps.storage)?;
+  
+  if info.sender != owner {
+    return Err(ContractError::Unauthorized {});
+  }
+
+  Ok(Response::new().add_message(BankMsg::Send {
+    amount, // Do we need to check that this is enough?
+    to_address: owner
+  }))
+}
+
+fn check_sufficient_funds(funds: Vec<Coin>, required: Coin) -> Result<(), ContractError> {
+  if required.amount.u128() == 0 {
+    return Ok(());
+  }
+  let sent_sufficient_funds = funds.iter().any(|coin| {
+    // check if denom and amount is right
+    coin.denom == required.denom && coin.amount.u128() == required.amount.u128()
+  });
+  if sent_sufficient_funds{
+    Ok(())
+  } else {
+    Err(ContractError::Std(StdError::generic_err(
+      "insufficient funds sent"
+    )))
+  }
 }

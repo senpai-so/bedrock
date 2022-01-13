@@ -1,11 +1,11 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use cosmwasm_std::Binary;
+use cosmwasm_std::{Binary, Coin};
 use cw721::Expiration;
 use cw721_base::{
   msg::{
-    ExecuteMsg as CW721ExecuteMsg, InstantiateMsg as CW721InstantiateMsg, QueryMsg as CW721QueryMsg,
+    ExecuteMsg as CW721ExecuteMsg, /*InstantiateMsg as CW721InstantiateMsg,*/ QueryMsg as CW721QueryMsg,
   },
   MintMsg as CW721MintMsg,
 };
@@ -18,28 +18,33 @@ pub struct InstantiateMsg {
   pub name: String,
   /// Symbol of the NFT contract
   pub symbol: String,
-
+  /// Cost of NFT with the coin denom
+  pub price: Option<Coin>,
+  /// Account receiving funds
+  pub treasury_account: String,
+  /// Time when minting becomes available
+  pub start_time: Option<u64>,
+  /// Time when minting becomes unavailable
+  pub end_time: Option<u64>,
+  /// Maximum token supply 
   pub max_token_count: u64,
+  /// Whether minting is public
+  pub is_mint_public: bool,
 
-  /// The minter is the only one who can create new NFTs.
-  /// This is designed for a base NFT that is controlled by an external program
-  /// or contract. You will likely replace this with custom logic in custom NFTs
-  pub minter: String,
-
-  // maximum token supply
-  pub token_supply: Option<u64>,
+  // /// The minter is the only one who can create new NFTs if minting is not public.
+  // pub minter: String,
 }
 
-impl From<InstantiateMsg> for CW721InstantiateMsg {
-  fn from(msg: InstantiateMsg) -> CW721InstantiateMsg {
-    CW721InstantiateMsg {
-      name: msg.name,
-      symbol: msg.symbol,
-      minter: msg.minter,
-      max_token_count: msg.max_token_count,
-    }
-  }
-}
+// impl From<InstantiateMsg> for CW721InstantiateMsg {
+//   fn from(msg: InstantiateMsg) -> CW721InstantiateMsg {
+//     CW721InstantiateMsg {
+//       name: msg.name,
+//       symbol: msg.symbol,
+//       // minter: msg.minter,
+//       // max_token_count: msg.max_token_count,
+//     }
+//   }
+// }
 
 pub type MintMsg = CW721MintMsg<Extension>;
 
@@ -69,6 +74,11 @@ pub enum ExecuteMsg {
 
   /// Mint a new NFT, can only be called by the contract minter
   Mint(MintMsg),
+
+  /// Withdraw funds to treasury wallet
+  Withdraw {
+    amount: Vec<Coin>,
+  },
 
   // Standard CW721 ExecuteMsg
   /// Transfer is a base message to move a token to another account without triggering actions

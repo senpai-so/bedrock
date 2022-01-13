@@ -1,33 +1,52 @@
 #[cfg(not(feature = "library"))]
-use cosmwasm_std::entry_point;
-use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, Empty, StdResult };
 
 use cw2::{get_contract_version, set_contract_version};
-pub use cw721_base::{MintMsg, MinterResponse};
+use cw721::ContractInfoResponse;
+pub use cw721_base::{MintMsg, MinterResponse, Cw721Contract};
 use rest_nft::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use rest_nft::state::RestNFTContract;
+use rest_nft::state::{/*RestNFTContract,*/ Extension};
 
-use crate::execute::{execute_freeze, execute_mint, execute_set_minter, execute_update};
+use crate::execute::{execute_freeze, execute_mint, execute_set_minter, execute_withdraw, execute_update};
 
 use crate::query::{query_config, query_frozen};
-use crate::state::{Config, CONFIG};
+use crate::state::{Config, CONFIG, OWNER};
+
 use crate::{error::ContractError, execute::execute_burn};
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
     deps: DepsMut,
-    env: Env,
+    _env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> StdResult<Response> {
+    let cw721_contract = Cw721Contract::<Extension, Empty>::default();
     let config = Config {
-        token_supply: msg.token_supply,
+        name: msg.name.clone(),
+        symbol: msg.symbol.clone(),
+        price: msg.price,
+        treasury_account: msg.treasury_account,
+        start_time: msg.start_time,
+        end_time: msg.end_time,
+        token_supply: msg.max_token_count,
         frozen: false,
+        is_mint_public: msg.is_mint_public,
     };
 
-    CONFIG.save(deps.storage, &config)?;
+    let contract_info = ContractInfoResponse {
+        name: msg.name.clone(),
+        symbol: msg.symbol.clone(),
+    };
 
-    RestNFTContract::default().instantiate(deps, env, info, msg.into())
+    cw721_contract
+        .contract_info
+        .save(deps.storage, &contract_info)?;
+
+    CONFIG.save(deps.storage, &config)?;
+    OWNER.save(deps.storage, &info.sender.to_string())?;
+
+    Ok(Response::default())
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -55,8 +74,10 @@ pub fn execute(
         // Set minter
         ExecuteMsg::SetMinter { minter } => execute_set_minter(deps, env, info, minter),
 
+        ExecuteMsg::Withdraw { amount } => execute_withdraw(deps, env, info, amount),
+
         // CW721 methods
-        _ => RestNFTContract::default()
+        _ => Cw721Contract::<Extension, Empty>::default()
             .execute(deps, env, info, msg.into())
             .map_err(|err| err.into()),
     }
@@ -68,7 +89,8 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::Config {} => to_binary(&query_config(deps)?),
         QueryMsg::Frozen {} => to_binary(&query_frozen(deps)?),
         // CW721 methods
-        _ => RestNFTContract::default().query(deps, env, msg.into()),
+        _ => Cw721Contract::<Extension, Empty>::default()
+            .query(deps, env, msg.into()),
     }
 }
 
