@@ -26,7 +26,7 @@ export const mint = async (
   }
 
   // Select our NFT to mint
-  let mintMsg: MintMsg = { token_id: "", name: "", token_uri: undefined, owner: undefined };
+  let mintMsg: MintMsg = { token_id: "", owner: undefined, token_uri: undefined, extension: undefined };
   const newAssets = cacheContent.items.filter(x => !cacheContent.program.tokens_minted.includes(x.token_id));
 
   if (newAssets.length === 0) {
@@ -45,6 +45,9 @@ export const mint = async (
 
   const { contract_address } = cacheContent.program;
   const execMsg = { mint: mintMsg };
+
+  console.log("ExecMsg:", execMsg);
+
   if (typeof contract_address === 'undefined') return;
 
   const execute = new MsgExecuteContract(

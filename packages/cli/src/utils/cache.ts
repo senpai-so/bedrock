@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Manifest } from '../commands/upload';
+import { MintMsg } from '../lib/types';
 // import { CACHE_PATH } from './constants';
 
 const CACHE_PATH = "./"; // CHANGE
@@ -12,7 +12,7 @@ type Program = {
 
 export type CacheContent = { 
   program: Program;
-  items: Manifest[] | undefined;
+  items: MintMsg[] | undefined;
   env: string | undefined;
   cacheName: string | undefined;
 }
