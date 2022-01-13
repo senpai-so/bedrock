@@ -1,0 +1,13 @@
+{
+  "name": "example",
+  "symbol": "EXPL",
+  "price": {
+    "amount": "1000000",
+    "denom": "uluna"
+  },
+  "treasury_account": "terra1azfgrmvhvzc38fe4ce097fr4ujac8dfydjjvkg",
+  "start_date": 1642054986,
+  "end_date":   1642162986,
+  "max_token_count": 10,
+  "is_mint_public": true
+}
