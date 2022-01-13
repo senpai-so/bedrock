@@ -14,13 +14,22 @@ yarn build
 ```
 npm link
 ```
-5. Upload contract
+5. Get encrypted private key from Terra Station
+  - 
+6. Upload contract
 ```
-bedrock upload ./assets -e localterra -m ./mnemonic.txt -o config -a cache
+bedrock upload <asset_path> \
+	-e <network> \
+	-k <encrypted_private_key> \
+	-p <password_for_wallet> \
+	-o <config_path>
 ```
-6. Mint NFT
+7. Mint NFT
 ```
-bedrock mint -e localterra -m ./mnemonic.txt -a cache
+bedrock mint \
+	-e <network> \
+	-k <encrypted_private_key> \
+	-p <password_for_wallet>
 ```
 
 ## Formatting
