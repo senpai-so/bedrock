@@ -3,12 +3,13 @@ mod tests {
     use crate::contract::{execute, instantiate, query};
     use crate::error::ContractError;
 
-    use cosmwasm_std::from_binary;
+    use cosmwasm_std::{from_binary,Empty};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
     use cw721::{Cw721Query, NftInfoResponse};
     use cw721_base::MintMsg;
+    use cw721_base::state::Cw721Contract;
     use rest_nft::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-    use rest_nft::state::{Extension, Metadata, RestNFTContract};
+    use rest_nft::state::{Extension, Metadata};
 
     const CREATOR: &str = "creator";
     const PUBLIC: &str = "public";
@@ -22,22 +23,22 @@ mod tests {
         let init_msg = InstantiateMsg {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
-            minter: CREATOR.to_string(),
             max_token_count: 1, 
-            token_supply: None,
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
         };
 
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
 
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
-            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: "john".to_string(),
+            token_uri: None, 
             extension: None,
-            image: Some("".to_string()),
-            description: Some("".to_string()),
-
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
         execute(deps.as_mut(), mock_env(), info, exec_msg).unwrap();
@@ -54,27 +55,28 @@ mod tests {
     #[test]
     fn mint_limit() {
         let mut deps = mock_dependencies(&[]);
-        let contract = RestNFTContract::default();
+        let contract = Cw721Contract::<Extension, Empty>::default();
 
         let info = mock_info(CREATOR, &[]);
         let init_msg = InstantiateMsg {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
-            minter: CREATOR.to_string(),
-            max_token_count: 1,
-            token_supply: Some(1),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
         };
 
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
 
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
-            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: "john".to_string(),
+            token_uri: None, 
             extension: None,
-            image: Some("".to_string()),
-            description: Some("".to_string()),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
@@ -92,27 +94,28 @@ mod tests {
     #[test]
     fn burn() {
         let mut deps = mock_dependencies(&[]);
-        let contract = RestNFTContract::default();
+        let contract = Cw721Contract::<Extension, Empty>::default();
 
         let info = mock_info(CREATOR, &[]);
         let init_msg = InstantiateMsg {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
-            minter: CREATOR.to_string(),
-            max_token_count: 1,
-            token_supply: Some(1),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
         };
-
+       
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
         // Mint an NFT
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
-            name: token_id.to_string(),
             token_id: token_id.to_string(),
-            owner: OWNER.to_string(),
+            owner: "john".to_string(),
+            token_uri: None, 
             extension: None,
-            image: Some("".to_string()),
-            description: Some("".to_string()),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
@@ -131,7 +134,7 @@ mod tests {
         let token_count = contract.token_count(&deps.storage).unwrap();
         // Token count decrements
         assert_eq!(token_count, 0);
-        let res = RestNFTContract::default().nft_info(deps.as_ref(), token_id.into());
+        let res = Cw721Contract::<Extension, Empty>::default().nft_info(deps.as_ref(), token_id.into());
         match res {
             Ok(_) => panic!("Should not return token info"),
             Err(_) => {}
@@ -146,9 +149,12 @@ mod tests {
         let init_msg = InstantiateMsg {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
-            minter: CREATOR.to_string(),
-            max_token_count: 1,
-            token_supply: Some(1),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
         };
 
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
@@ -156,18 +162,16 @@ mod tests {
         // Mint an NFT
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
-            name: token_id.to_string(),
             token_id: token_id.to_string(),
             owner: "john".to_string(),
+            token_uri: None, 
             extension: None,
-            image: Some("".to_string()),
-            description: Some("".to_string()),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
         execute(deps.as_mut(), mock_env(), info.clone(), exec_msg).unwrap();
 
-        let res = RestNFTContract::default()
+        let res = Cw721Contract::<Extension, Empty>::default()
             .nft_info(deps.as_ref(), token_id.into())
             .unwrap();
         assert_eq!(Some("".to_string()), res.image);
@@ -191,7 +195,7 @@ mod tests {
 
         execute(deps.as_mut(), mock_env(), info.clone(), exec_msg).unwrap();
 
-        let res = RestNFTContract::default()
+        let res = Cw721Contract::<Extension, Empty>::default()
             .nft_info(deps.as_ref(), token_id.into())
             .unwrap();
         assert_eq!(Some("https://moon.com".to_string()), res.image);
@@ -229,21 +233,22 @@ mod tests {
         let init_msg = InstantiateMsg {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
-            minter: CREATOR.to_string(),
-            max_token_count: 1,
-            token_supply: Some(1),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
         };
 
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
 
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
-            name: token_id.to_string(),
             token_id: token_id.to_string(),
-            owner: CREATOR.to_string(),
+            owner: "john".to_string(),
+            token_uri: None, 
             extension: None,
-            image: Some("".to_string()),
-            description: Some("".to_string()),
         };
 
 
@@ -298,9 +303,12 @@ mod tests {
         let init_msg = InstantiateMsg {
             name: "SpaceShips".to_string(),
             symbol: "SPACE".to_string(),
-            minter: CREATOR.to_string(),
-            max_token_count: 1,
-            token_supply: Some(1),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
         };
 
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
@@ -308,20 +316,16 @@ mod tests {
         // Mint an NFT
         let token_id = "Enterprise";
         let mint_msg = MintMsg {
-            name: token_id.to_string(),
             token_id: token_id.to_string(),
-            owner: CREATOR.to_string(),
+            owner: "john".to_string(),
+            token_uri: None, 
             extension: None,
-            image: Some("".to_string()),
-            description: Some("".to_string()),
-            
-            
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
         execute(deps.as_mut(), mock_env(), info.clone(), exec_msg).unwrap();
 
-        let res = RestNFTContract::default()
+        let res = Cw721Contract::<Extension, Empty>::default()
             .nft_info(deps.as_ref(), token_id.into())
             .unwrap();
         assert_eq!(Some("".to_string()), res.image);
