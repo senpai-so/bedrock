@@ -7,9 +7,9 @@ use cw721::{
     AllNftInfoResponse, ApprovedForAllResponse, ContractInfoResponse, NftInfoResponse,
     NumTokensResponse, OwnerOfResponse, TokensResponse,
 };
-use cw721_base::{InstantiateMsg, MinterResponse};
+use cw721_base::{MinterResponse};
 use rest_nft::{
-    msg::{ExecuteMsg, QueryMsg},
+    msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg},
     state::Extension,
 };
 
@@ -22,6 +22,7 @@ fn main() {
     export_schema(&schema_for!(InstantiateMsg), &out_dir);
     export_schema_with_title(&schema_for!(ExecuteMsg), &out_dir, "ExecuteMsg");
     export_schema(&schema_for!(QueryMsg), &out_dir);
+    // export_schema(&schema_for!(MigrateMsg), &out_dir);
     export_schema_with_title(
         &schema_for!(AllNftInfoResponse<Extension>),
         &out_dir,
