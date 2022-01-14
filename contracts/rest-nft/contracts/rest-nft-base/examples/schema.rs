@@ -9,7 +9,7 @@ use cw721::{
 };
 use cw721_base::{MinterResponse};
 use rest_nft::{
-    msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg},
+    msg::{ExecuteMsg, InstantiateMsg, QueryMsg},
     state::Extension,
 };
 

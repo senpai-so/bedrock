@@ -55,7 +55,7 @@ pub enum ExecuteMsg {
   // Update token metadata
   Update {
     token_id: String,
-    image: Option<String>,
+    token_uri: Option<String>,
     extension: Extension,
   },
 
