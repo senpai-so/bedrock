@@ -5,7 +5,7 @@ use rest_nft::msg::MintMsg;
 use rest_nft::state::{/*RestNFTContract,*/ Extension};
 
 use crate::error::ContractError;
-use crate::state::{Config, CONFIG, OWNER};
+use crate::state::{CONFIG, OWNER};
 
 pub fn execute_burn(
   deps: DepsMut,
@@ -220,6 +220,7 @@ pub fn execute_withdraw(
   amount: Vec<Coin>
 ) -> Result<Response, ContractError> {
   let owner = OWNER.load(deps.storage)?;
+  let config = CONFIG.load(deps.storage)?;
   
   if info.sender != owner {
     return Err(ContractError::Unauthorized {});
@@ -227,7 +228,7 @@ pub fn execute_withdraw(
 
   Ok(Response::new().add_message(BankMsg::Send {
     amount, // Do we need to check that this is enough?
-    to_address: owner
+    to_address: config.treasury_account
   }))
 }
 
@@ -236,7 +237,7 @@ fn check_sufficient_funds(funds: Vec<Coin>, required: Coin) -> Result<(), Contra
     return Ok(());
   }
   let sent_sufficient_funds = funds.iter().any(|coin| {
-    // check if denom and amount is right
+    // check if denom and amount are right
     coin.denom == required.denom && coin.amount.u128() == required.amount.u128()
   });
   if sent_sufficient_funds{

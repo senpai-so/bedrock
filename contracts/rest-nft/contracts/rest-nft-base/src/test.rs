@@ -3,7 +3,7 @@ mod tests {
     use crate::contract::{execute, instantiate, query};
     use crate::error::ContractError;
 
-    use cosmwasm_std::{from_binary,Empty};
+    use cosmwasm_std::{from_binary, coin, Empty, StdError};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
     use cw721::{Cw721Query, NftInfoResponse};
     use cw721_base::MintMsg;
@@ -14,6 +14,9 @@ mod tests {
     const CREATOR: &str = "creator";
     const PUBLIC: &str = "public";
     const OWNER: &str = "owner";
+
+
+    // Mint tests
 
     #[test]
     fn init_mint() {
@@ -34,14 +37,15 @@ mod tests {
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
 
         let token_id = "Enterprise";
+        let mint_info = mock_info(OWNER, &[]);
         let mint_msg = MintMsg {
             token_id: token_id.to_string(),
-            owner: "john".to_string(),
-            token_uri: None, 
+            owner: OWNER.to_string(),
+            token_uri: Some("uri".to_string()), 
             extension: None,
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
-        execute(deps.as_mut(), mock_env(), info, exec_msg).unwrap();
+        execute(deps.as_mut(), mock_env(), mint_info, exec_msg).unwrap();
 
         let query_msg: QueryMsg = QueryMsg::NftInfo {
             token_id: (&token_id).to_string(),
@@ -49,7 +53,7 @@ mod tests {
 
         let res: NftInfoResponse<Extension> =
             from_binary(&query(deps.as_ref(), mock_env(), query_msg).unwrap()).unwrap();
-        assert_eq!(res.extension, mint_msg.extension);
+        assert_eq!(res.token_uri, mint_msg.token_uri);
     }
 
     #[test]
@@ -90,6 +94,135 @@ mod tests {
         let res = execute(deps.as_mut(), mock_env(), info.clone(), exec_msg);
         assert_eq!(ContractError::MaxTokenSupply {}, res.unwrap_err());
     }
+
+    #[test]
+    fn mint_not_public() {
+        let mut deps = mock_dependencies(&[]);
+
+        let info = mock_info(CREATOR, &[]);
+        let init_msg = InstantiateMsg {
+            name: "SpaceShips".to_string(),
+            symbol: "SPACE".to_string(),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: false, 
+            start_time: None, 
+            end_time: None,
+            price: None,
+        };
+
+        instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
+
+        let token_id = "Enterprise";
+        let mint_info = mock_info(OWNER, &[]);
+        let mint_msg = MintMsg {
+            token_id: token_id.to_string(),
+            owner: OWNER.to_string(),
+            token_uri: None, 
+            extension: None,
+        };
+
+        let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
+        let res = execute(deps.as_mut(), mock_env(), mint_info.clone(), exec_msg);
+
+        assert_eq!(ContractError::Unauthorized {}, res.unwrap_err());
+    }
+
+    #[test]
+    fn mint_funds() {
+        let mut deps = mock_dependencies(&[]);
+
+        let info = mock_info(CREATOR, &[]);
+        let init_msg = InstantiateMsg {
+            name: "SpaceShips".to_string(),
+            symbol: "SPACE".to_string(),
+            max_token_count: 2, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: Some(coin(1_000_000, "uluna")),
+        };
+
+        instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
+
+        let token_ids = ["Enterprise", "Falcon"];
+        let coins = [coin(1_000_000, "uluna")];
+        let success_info = mock_info(OWNER, &coins);
+        let failure_info = mock_info(OWNER, &[]);
+
+        // sufficient coins
+        let mint_msg1 = MintMsg {
+            token_id: token_ids[0].to_string(),
+            owner: OWNER.to_string(),
+            token_uri: None, 
+            extension: None,
+        };
+        let exec_msg = ExecuteMsg::Mint(mint_msg1);
+        let res = execute(deps.as_mut(), mock_env(), success_info, exec_msg.clone());
+        assert!(res.is_ok());
+
+        // insufficient coins
+        let mint_msg2 = MintMsg {
+            token_id: token_ids[1].to_string(),
+            owner: OWNER.to_string(),
+            token_uri: None, 
+            extension: None,
+        };
+        let exec_msg = ExecuteMsg::Mint(mint_msg2);
+        let res = execute(deps.as_mut(), mock_env(), failure_info.clone(), exec_msg.clone());
+        let err = ContractError::Std(StdError::generic_err("insufficient funds sent"));
+        assert_eq!(err, res.unwrap_err());
+    }
+
+    
+    // Withdraw tests
+
+    #[test]
+    fn withdraw() {
+        let mut deps = mock_dependencies(&[]);
+
+        let creator_info = mock_info(CREATOR, &[]);
+        let init_msg = InstantiateMsg {
+            name: "SpaceShips".to_string(),
+            symbol: "SPACE".to_string(),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: Some(coin(1_000_000, "uluna")),
+        };
+
+        instantiate(deps.as_mut(), mock_env(), creator_info.clone(), init_msg).unwrap();
+
+        let token_id = "Enterprise";
+        let coins = [coin(1_000_000, "uluna")];
+        let success_info = mock_info(CREATOR, &coins);
+        let mint_msg = MintMsg {
+            token_id: token_id.to_string(),
+            owner: OWNER.to_string(),
+            token_uri: None, 
+            extension: None,
+        };
+
+        let exec_msg = ExecuteMsg::Mint(mint_msg);
+        execute(deps.as_mut(), mock_env(), success_info, exec_msg.clone()).unwrap();
+
+        let fail_info = mock_info(OWNER, &[]);
+        let exec_msg = ExecuteMsg::Withdraw { amount: coins.to_vec() };
+        
+        // Unauthorized withdraw
+        let res = execute(deps.as_mut(), mock_env(), fail_info, exec_msg.clone());
+        assert_eq!(ContractError::Unauthorized {}, res.unwrap_err());
+
+        // Owner withdraw
+        let res = execute(deps.as_mut(), mock_env(), creator_info, exec_msg);
+        assert!(res.is_ok());
+    }
+
+
+    // Burn tests
 
     #[test]
     fn burn() {
