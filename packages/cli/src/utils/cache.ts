@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { MintMsg } from '../lib/types';
-// import { CACHE_PATH } from './constants';
 
 const CACHE_PATH = "./"; // CHANGE
 

@@ -1,5 +1,5 @@
 import { IPFS, create } from 'ipfs-core';
-import { Coin, isTxError, LCDClient, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
+import { isTxError, LCDClient, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -7,9 +7,8 @@ import path from 'path';
 import { CacheContent, saveCache } from '../utils/cache';
 import { getClient } from '../lib/getClient';
 import { encryptedToRawKey } from '../utils/keys';
-import { Input, MintMsg, Metadata, InitMsg } from '../lib/types';
+import { Input, MintMsg, Metadata } from '../lib/types';
 import { loadConfig } from '../utils/config';
-import { config } from 'yargs';
 
 
 const IMG_TYPE = ".jpg";
