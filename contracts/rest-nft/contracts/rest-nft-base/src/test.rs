@@ -3,9 +3,9 @@ mod tests {
     use crate::contract::{execute, instantiate, query};
     use crate::error::ContractError;
 
-    use cosmwasm_std::{from_binary, coin, Empty, StdError};
+    use cosmwasm_std::{to_binary, from_binary, coin, CosmosMsg, Empty, Response, StdError, WasmMsg};
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
-    use cw721::{Cw721Query, NftInfoResponse};
+    use cw721::{Cw721Query, NftInfoResponse, Cw721ReceiveMsg};
     use cw721_base::MintMsg;
     use cw721_base::state::Cw721Contract;
     use rest_nft::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
@@ -14,7 +14,6 @@ mod tests {
     const CREATOR: &str = "creator";
     const PUBLIC: &str = "public";
     const OWNER: &str = "owner";
-
 
     // Mint tests
 
@@ -173,6 +172,79 @@ mod tests {
         let res = execute(deps.as_mut(), mock_env(), failure_info.clone(), exec_msg.clone());
         let err = ContractError::Std(StdError::generic_err("insufficient funds sent"));
         assert_eq!(err, res.unwrap_err());
+    }
+
+
+    // Send tests
+    #[test]
+    fn send_nft() {
+        let mut deps = mock_dependencies(&[]);
+
+        let info = mock_info(CREATOR, &[]);
+        let init_msg = InstantiateMsg {
+            name: "SpaceShips".to_string(),
+            symbol: "SPACE".to_string(),
+            max_token_count: 2, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
+        };
+
+        instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
+
+        let token_id = "Enterprise";
+        let mint_info = mock_info(OWNER, &[]);
+
+        let mint_msg = MintMsg {
+            token_id: token_id.to_string(),
+            owner: OWNER.to_string(),
+            token_uri: None, 
+            extension: None,
+        };
+        let exec_msg = ExecuteMsg::Mint(mint_msg);
+        execute(deps.as_mut(), mock_env(), mint_info, exec_msg.clone()).unwrap();
+
+        let msg = to_binary("Here is your NFT").unwrap();
+        let send_msg = ExecuteMsg::SendNft {
+            contract: PUBLIC.to_string(),
+            token_id: token_id.to_string(),
+            msg: msg.clone(),
+        };
+
+        // random sender can not send
+        let random_info = mock_info("random", &[]);
+        let err = execute(deps.as_mut(), mock_env(), random_info, send_msg.clone()).unwrap_err();
+        assert_eq!(err, ContractError::Unauthorized {});
+
+        // but owner can
+        let owner_info = mock_info(OWNER, &[]);
+        let res = execute(deps.as_mut(), mock_env(), owner_info, send_msg).unwrap();
+
+        let payload = Cw721ReceiveMsg {
+            sender: OWNER.to_string(),
+            token_id: token_id.to_string(),
+            msg: msg,
+        };
+        let expected = payload.into_cosmos_msg(PUBLIC).unwrap();
+        // ensure expected serializes as we think it should
+        match &expected {
+            CosmosMsg::Wasm(WasmMsg::Execute { contract_addr, .. }) => {
+                assert_eq!(contract_addr, PUBLIC)
+            }
+            m => panic!("Unexpected message type: {:?}", m),
+        }
+        // and make sure this is the request sent by the contract
+        assert_eq!(
+            res,
+            Response::new()
+                .add_message(expected)
+                .add_attribute("action", "send_nft")
+                .add_attribute("sender", OWNER)
+                .add_attribute("recipient", PUBLIC)
+                .add_attribute("token_id", token_id)
+        );
     }
 
     
