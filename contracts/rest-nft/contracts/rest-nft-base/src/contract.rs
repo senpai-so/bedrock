@@ -59,9 +59,9 @@ pub fn execute(
     match msg {
         ExecuteMsg::Update {
             token_id,
-            image,
+            token_uri,
             extension,
-        } => execute_update(deps, env, info, token_id, image, extension),
+        } => execute_update(deps, env, info, token_id, token_uri, extension),
         // Freeze token metadata
         ExecuteMsg::Freeze {} => execute_freeze(deps, env, info),
 

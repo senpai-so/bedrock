@@ -71,65 +71,65 @@ fn _check_can_send(
   }
 }
 
-pub fn execute_update(
-  deps: DepsMut,
-  _env: Env,
-  info: MessageInfo,
-  token_id: String,
-  token_uri: Option<String>,
-  extension: Extension,
-) -> Result<Response, ContractError> {
-  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
-  let minter = cw721_contract.minter.load(deps.storage)?;
-  if info.sender != minter {
-    return Err(ContractError::Unauthorized {});
-  }
+// pub fn execute_update(
+//   deps: DepsMut,
+//   _env: Env,
+//   info: MessageInfo,
+//   token_id: String,
+//   token_uri: Option<String>,
+//   extension: Extension,
+// ) -> Result<Response, ContractError> {
+//   let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
+//   let minter = cw721_contract.minter.load(deps.storage)?;
+//   if info.sender != minter {
+//     return Err(ContractError::Unauthorized {});
+//   }
 
-  let config = CONFIG.load(deps.storage)?;
+//   let config = CONFIG.load(deps.storage)?;
 
-  if config.frozen {
-    return Err(ContractError::ContractFrozen {});
-  }
+//   if config.frozen {
+//     return Err(ContractError::ContractFrozen {});
+//   }
 
-  cw721_contract
-    .tokens
-    .update(deps.storage, &token_id, |token| match token {
-      Some(mut token_info) => {
-        token_info.token_uri = token_uri;
-        token_info.extension = extension;
-        Ok(token_info)
-      }
-      None => return Err(ContractError::TokenNotFound {}),
-    })?;
+//   cw721_contract
+//     .tokens
+//     .update(deps.storage, &token_id, |token| match token {
+//       Some(mut token_info) => {
+//         token_info.token_uri = token_uri;
+//         token_info.extension = extension;
+//         Ok(token_info)
+//       }
+//       None => return Err(ContractError::TokenNotFound {}),
+//     })?;
 
-  Ok(
-    Response::new()
-      .add_attribute("action", "update")
-      .add_attribute("token_id", token_id),
-  )
-}
+//   Ok(
+//     Response::new()
+//       .add_attribute("action", "update")
+//       .add_attribute("token_id", token_id),
+//   )
+// }
 
-pub fn execute_freeze(
-  deps: DepsMut,
-  _env: Env,
-  info: MessageInfo,
-) -> Result<Response, ContractError> {
-  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
-  let minter = cw721_contract.minter.load(deps.storage)?;
-  if info.sender != minter {
-    return Err(ContractError::Unauthorized {});
-  }
+// pub fn execute_freeze(
+//   deps: DepsMut,
+//   _env: Env,
+//   info: MessageInfo,
+// ) -> Result<Response, ContractError> {
+//   let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
+//   let minter = cw721_contract.minter.load(deps.storage)?;
+//   if info.sender != minter {
+//     return Err(ContractError::Unauthorized {});
+//   }
 
-  CONFIG.update(
-    deps.storage,
-    |mut config| -> Result<Config, ContractError> {
-      config.frozen = true;
-      Ok(config)
-    },
-  )?;
+//   CONFIG.update(
+//     deps.storage,
+//     |mut config| -> Result<Config, ContractError> {
+//       config.frozen = true;
+//       Ok(config)
+//     },
+//   )?;
 
-  Ok(Response::new().add_attribute("action", "freeze"))
-}
+//   Ok(Response::new().add_attribute("action", "freeze"))
+// }
 
 pub fn execute_mint(
   deps: DepsMut,
@@ -194,23 +194,23 @@ pub fn execute_mint(
 }
 
 // Is minter even used anymore?
-pub fn execute_set_minter(
-  deps: DepsMut,
-  _env: Env,
-  info: MessageInfo,
-  new_minter: String,
-) -> Result<Response, ContractError> {
-  let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
-  let minter = cw721_contract.minter.load(deps.storage)?;
-  if info.sender != minter {
-    return Err(ContractError::Unauthorized {});
-  }
+// pub fn execute_set_minter(
+//   deps: DepsMut,
+//   _env: Env,
+//   info: MessageInfo,
+//   new_minter: String,
+// ) -> Result<Response, ContractError> {
+//   let cw721_contract = Cw721Contract::<Extension, Empty>::default(); //RestNFTContract::default();
+//   let minter = cw721_contract.minter.load(deps.storage)?;
+//   if info.sender != minter {
+//     return Err(ContractError::Unauthorized {});
+//   }
 
-  let new_minter = deps.api.addr_validate(&new_minter)?;
-  cw721_contract.minter.save(deps.storage, &new_minter)?;
+//   let new_minter = deps.api.addr_validate(&new_minter)?;
+//   cw721_contract.minter.save(deps.storage, &new_minter)?;
 
-  Ok(Response::new().add_attribute("action", "set_minter"))
-}
+//   Ok(Response::new().add_attribute("action", "set_minter"))
+// }
 
 // Source: https://github.com/collectxyz/collectxyz-nft-contract/blob/main/contracts/collectxyz-nft-contract/src/execute.rs#L253
 pub fn execute_withdraw(
