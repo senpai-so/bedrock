@@ -53,14 +53,14 @@ pub type MintMsg = CW721MintMsg<Extension>;
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
   // Update token metadata
-  Update {
-    token_id: String,
-    token_uri: Option<String>,
-    extension: Extension,
-  },
+  // Update {
+  //   token_id: String,
+  //   token_uri: Option<String>,
+  //   extension: Extension,
+  // },
 
-  // Freeze token metadata
-  Freeze {},
+  // // Freeze token metadata
+  // Freeze {},
 
   // Destroys the NFT permanently.
   Burn {
@@ -68,9 +68,9 @@ pub enum ExecuteMsg {
   },
 
   // Set minter
-  SetMinter {
-    minter: String,
-  },
+  // SetMinter {
+  //   minter: String,
+  // },
 
   /// Mint a new NFT, can only be called by the contract minter
   Mint(MintMsg),

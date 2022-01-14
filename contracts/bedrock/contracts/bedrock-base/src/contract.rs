@@ -4,8 +4,8 @@ use cosmwasm_std::{entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageIn
 use cw2::{get_contract_version, set_contract_version};
 use cw721::ContractInfoResponse;
 pub use cw721_base::{MintMsg, MinterResponse, Cw721Contract};
-use rest_nft::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use rest_nft::state::{Extension};
+use bedrock::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
+use bedrock::state::{Extension};
 
 use crate::execute::{execute_mint, execute_withdraw};
 

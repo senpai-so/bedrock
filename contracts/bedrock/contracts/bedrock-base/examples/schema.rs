@@ -8,7 +8,7 @@ use cw721::{
     NumTokensResponse, OwnerOfResponse, TokensResponse,
 };
 use cw721_base::{MinterResponse};
-use rest_nft::{
+use bedrock::{
     msg::{ExecuteMsg, InstantiateMsg, QueryMsg},
     state::Extension,
 };
