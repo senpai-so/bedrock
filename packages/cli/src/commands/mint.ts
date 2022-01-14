@@ -1,13 +1,8 @@
-import { isTxError, LCDClient, MnemonicKey, MsgExecuteContract, RawKey } from "@terra-money/terra.js"
-import { create } from 'ipfs-core';
-import axios from 'axios';
-
-import fs from 'fs';
-
 import { getClient } from '../lib/getClient';
 import { CacheContent, loadCache, saveCache } from "../utils/cache";
 import { encryptedToRawKey } from "../utils/keys";
 import { MintMsg } from "../lib/types";
+import { executeTransaction } from "../utils/contract";
 
 
 export const mint = async (
@@ -34,43 +29,28 @@ export const mint = async (
     return;
   }
 
-  const idx = Math.floor(Math.random() * newAssets.length) // random idx 
-  mintMsg = cacheContent.items[idx];
-
   // Load wallet & LCD client 
   const terra = await getClient(env);
   const key = encryptedToRawKey(pk, pass);
   const wallet = terra.wallet(key);
+
+  const idx = Math.floor(Math.random() * newAssets.length)
+  mintMsg = cacheContent.items[idx];
   mintMsg.owner = wallet.key.accAddress;
 
-  const { contract_address } = cacheContent.program;
   const execMsg = { mint: mintMsg };
-
   console.log("ExecMsg:", execMsg);
 
+  const { contract_address } = cacheContent.program;
   if (typeof contract_address === 'undefined') return;
-
-  const execute = new MsgExecuteContract(
-    wallet.key.accAddress, 
-    contract_address, 
-    execMsg
-  );
-  const executeTx = await wallet.createAndSignTx({ msgs: [execute] });
-  const executeTxResult = await terra.tx.broadcast(executeTx);
-  if (isTxError(executeTxResult)) {
-    console.log("Mint failed.")
-    throw new Error(
-      `mint failed. code: ${executeTxResult.code}, codespace: ${executeTxResult.codespace}, raw_log: ${executeTxResult.raw_log}`
-    );
-  }
-
-  // Success
-  cacheContent.program.tokens_minted.push(mintMsg.token_id);
+  
+  const result = await executeTransaction(terra, wallet, contract_address, execMsg);
+  
+  // If we reach here, mint succeeded
+  const { wasm: { token_id } } = result.logs[0].eventsByType;
+  cacheContent.program.tokens_minted.push(token_id[0]);
   saveCache(cacheName, env, cacheContent);
   console.log("Successfully minted new NFT!")
-
-  const { wasm: { token_id } } = executeTxResult.logs[0].eventsByType;
-
   console.log("token_id:", token_id[0]);
-  console.log("txhash:", executeTxResult.txhash);
+  console.log("txhash:", result.txhash);
 }
