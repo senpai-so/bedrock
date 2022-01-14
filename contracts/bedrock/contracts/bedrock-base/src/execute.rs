@@ -1,8 +1,8 @@
 use cosmwasm_std::{Deps, DepsMut, Env, MessageInfo, Response, Coin, StdError, BankMsg, Empty};
 
 use cw721_base::state::{TokenInfo, Cw721Contract};
-use rest_nft::msg::MintMsg;
-use rest_nft::state::{/*RestNFTContract,*/ Extension};
+use bedrock::msg::MintMsg;
+use bedrock::state::{Extension};
 
 use crate::error::ContractError;
 use crate::state::{CONFIG, OWNER};

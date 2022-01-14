@@ -24,14 +24,14 @@
                 }
               ]
             },
-            "image": {
+            "token_id": {
+              "type": "string"
+            },
+            "token_uri": {
               "type": [
                 "string",
                 "null"
               ]
-            },
-            "token_id": {
-              "type": "string"
             }
           }
         }
