@@ -1,6 +1,5 @@
 import fs from 'fs';
-import path from 'path';
-import { InitMsg, MintMsg } from '../lib/types';
+import { InitMsg } from '../lib/types';
 
 
 export function loadConfig(
