@@ -5,9 +5,9 @@ use cw2::{get_contract_version, set_contract_version};
 use cw721::ContractInfoResponse;
 pub use cw721_base::{MintMsg, MinterResponse, Cw721Contract};
 use rest_nft::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use rest_nft::state::{/*RestNFTContract,*/ Extension};
+use rest_nft::state::{Extension};
 
-use crate::execute::{execute_freeze, execute_mint, execute_set_minter, execute_withdraw, execute_update};
+use crate::execute::{execute_mint, execute_withdraw};
 
 use crate::query::{query_config, query_frozen};
 use crate::state::{Config, CONFIG, OWNER};
@@ -57,13 +57,6 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::Update {
-            token_id,
-            token_uri,
-            extension,
-        } => execute_update(deps, env, info, token_id, token_uri, extension),
-        // Freeze token metadata
-        ExecuteMsg::Freeze {} => execute_freeze(deps, env, info),
 
         // Destroys the NFT permanently.
         ExecuteMsg::Burn { token_id } => execute_burn(deps, env, info, token_id),
@@ -71,10 +64,22 @@ pub fn execute(
         // Mint token
         ExecuteMsg::Mint(mint_msg) => execute_mint(deps, env, info, mint_msg),
 
-        // Set minter
-        ExecuteMsg::SetMinter { minter } => execute_set_minter(deps, env, info, minter),
-
+        // Withdraw funds to 
         ExecuteMsg::Withdraw { amount } => execute_withdraw(deps, env, info, amount),
+
+        // Set minter
+        // ExecuteMsg::SetMinter { minter } => execute_set_minter(deps, env, info, minter),
+
+        // Freeze token metadata
+        // ExecuteMsg::Freeze {} => execute_freeze(deps, env, info),
+        
+        // Update token info
+        // ExecuteMsg::Update {
+        //     token_id,
+        //     token_uri,
+        //     extension,
+        // } => execute_update(deps, env, info, token_id, token_uri, extension),
+
 
         // CW721 methods
         _ => Cw721Contract::<Extension, Empty>::default()
