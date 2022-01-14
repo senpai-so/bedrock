@@ -13,7 +13,8 @@ import { config } from 'yargs';
 
 
 const IMG_TYPE = ".jpg";
-const WASM_PATH = "../../contracts/rest-nft/contracts/rest-nft-base/rest_nft_base.wasm";
+const WASM_PATH = "../../contracts/bedrock/contracts/bedrock-base/bedrock_base.wasm";
+
 
 // Functionality
 
@@ -115,10 +116,6 @@ const createContract = async (
   }
   const { store_code: { code_id } } = storeCodeTxResult.logs[0].eventsByType;
 
-  const minterAddress = wallet.key.accAddress;
-  const collectionName = "Loonies";
-  const collectionSymbol = "LANA";
-
   const msg = loadConfig(configPath)
 
   if (typeof msg === 'undefined') {
@@ -142,10 +139,12 @@ const createContract = async (
       is_mint_public: msg.is_mint_public,
     },
   );
+
+  const { sequence, account_number } = await wallet.accountNumberAndSequence();
   const instantiateTx = await wallet.createAndSignTx({ 
     msgs: [instantiate], 
-    sequence: await wallet.sequence(), 
-    accountNumber: await wallet.accountNumber() 
+    sequence: sequence + 1, 
+    accountNumber: account_number
   });
   const instantiateTxResult = await terra.tx.broadcast(instantiateTx);
 

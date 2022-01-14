@@ -57,7 +57,6 @@ export const mint = async (
   );
   const executeTx = await wallet.createAndSignTx({ msgs: [execute] });
   const executeTxResult = await terra.tx.broadcast(executeTx);
-
   if (isTxError(executeTxResult)) {
     console.log("Mint failed.")
     throw new Error(

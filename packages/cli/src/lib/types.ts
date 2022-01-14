@@ -16,23 +16,8 @@ export type Metadata = {
   youtube_url: string | undefined;
 }
 
-export type MintMsg = {
-  token_id: string;
-  owner: string | undefined;
-  token_uri: string | undefined;
-  extension: Metadata | undefined;
-}
 
-export type Input = {
-  manifest: MintMsg;
-  metadata: Metadata;
-};
-
-
-type Coin = {
-  amount: string; // Uint128
-  denom: string;
-}
+// Messages
 
 export type InitMsg = {
   name: string;
@@ -43,5 +28,29 @@ export type InitMsg = {
   end_time: number;
   max_token_count: number;
   is_mint_public: boolean;
-  // minter: string;
+}
+
+export type MintMsg = {
+  token_id: string;
+  owner: string | undefined;
+  token_uri: string | undefined;
+  extension: Metadata | undefined;
+}
+
+export type TransferNftMsg = {
+  recipient: string;
+  token_id: string;
+}
+
+
+// Helpers
+
+export type Input = {
+  manifest: MintMsg;
+  metadata: Metadata;
+};
+
+type Coin = {
+  amount: string; // Uint128
+  denom: string;
 }

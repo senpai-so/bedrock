@@ -4,6 +4,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import { mint } from './commands/mint';
+import { transfer } from './commands/transfer';
 import { upload } from './commands/upload';
 
 
@@ -42,29 +43,6 @@ const argv = yargs(hideBin(process.argv))
     })
     // .example("$0 upload ./assets -e local -m ./mnemonic -cp ./config.json -c cache", "Upload assets and mint contract")
   })
-  .command("verify", "verifies successful upload", yargs => {
-    yargs.options({
-      env: { 
-        type: "string",
-        alias: "e",
-        demandOption: true,
-        description: "Chain environment",
-        choices: ["local", "testnet", "mainnet"],
-      },
-      key: {
-        type: "string",
-        alias: "k",
-        demandOption: true,
-        description: "Private key from Terra Station"
-      },
-      pass: {
-        type: "string",
-        alias: "p",
-        demandOption: true,
-        description: "Password for Terra Station"
-      },
-    })
-  })
   .command("mint", "mints a single NFT", yargs => {
     yargs.options({
       env: { 
@@ -88,13 +66,8 @@ const argv = yargs(hideBin(process.argv))
       },
     })
   })
-  .command("mint-multiple", "mints multiple NFTs", yargs => {
-    yargs.positional("count", {
-      type: "number",
-      demandOption: true,
-      description: "number of NFTs to mint"
-    })
-    .options({
+  .command("transfer", "transfers NFT to a recipient", yargs => {
+    yargs.options({
       env: { 
         type: "string",
         alias: "e",
@@ -114,39 +87,17 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Password for Terra Station"
       },
-    })
-  })
-  .command("update", "updates owner address or config", yargs => {
-    yargs.positional("address", {
-      type: "string",
-      demandOption: false,
-      description: "New owner address"
-    })
-    .options({
-      env: { 
+      recipient: {
         type: "string",
-        alias: "e",
-        demandOption: true,
-        description: "Chain environment",
-        choices: ["local", "testnet", "mainnet"],
-      },
-      key: {
-        type: "string",
-        alias: "k",
+        alias: "r",
         demandOption: true,
         description: "Private key from Terra Station"
       },
-      pass: {
+      token_id: {
         type: "string",
-        alias: "p",
+        alias: "t",
         demandOption: true,
         description: "Password for Terra Station"
-      },
-      config: {
-        type: "string",
-        alias: "o",
-        demandOption: true,
-        description: "Config file path"
       },
     })
   })
@@ -161,13 +112,18 @@ const main = async () => {
   const pk = args.k as string;
   const pass = args.p as string;
   const config = args.o as string;
-  const cache = "cache"; //args.a as string;
+
+  const cache = "cache";
 
   if (typeof command === "string" && command === "upload") {
     const path = args._[1] as string;
     await upload(cache, env, path, pk, pass, config);
   } else if (typeof command === "string" && command === "mint") {
     await mint(env, pk, pass, cache);
+  } else if (typeof command === "string" && command === "transfer") {
+    const recipient = args.r as string;
+    const token_id = args.t as string;
+    await transfer(env, pk, pass, cache, recipient, token_id);
   } else {
     console.error("Invalid command");
   }
