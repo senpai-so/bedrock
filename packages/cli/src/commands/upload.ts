@@ -11,9 +11,7 @@ import { Input, MintMsg, Metadata } from '../lib/types';
 import { loadConfig } from '../utils/config';
 
 
-const IMG_TYPE = ".jpg";
-const WASM_PATH = "../../contracts/bedrock/contracts/bedrock-base/bedrock_base.wasm";
-
+const WASM_PATH = "../../contracts/bedrock/artifacts/bedrock_base.wasm";
 
 // Functionality
 
@@ -30,6 +28,7 @@ export const upload = async (
 
     // Upload files to IPFS
     const assets = await ipfsUpload(node, path);
+    console.log("Asset upload complete");
     cacheContent.items = assets;
     saveCache(cacheName, env, cacheContent);
 
@@ -58,23 +57,25 @@ const ipfsUpload = async (node: IPFS, dirPath: string) => {
     return cid;
   }
 
-  const names = new Set(
+  // Grab all image files
+  const images = new Set(
     fs
-    .readdirSync(dirPath) // will these be relative or absolute???
-    .map( fName => fName.split('.')[0])
+    .readdirSync(dirPath)
+    .filter(name => !name.includes('.json'))
   );
-  
+
   const assets: MintMsg[] = [];
 
-  for (const fName of Array.from(names)) {
+  for (const file of Array.from(images)) {
+    const jsonFile = file.split('.')[0] + '.json';
 
     // Upload media to IPFS
-    const media = fs.readFileSync(path.join(dirPath, fName + IMG_TYPE)).toString()
+    const media = fs.readFileSync(path.join(dirPath, file)).toString()
     const mediaHash = await uploadToIpfs(media);
     const mediaUrl = `https://ipfs.io/ipfs/${mediaHash}`;
 
     // Read metadata & manifest from the input
-    const input: Input = JSON.parse(fs.readFileSync(path.join(dirPath, fName + '.json')).toString());
+    const input: Input = JSON.parse(fs.readFileSync(path.join(dirPath, jsonFile)).toString());
     const metadata: Metadata = input.metadata;
     metadata.image = mediaUrl;
 
@@ -114,6 +115,7 @@ const createContract = async (
     );
   }
   const { store_code: { code_id } } = storeCodeTxResult.logs[0].eventsByType;
+  console.log("Contract store code_id:", code_id);
 
   const msg = loadConfig(configPath)
 
@@ -153,7 +155,7 @@ const createContract = async (
     );
   }
   const { instantiate_contract: { contract_address } } = instantiateTxResult.logs[0].eventsByType;
-  console.log("Contract instantiated")
+  console.log("Contract instantiated");
   console.log("Contract address:", contract_address);
 
   return contract_address[0];
