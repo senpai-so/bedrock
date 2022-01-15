@@ -1,8 +1,9 @@
 # Bedrock CLI
 
 ## Getting started (locally)
-1. Setup localterra as defined in bedrock readme
-2. Install packages
+1. Complete setup instructions from Bedrock Readme (add link here)
+2. Setup LocalTerra from this [tutorial](https://docs.terra.money/Tutorials/Smart-contracts/Overview.html)
+3. Install packages
 ```
 yarn
 ```
@@ -10,12 +11,13 @@ yarn
 ```
 yarn build
 ```
-4. Link bin to use 'bedrock'
+4. Link bin to use `bedrock` command
 ```
 npm link
 ```
 5. Get encrypted private key from Terra Station
-  - 
+https://docs.terra.money/How-to/Terra-Station/Wallet.html#export-your-private-key
+
 6. Upload contract
 ```
 bedrock upload <asset_path> \
@@ -72,3 +74,27 @@ e.g.
   }
 }
 ```
+### Config File
+The config file is used to configure your NFT collection. An example of how this file should be structure is available [here](google.com)
+| Setting          	| Properties 	| Accepted Values 	| Required 	| Description                                                                                                       	|
+|------------------	|------------	|-----------------	|----------	|-------------------------------------------------------------------------------------------------------------------	|
+| name             	|            	| string          	| Yes      	| The name of the NFT collection                                                                                    	|
+| symbol           	|            	| string          	| Yes      	| The symbol of the NFT collection                                                                                  	|
+| price            	|            	| Object          	| No       	| Object storing the price information                                                                              	|
+|                  	| amount     	| string          	|          	| The number of tokens required to mint                                                                             	|
+|                  	| denom      	| string          	|          	| The token used in minting                                                                                         	|
+| treasury_account 	|            	| string          	| Yes      	| The address that can withdraw proceeds from the contract. In most cases this will be you.                         	|
+| *start_date      	|            	| integer         	| No       	| The unix timestamp when minting becomes available. (This feature has not been tested)                             	|
+| *end_date        	|            	| integer         	| No       	| The unix timestemp when minting is no longer available. (This feature has not been tested)                        	|
+| max_token_count  	|            	| integer         	| Yes      	| Maximum number of tokens that can be minted. In most cases this should be the number of assets you are uploading. 	|
+| is_mint_public   	|            	| boolean         	| Yes      	| Whether or not someone other than the owner can mint                                                              	|
+
+## Commands
+### upload
+Uploads the images and metadata to IPFS, uploads contract code, and creates the contract.
+
+### mint
+Randomly mints one NFT from the collection. 
+
+### transfer
+Transfers the NFT to recipient. This sets the metadata `owner` field to the recipient.
