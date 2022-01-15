@@ -36,6 +36,8 @@ bedrock mint \
 
 ## Formatting
 
+:warning: **Double check the asset and config formatting aligns with the following. Otherwise you could experience problems when minting your collection.**
+
 ### Assets
 For uploading, assets should be structured using `<assetKey>` pairs. Each pair should have a media file and a metadata file.
 e.g.
