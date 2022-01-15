@@ -5,54 +5,6 @@
     {
       "type": "object",
       "required": [
-        "update"
-      ],
-      "properties": {
-        "update": {
-          "type": "object",
-          "required": [
-            "token_id"
-          ],
-          "properties": {
-            "extension": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Metadata"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "token_id": {
-              "type": "string"
-            },
-            "token_uri": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "required": [
-        "freeze"
-      ],
-      "properties": {
-        "freeze": {
-          "type": "object"
-        }
-      },
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "required": [
         "burn"
       ],
       "properties": {
@@ -63,26 +15,6 @@
           ],
           "properties": {
             "token_id": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "required": [
-        "set_minter"
-      ],
-      "properties": {
-        "set_minter": {
-          "type": "object",
-          "required": [
-            "minter"
-          ],
-          "properties": {
-            "minter": {
               "type": "string"
             }
           }
