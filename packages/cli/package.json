@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Bedrock CLI",
   "main": "index.js",
+  "engines": {
+    "node": ">=15.3"
+  },
   "bin": {
     "bedrock": "./build/src/cli.js"
   },

@@ -9,6 +9,7 @@ import { getClient } from '../lib/getClient';
 import { encryptedToRawKey } from '../utils/keys';
 import { Input, MintMsg, Metadata } from '../lib/types';
 import { loadConfig } from '../utils/config';
+import VARS from '../../env.config';
 
 
 const WASM_PATH = "../../contracts/bedrock/artifacts/bedrock_base.wasm";
@@ -100,23 +101,7 @@ const createContract = async (
   ): Promise<string> => {
 
   console.log() // Break line before contract logs
-
-  // Upload code for contract
-  const storeCode = new MsgStoreCode(
-    wallet.key.accAddress,
-    fs.readFileSync(WASM_PATH).toString('base64')
-  );
-  const storeCodeTx = await wallet.createAndSignTx({ msgs: [storeCode] });
-  const storeCodeTxResult = await terra.tx.broadcast(storeCodeTx);
-
-  if (isTxError(storeCodeTxResult)) {
-    throw new Error(
-      `store code failed. code: ${storeCodeTxResult.code}, codespace: ${storeCodeTxResult.codespace}, raw_log: ${storeCodeTxResult.raw_log}`
-    );
-  }
-  const { store_code: { code_id } } = storeCodeTxResult.logs[0].eventsByType;
-  console.log("Contract store code_id:", code_id);
-
+  
   const msg = loadConfig(configPath)
 
   if (typeof msg === 'undefined') {
@@ -128,7 +113,7 @@ const createContract = async (
   const instantiate = new MsgInstantiateContract(
     wallet.key.accAddress,
     undefined,
-    +code_id[0],
+    VARS.CODE_ID, // Add option to update the code
     { 
       name: msg.name,
       symbol: msg.symbol,
@@ -141,11 +126,8 @@ const createContract = async (
     },
   );
 
-  const { sequence, account_number } = await wallet.accountNumberAndSequence();
   const instantiateTx = await wallet.createAndSignTx({ 
-    msgs: [instantiate], 
-    sequence: sequence + 1, 
-    accountNumber: account_number
+    msgs: [instantiate],
   });
   const instantiateTxResult = await terra.tx.broadcast(instantiateTx);
 
