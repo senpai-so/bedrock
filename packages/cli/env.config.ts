@@ -10,4 +10,6 @@ export default {
 
   LOCALTERRA_URL: process.env.LOCALTERRA_URL ?? 'http://localhost:1317',
   LOCALTERRA_CHAIN_ID: process.env.LOCALTERRA_CHAIN_ID ?? 'http://localhost:1317',
+
+  CODE_ID: 2351,
 }
