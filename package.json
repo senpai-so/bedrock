@@ -32,11 +32,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@types/uuid": "^8.3.3",
-    "@uniswap/sdk-core": "^3.0.1",
-    "@uniswap/smart-order-router": "^2.0.3",
-    "@uniswap/v2-periphery": "^1.1.0-beta.0",
-    "@uniswap/v2-sdk": "^3.0.1",
-    "@uniswap/v3-sdk": "^3.6.3",
+    "@types/yargs": "^17.0.8",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/portis-connector": "^6.1.9",
@@ -53,8 +49,10 @@
     "eslint-plugin-node": "^11.1.0",
     "ethers": "^5.5.2",
     "framer-motion": "^5.3.1",
+    "ipfs-core": "0.13.0",
     "isomorphic-fetch": "^3.0.0",
     "jsbi": "3.1.4",
+    "libp2p": "0.32.0",
     "next": "12.0.4",
     "nookies": "^2.5.2",
     "pick-random": "^4.0.0",
@@ -72,7 +70,8 @@
     "ts-node": "^10.4.0",
     "typescript-eslint": "^0.0.1-alpha.0",
     "uuid": "^8.3.2",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "yargs": "^17.3.1"
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
