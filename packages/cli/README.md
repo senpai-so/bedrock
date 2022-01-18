@@ -1,7 +1,7 @@
 # Bedrock CLI
 
 ## Getting started (locally)
-1. Complete setup instructions from Bedrock Readme (add link here)
+1. Complete setup instructions from [Bedrock Readme](../../README.md)
 2. Setup LocalTerra from this [tutorial](https://docs.terra.money/Tutorials/Smart-contracts/Overview.html)
 3. Install packages
 ```
