@@ -174,8 +174,56 @@ mod tests {
         assert_eq!(err, res.unwrap_err());
     }
 
+    #[test]
+    fn mint_times() {
+        let mut deps = mock_dependencies(&[]);
 
-    // Send tests
+        let info = mock_info(CREATOR, &[]);
+        let env = mock_env();
+        let init_msg = InstantiateMsg {
+            name: "SpaceShips".to_string(),
+            symbol: "SPACE".to_string(),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: Some(env.block.time.minus_seconds(1000).seconds()), 
+            end_time: Some(env.block.time.plus_seconds(1000).seconds()),
+            price: None,
+        };
+
+        instantiate(deps.as_mut(), env.clone(), info.clone(), init_msg).unwrap();
+
+        let token_id = "Enterprise";
+        let mint_msg = MintMsg {
+            token_id: token_id.to_string(),
+            owner: OWNER.to_string(),
+            token_uri: None, 
+            extension: None,
+        };
+        let exec_msg = ExecuteMsg::Mint(mint_msg);
+        let mint_info = mock_info(OWNER, &[]);
+
+        // Minting too early (fail)
+        let mut early_env = mock_env();
+        early_env.block.time = env.block.time.minus_seconds(1010); // 10 seconds before start_time
+        let res = execute(deps.as_mut(), early_env, mint_info.clone(), exec_msg.clone());
+        assert_eq!(ContractError::Unauthorized {}, res.unwrap_err());
+
+        // Minting too late (fail)
+        let mut late_env = mock_env();
+        late_env.block.time = env.block.time.plus_seconds(1010); // 10 seconds after end_time
+        let res = execute(deps.as_mut(), late_env, mint_info.clone(), exec_msg.clone());
+        assert_eq!(ContractError::Unauthorized {}, res.unwrap_err());
+
+        // Minting inbetween (success)
+        let mut valid_env = mock_env();
+        valid_env.block.time = env.block.time;
+        let res = execute(deps.as_mut(), valid_env, mint_info, exec_msg);
+        assert!(res.is_ok());
+    }
+
+
+    // Transfer tests
     #[test]
     fn transfer_nft() {
         let mut deps = mock_dependencies(&[]);
