@@ -100,3 +100,11 @@ Randomly mints one NFT from the collection.
 
 ### transfer
 Transfers the NFT to recipient. This sets the metadata `owner` field to the recipient.
+
+
+## Troubleshooting
+
+There is a known issue with sequences on testnet. This is caused by the lower number of validators on the testnet, which leads to unprocessed transactions. This issue has not been encountered on mainnet. If you run into this issue on testnet, create a new wallet to continue testing.
+```
+'account sequence mismatch, expected 13, got 14: incorrect account sequence: invalid request'
+```

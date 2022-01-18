@@ -30,7 +30,7 @@ Follow the [tutorial](https://docs.terra.money/Tutorials/Smart-contracts/Overvie
 
 We store a custom fork of the [CW721 standard](https://github.com/CosmWasm/cw-nfts). Specifically, we extend the `cw721-base` contract to enforce a max token supply, a payable function, and a variety of configurable setting. This avoids the need to create a separate contract for purchasing NFT's. We also ensure that this contract is deployable on the Terra ecosystem.
 
-To set up, navigate to `packages/cli` and follow the [instructions](google.com):
+To set up, navigate to `packages/cli` and follow the [instructions](packages/cli/README.md):
 
 ### Part 3: Web app
 
