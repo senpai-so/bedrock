@@ -41,7 +41,6 @@ const argv = yargs(hideBin(process.argv))
         description: "Path to config file"
       },
     })
-    // .example("$0 upload ./assets -e local -m ./mnemonic -cp ./config.json -c cache", "Upload assets and mint contract")
   })
   .command("mint", "mints a single NFT", yargs => {
     yargs.options({

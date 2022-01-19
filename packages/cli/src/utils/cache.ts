@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { MintMsg } from '../lib/types';
 
-const CACHE_PATH = "./"; // CHANGE
+const CACHE_PATH = "./";
 
 type Program = {
   contract_address: string | undefined;

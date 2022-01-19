@@ -89,19 +89,11 @@ export default function Index() {
       console.log('buyer', buyer)
       console.log('owner', ownerAddress)
       console.log('mint fee', mintFeeLuna)
-
-      // TODO use proper fee
-      // const gasLimit = 1000000 * adjustGasLimit(0.01133)
-      // const fee = new Fee(gasLimit, '11330uluna')
-
-      // TODO switch to pay btwn luna or uust depending on what user chooses
       console.log('Posting...')
       connectedWallet
         .post({
-          // fee: fee,
           msgs: [
             new MsgSend(buyer, ownerAddress, {
-              // uusd: toUUST(1)
               uluna: toULuna(mintFeeLuna)
             })
           ]
@@ -167,7 +159,7 @@ export default function Index() {
   return (
     <div
       style={{
-        backgroundImage: 'url(/loonies_star_background.png)',
+        backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover'
       }}
     >
@@ -192,78 +184,12 @@ export default function Index() {
             <div>
               <Image
                 className='rounded-xl'
-                src='/LooniesGif.gif'
+                src='/BoredApe.gif'
                 height='400'
                 width='400'
-                alt='LooniesGif'
+                alt='BoredApe'
               />
             </div>
-
-            {status === WalletStatus.WALLET_NOT_CONNECTED && (
-              <>
-                {availableConnections
-                  .filter((_) => _.type === 'EXTENSION')
-                  .map(({ type, name, icon, identifier = '' }) => (
-                    <button
-                      key={'connection-' + type + identifier}
-                      className='inline-flex items-center px-6 py-3 text-blue-700 font-bold rounded-2xl border-2 border-blue-600 bg-white focus:outline-none '
-                      onClick={() => connect(type, identifier)}
-                    >
-                      <Image
-                        src={icon}
-                        alt={name}
-                        width='1em'
-                        height='1em'
-                        className='mr-2'
-                      />
-                      Connect Wallet
-                    </button>
-                  ))}
-              </>
-            )}
-
-            {status === WalletStatus.WALLET_CONNECTED && (
-              <>
-                <div
-                  className='border cursor-pointer border-1 px-4 py-2 sm:text-lg font-medium border-gray-300 rounded-lg text-gray-700'
-                  onClick={() => toggleDisconnect()}
-                >
-                  🧧{' '}
-                  {abbreviateWalletAddress(
-                    connectedWallet?.walletAddress || ''
-                  )}
-                </div>
-                {mintedTokenId ? (
-                  <FinishMintComponent token_id={mintedTokenId} />
-                ) : numTokens >= maxTokensAllowed ? (
-                  <div className='px-4'>
-                    <h1 className='font-bold text-center text-3xl text-red-500'>
-                      {' '}
-                      Sold out!{' '}
-                    </h1>
-                    <br />
-                    <p className='font-bold text-center text-red-500'>
-                      {' '}
-                      Our first drop has sold out.{' '}
-                    </p>
-                    <p className='font-bold text-center text-red-500'>
-                      {' '}
-                      Follow our discord channel to find out when the next drop
-                      will be!{' '}
-                    </p>
-                  </div>
-                ) : (
-                  <button
-                    className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                    onClick={() => {
-                      handleClickMint()
-                    }}
-                  >
-                    Mint!
-                  </button>
-                )}
-              </>
-            )}
 
             <FAQ />
 

@@ -67,20 +67,6 @@ pub fn execute(
         // Withdraw funds to 
         ExecuteMsg::Withdraw { amount } => execute_withdraw(deps, env, info, amount),
 
-        // Set minter
-        // ExecuteMsg::SetMinter { minter } => execute_set_minter(deps, env, info, minter),
-
-        // Freeze token metadata
-        // ExecuteMsg::Freeze {} => execute_freeze(deps, env, info),
-        
-        // Update token info
-        // ExecuteMsg::Update {
-        //     token_id,
-        //     token_uri,
-        //     extension,
-        // } => execute_update(deps, env, info, token_id, token_uri, extension),
-
-
         // CW721 methods
         _ => Cw721Contract::<Extension, Empty>::default()
             .execute(deps, env, info, msg.into())

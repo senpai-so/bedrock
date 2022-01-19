@@ -9,24 +9,24 @@ import { EmptyProps } from 'lib/types'
 
 const faqs = [
   {
-    question: 'What are Loonies?',
-    answer: `Loonies are a limited edition collection of 5000 NFTs that live in LASA (Loonies Aeronautics and Space Administration). They’re crazy enough to think they can build rocket ships that fly to different chain networks & are going to prove to other NFTs they can. Their first mission is to fly to the Solana metaverse Desolates (desolate.space)`
+    question: 'Question 1',
+    answer: `Answer 1`
   },
   {
-    question: 'How do I buy a Loonie?',
-    answer: `With Luna coins! Follow [this tutorial](/tutorial) to set up a wallet and buy a Luna coin. Then come back here and click on "Connect Wallet" > "Mint" buttons.`
+    question: 'Question 2',
+    answer: `Answer 2`
   },
   {
-    question: 'How do I set up a wallet to buy?',
-    answer: `Install [Terra Station](https://docs.terra.money/Tutorials/Get-started/Terra-Station-desktop.html) and then the [Chrome Extension](https://docs.terra.money/Tutorials/Get-started/Terra-Station-extension.html)`
+    question: 'Question 3',
+    answer: `Answer 3`
   },
   {
-    question: 'How do I view my NFT?',
-    answer: `You'll need to download [Terra Station Desktop](https://docs.terra.money/Tutorials/Get-started/Terra-Station-desktop.html) (extension doesn't support NFTs at the moment). Then, authenticate with your wallet and click on the NFT tab to view your NFT.`
+    question: 'Question 4',
+    answer: `Answer 4`
   },
   {
-    question: 'How do I stay updated on future drops?',
-    answer: `Join our [Discord channel](https://discord.com/invite/hS3NAqHsPs) to stay in the loop and be alerted of future drops 🙌`
+    question: 'Question 5 ',
+    answer: `Answer 5`
   }
 ]
 

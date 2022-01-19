@@ -138,7 +138,7 @@ export default function Index() {
     <div
       className='h-full'
       style={{
-        backgroundImage: 'url(/loonies_star_background.png)',
+        backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
         height: '100vh'
       }}
