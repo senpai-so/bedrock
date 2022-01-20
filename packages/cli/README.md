@@ -39,8 +39,7 @@ bedrock mint \
 :warning: **Double check the asset and config formatting aligns with the following. Otherwise you could experience problems when minting your collection.**
 
 ### Assets
-For uploading, assets should be structured using `<assetKey>` pairs. Each pair should have a media file and a metadata file.
-e.g.
+For uploading, assets should be structured using `<assetKey>` pairs. Each pair should have a media file and a metadata file. An example of this is is available [here](example/assets)
 ```
 assets
   0.jpg   <--- media
@@ -77,7 +76,7 @@ e.g.
 }
 ```
 ### Config File
-The config file is used to configure your NFT collection. An example of how this file should be structure is available [here](google.com)
+The config file is used to configure your NFT collection. An example of how this file should be structure is available [here](example/config.json)
 | Setting          	| Properties 	| Accepted Values 	| Required 	| Description                                                                                                       	|
 |------------------	|------------	|-----------------	|----------	|-------------------------------------------------------------------------------------------------------------------	|
 | name             	|            	| string          	| Yes      	| The name of the NFT collection                                                                                    	|
