@@ -27,7 +27,7 @@ To set up, navigate to `packages/cli` and follow the [instructions](packages/cli
 
 ### NextJS dApp
 
-Coming soon! 🔜
+Coming 🔜 !
 
 ## Contributing
 
@@ -38,3 +38,6 @@ Follow the [tutorial](https://docs.terra.money/Tutorials/Smart-contracts/Overvie
 
 #### b) Run changes against local stack
 After you make changes, run them agains the local stack by issuing commands with the CLI.
+
+## Roadmap and Team
+You can view [our team and roadmap here](https://www.notion.so/senpai-inc/Bedrock-Terra-NFT-Tools-1a360fafc49248e69ead3b10b4af9e94).
