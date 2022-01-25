@@ -118,7 +118,7 @@ const main = async () => {
     const path = args._[1] as string;
     await upload(cache, env, path, pk, pass, config);
   } else if (typeof command === "string" && command === "mint") {
-    await mint(env, pk, pass, cache);
+    // await mint(env, pk, pass, cache);
   } else if (typeof command === "string" && command === "transfer") {
     const recipient = args.r as string;
     const token_id = args.t as string;

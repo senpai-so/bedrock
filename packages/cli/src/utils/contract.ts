@@ -1,4 +1,5 @@
 import { isTxError, LCDClient, MsgExecuteContract, Wallet } from "@terra-money/terra.js"
+import { ConnectedWallet } from "@terra-money/wallet-provider";
 
 
 export const executeTransaction = async (

@@ -13,7 +13,6 @@ import { Modal } from 'components/Modal'
 
 import { getLCD } from 'lib/utils/terra'
 import { NFTTokenItem, OwnerOf } from 'lib/types'
-import Link from 'next/link'
 
 const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
 

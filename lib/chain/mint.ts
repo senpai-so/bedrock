@@ -1,18 +1,15 @@
-import { getClient } from '../lib/getClient';
-import { CacheContent, loadCache, saveCache } from "../utils/cache";
-import { encryptedToRawKey } from "../utils/keys";
-import { MintMsg } from "../lib/types";
+import { getClient } from '../../packages/cli/src/lib/getClient';
+import { CacheContent, loadCache, saveCache } from "../../packages/cli/src/utils/cache";
+import { encryptedToRawKey } from '../../packages/cli/src/utils/keys'
+import { MintMsg } from "../../packages/cli/src/lib/types";
 import { isTxError, MsgExecuteContract } from '@terra-money/terra.js';
 
 
 export const mint = async (
   wallet: any,
-  cacheName: string,
-  env: string,
+  cacheContent: CacheContent,
 ) => {
   // Choose next asset
-  const savedContent = loadCache(cacheName, env);
-  const cacheContent: CacheContent = savedContent || { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
   if (typeof cacheContent.items === 'undefined') return;
 
   if (typeof cacheContent.program.tokens_minted === 'undefined') {
@@ -43,7 +40,6 @@ export const mint = async (
   const { contract_address } = cacheContent.program;
   if (typeof contract_address === 'undefined') return;
   
-  // const result = await executeTransaction(terra, wallet., contract_address, execMsg);
   const execute = new MsgExecuteContract(
     wallet.walletAddress, 
     contract_address, 
@@ -63,10 +59,6 @@ export const mint = async (
   // If we reach here, mint succeeded
   const { wasm: { token_id } } = executeTxResult.logs[0].eventsByType;
   cacheContent.program.tokens_minted.push(token_id[0]);
-  saveCache(cacheName, env, cacheContent);
-  console.log("Successfully minted new NFT!")
-  console.log("token_id:", token_id[0]);
-  console.log("txhash:", executeTxResult.txhash);
 
-  return token_id;
+  return token_id[0];
 }
