@@ -1,19 +1,10 @@
-import React, { Component, useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image'
-
-import { Fee, MsgSend, TxError } from '@terra-money/terra.js'
 
 import {
   useWallet,
   useConnectedWallet,
-  ConnectedWallet,
-  WalletStatus,
-  TxResult,
-  UserDenied,
-  CreateTxFailed,
-  Timeout,
-  TxFailed,
-  TxUnspecifiedError
+  ConnectType
 } from '@terra-money/wallet-provider'
 
 import { Page } from 'components/Page'
@@ -21,14 +12,7 @@ import { Modal } from 'components/Modal'
 import { FAQ } from 'components/FAQ'
 
 import api from 'lib/utils/api-client'
-import { MintResponse } from 'pages/api/mint'
-import { ownerAddress, mintFeeLuna } from 'lib/config'
-import { toUUST, toULuna } from 'lib/utils/currency'
 import { toast, ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import FinishMintComponent from 'src/finishMintComponent'
-import { getLCD } from 'lib/utils/terra'
-import { NumTokensResponse } from 'lib/types'
 import { CacheContent } from 'packages/cli/src/utils/cache'
 import { mint } from 'lib/chain/mint'
 import router from 'next/router'
@@ -56,13 +40,13 @@ export default function Index() {
     if (connectedWallet) {
 
       const cacheStr = await api
-        .post('/config', { path: './cache', env: connectedWallet.connectType })
+        .post('/config', { path: './packages/server/config.json', env: 'mainnet'/*connectedWallet.connectType*/ })
         .then(async (res) => {
           const json = await res.json();
           return json.cacheStr as string;
         })
-        .catch((error) => {
-          throw new ServerError()
+        .catch((_) => {
+          throw new ServerError("Config not found. Please upload first!")
         }
       );
 
@@ -113,12 +97,23 @@ export default function Index() {
               />
             </div>
 
-            <button
-              className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-              onClick={() => handleClickMint()}
-            >
-              Mint!
-            </button>
+            { typeof connectedWallet?.connectType === 'undefined' ? (
+              <button
+                className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                onClick={() => connect(ConnectType.EXTENSION)}
+              >
+                Connect!
+              </button>
+            ) : (
+              <button
+                className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                onClick={() => handleClickMint()}
+              >
+                Mint!
+              </button>
+            )
+            
+            }
 
             <FAQ />
 

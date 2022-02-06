@@ -1,5 +1,5 @@
 import { IPFS, create } from 'ipfs-core';
-import { isTxError, LCDClient, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
+import { isTxError, LCDClient, MnemonicKey, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -10,7 +10,6 @@ import { encryptedToRawKey } from '../utils/keys';
 import { Input, MintMsg, Metadata } from '../lib/types';
 import { loadConfig } from '../utils/config';
 import VARS from '../../env.config';
-
 
 const WASM_PATH = "../../contracts/bedrock/artifacts/bedrock_base.wasm";
 
@@ -24,29 +23,42 @@ export const upload = async (
   pass: string,
   config: string,
   ) => {
-    const node = await create();
-    const cacheContent: CacheContent = { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
+    // const node = await create();
+    // const cacheContent: CacheContent = { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
 
-    // Upload files to IPFS
-    const assets = await ipfsUpload(node, path);
-    console.log("Asset upload complete");
-    cacheContent.items = assets;
-    saveCache(cacheName, env, cacheContent);
+    // // Upload files to IPFS
+    // const assets = await ipfsUpload(node, path);
+    // console.log("Asset upload complete");
+    // cacheContent.items = assets;
+    // saveCache(cacheName, env, cacheContent);
 
     // Load user creds
     const terra = await getClient(env);
 
-    const key = encryptedToRawKey(pk, pass);
-    const wallet = terra.wallet(key);
+    // const key = encryptedToRawKey(pk, pass);
+    // const wallet = terra.wallet(key);
 
     // Create contract
-    if (assets.length == 0) {
-      throw new Error("Asset folder must contain 1 or more correctly formatted assets. \
-      Please ensure the assets are correctly formatted.");
+    // if (assets.length == 0) {
+    //   throw new Error("Asset folder must contain 1 or more correctly formatted assets. \
+    //   Please ensure the assets are correctly formatted.");
+    // }
+    // const contract_address = await createContract(wallet, terra, assets.length, config);
+    // cacheContent.program = {...cacheContent.program, contract_address: contract_address }
+    // saveCache(cacheName, env, cacheContent);
+    const wallet = terra.wallet(new MnemonicKey({mnemonic: "satisfy adjust timber high purchase tuition stool faith fine install that you unaware feed domain license impose boss human eager hat rent enjoy dawn"}))
+    const wasm = fs.readFileSync('../../contracts/bedrock/target/wasm32-unknown-unknown/release/bedrock_base.wasm').toString('base64');
+    const storeCode = new MsgStoreCode(wallet.key.accAddress, wasm);
+    const storeCodeTx = await wallet.createAndSignTx({ msgs: [storeCode] });
+    const txResult = await terra.tx.broadcast(storeCodeTx)
+    if (isTxError(txResult)) {
+      throw new Error(
+        `store code failed. code: ${txResult.code}, codespace: ${txResult.codespace}, raw_log: ${txResult.raw_log}`
+      );
     }
-    const contract_address = await createContract(wallet, terra, assets.length, config);
-    cacheContent.program = {...cacheContent.program, contract_address: contract_address }
-    saveCache(cacheName, env, cacheContent);
+
+    const { store_code: { code_id } } = txResult.logs[0].eventsByType;
+    console.log(env, code_id);
 }
 
 const ipfsUpload = async (node: IPFS, dirPath: string) => {

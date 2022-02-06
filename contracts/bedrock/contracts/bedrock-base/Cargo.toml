@@ -1,13 +1,11 @@
 [package]
 name = "bedrock-base"
 version = "0.9.3"
-authors = ["tfive <tfivedev@gmail.com>"]
+authors = ["Hank Breckenridge <breckenridgeh2@gmail.com>"]
 edition = "2018"
-description = "Extended CW721 NFT with update, burn, freeze, set_minter"
+description = "Extended CW721 NFT with more configurability"
 license = "Apache-2.0"
-repository = "https://github.com/CosmWasm/cw-plus"
-homepage = "https://cosmwasm.com"
-documentation = "https://docs.cosmwasm.com"
+repository = "https://github.com/senpai-so/bedrock"
 
 exclude = [
   # Those files are rust-optimizer artifacts. You might want to commit them for convenience but they should not be part of the source code publication.
