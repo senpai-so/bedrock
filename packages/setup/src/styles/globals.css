@@ -1,3 +1,8 @@
+@import 'ReactToastify.css';
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
 body,
 html {
   margin: 0;
@@ -31,7 +36,3 @@ mark {
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
