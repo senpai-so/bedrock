@@ -1,33 +1,26 @@
 import { LCDClient } from "@terra-money/terra.js";
-import VARS from '../../env.config';
 
-export const getClient = async (env: string): Promise<LCDClient> => {
-  let client: LCDClient;
+export const getClient = async (chainId: string): Promise<LCDClient> => {
   let url: string;
-  let chainId: string;
 
-  switch(env.toLowerCase()) {
-    case 'mainnet':
-      url = VARS.MAINNET_URL;
-      chainId = VARS.MAINNET_CHAIN_ID;
+  switch(chainId) {
+    case 'columbus-5':
+      url = 'https://lcd.terra.dev';
       break;
-    case 'testnet':
-      url = VARS.TESTNET_URL;
-      chainId = VARS.TESTNET_CHAIN_ID;
+    case 'bombay-12':
+      url = 'https://bombay-lcd.terra.dev';
       break;
     case 'local':
-      url = VARS.LOCALTERRA_URL;
-      chainId = VARS.LOCALTERRA_CHAIN_ID;
+      url = 'http://localhost:1317';
       break;
     default:
       console.log("Invalid value for \'env\'");
-      console.log("Using values for local");
-      url = VARS.LOCALTERRA_URL;
-      chainId = VARS.LOCALTERRA_CHAIN_ID;
+      console.log("Using values for localterra");
+      url = 'http://localhost:1317';
       break;
   }
   
-  client = new LCDClient({
+  const client = new LCDClient({
     URL: url,
     chainID: chainId
   });
