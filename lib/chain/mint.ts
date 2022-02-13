@@ -1,48 +1,57 @@
-import { getClient } from '../../packages/cli/src/lib/getClient';
-import { CacheContent, loadCache, saveCache } from "../../packages/cli/src/utils/cache";
+import { getClient } from './getClient';
+import { CacheContent } from 'lib/types';
 import { encryptedToRawKey } from '../../packages/cli/src/utils/keys'
 import { MintMsg } from "../../packages/cli/src/lib/types";
-import { isTxError, MsgExecuteContract } from '@terra-money/terra.js';
+import { isTxError, LCDClient, MsgExecuteContract } from "@terra-money/terra.js";
+import { create } from 'ipfs-http-client';
+import { concat as uint8ArrayConcat, toString as uint8ArrayToString } from 'uint8arrays'
+import { contractAddress } from 'lib/config';
 
 
 export const mint = async (
   wallet: any,
   cacheContent: CacheContent,
 ) => {
-  // Choose next asset
-  if (typeof cacheContent.items === 'undefined') return;
+  if (cacheContent.contract_addr == '') return;
+  if (cacheContent.assets.length == 0) return;
+  if (cacheContent.chainId == '') return;
 
-  if (typeof cacheContent.program.tokens_minted === 'undefined') {
-    cacheContent.program.tokens_minted = []
-  }
+  // Load wallet & LCD client 
+  const lcd = await getClient(cacheContent.chainId);
 
-  if (typeof cacheContent.env === 'undefined' || cacheContent.env == '') return; // do this better
+  const { tokens } = await lcd.wasm.contractQuery(cacheContent.contract_addr, {
+    all_tokens: { limit: undefined, start_after: undefined }
+  });
+ 
+  console.log()
 
   // Select our NFT to mint
   let mintMsg: MintMsg = { token_id: "", owner: undefined, token_uri: undefined, extension: undefined };
-  const newAssets = cacheContent.items.filter(x => !cacheContent.program.tokens_minted.includes(x.token_id));
+  const newAssets = cacheContent.assets.filter(asset => !tokens.includes(asset.split('.')[0]));
 
   if (newAssets.length === 0) {
     console.log("No NFTs left to mint :(")
     return;
   }
 
-  // Load wallet & LCD client 
-  const lcd = await getClient(cacheContent.env);
+  const assetJson = `${newAssets[0].split('.')[0]}.json`
+  const ipfsPath = `${cacheContent.cid}/${assetJson}`
+  const tokenData = JSON.parse(await getIPFSContents(ipfsPath));
 
-  const idx = Math.floor(Math.random() * newAssets.length)
-  mintMsg = cacheContent.items[idx];
-  mintMsg.owner = wallet.walletAddress;
+  mintMsg = {
+    token_id: newAssets[0].split('.')[0],
+    owner: wallet.walletAddress,
+    token_uri: `ipfs://${cacheContent.cid}/${assetJson}`,
+    extension: tokenData.metadata
+  };
 
   const execMsg = { mint: mintMsg };
   console.log("ExecMsg:", execMsg);
-
-  const { contract_address } = cacheContent.program;
-  if (typeof contract_address === 'undefined') return;
+  if (cacheContent.contract_addr === '') return;
   
   const execute = new MsgExecuteContract(
     wallet.walletAddress, 
-    contract_address, 
+    cacheContent.contract_addr, 
     execMsg
   );
 
@@ -58,7 +67,19 @@ export const mint = async (
   
   // If we reach here, mint succeeded
   const { wasm: { token_id } } = executeTxResult.logs[0].eventsByType;
-  cacheContent.program.tokens_minted.push(token_id[0]);
 
   return token_id[0];
+}
+
+const getIPFSContents = async (path: string) => {
+  const url = 'https://dweb.link/api/v0';
+  if (true) console.log("");
+  const ipfs = create({ url });
+
+  const bufs: Uint8Array[] = []
+  for await (const buf of ipfs.cat(path)) {
+    bufs.push(buf);
+  }
+  const data = uint8ArrayConcat(bufs);
+  return uint8ArrayToString(data);
 }

@@ -1,48 +1,43 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import * as fs from 'fs';
+import path from 'path';
 
-import { MnemonicKey, MsgExecuteContract } from '@terra-money/terra.js'
+import { CacheContent, CacheResponse } from 'lib/types';
 
-import { getLCD } from '../../lib/utils/terra'
-import { mnemonic, ownerAddress, contractAddress } from '../../lib/config'
-import { toULuna } from '../../lib/utils/currency'
-
-import { PrismaClient } from '@prisma/client'
-import pickRandom from 'pick-random'
-import { NftToken } from '../../lib/types'
-
-import { loadCache, saveCache } from '../../packages/cli/src/utils/cache';
-
-const prisma = new PrismaClient()
-
-export type ConfigResponse = {
-  success: boolean
-  cacheStr?: string | null
-  error?: string
+const loadCache = (name: string) => {
+  const filePath = `./lib/${name}.json`; //path.join(dir, `${name}.json`)
+  if (!fs.existsSync(filePath)) return undefined;
+  return JSON.parse(fs.readFileSync(filePath).toString()) as CacheContent;
 }
 
+const isString = (input: any) => {
+  return typeof input === 'string' || input instanceof String;
+}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ConfigResponse>
+  res: NextApiResponse<CacheResponse>
 ) {
   if (req.method === 'GET') {
-    const { path, env } = req.body
+    // const { path } = req.query;
 
-    const cache = loadCache("cache", env);
+    // if (!isString(path) || path === '') {
+    //   res.status(404).json({ success: false, error: 'PATH NOT PROVIDED' });
+    // }
+
+    const cache = loadCache("cache") as CacheContent | undefined;
+
     if (typeof cache === 'undefined') {
       res.status(404).json({ success: false, error: "CACHE NOT FOUND"});
-      return
+      return;
     }
 
     res.status(200).json({ success: true, cacheStr: JSON.stringify(cache) });
-
-    return
+    return;
   }
 
   // catch-all
   res.status(404).json({ success: false, error: 'NOT FOUND' })
-  prisma.$disconnect()
   return
 }

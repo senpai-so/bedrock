@@ -11,16 +11,14 @@ import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
 import { FAQ } from 'components/FAQ'
 
-import api from 'lib/utils/api-client'
 import { toast, ToastContainer } from 'react-toastify'
-import { CacheContent } from 'packages/cli/src/utils/cache'
+import { CacheContent } from 'lib/types'
 import { mint } from 'lib/chain/mint'
 import router from 'next/router'
 
-const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
+import cacheContent from '../lib/config.json';
 
 class ServerError extends Error {}
-
 
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
@@ -38,21 +36,11 @@ export default function Index() {
   const handleClickMint = async () => {
     const toastId = toast.loading('Transaction Pending...')
     if (connectedWallet) {
-
-      const cacheStr = await api
-        .post('/config', { path: './packages/server/config.json', env: 'mainnet'/*connectedWallet.connectType*/ })
-        .then(async (res) => {
-          const json = await res.json();
-          return json.cacheStr as string;
-        })
-        .catch((_) => {
-          throw new ServerError("Config not found. Please upload first!")
-        }
-      );
-
-      const cacheContent = JSON.parse(cacheStr) as CacheContent;
-      const token_id = mint(connectedWallet, cacheContent);
-      router.push(`/${token_id}`);
+      const token_id = await mint(connectedWallet, cacheContent as CacheContent);
+      console.log("Minted", token_id);
+      if (typeof token_id !== 'undefined') {
+        router.push(`/${token_id}`);
+      }
     }
   }
 
@@ -97,7 +85,7 @@ export default function Index() {
               />
             </div>
 
-            { typeof connectedWallet?.connectType === 'undefined' ? (
+            { connectedWallet?.connectType !== ConnectType.EXTENSION ? (
               <button
                 className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onClick={() => connect(ConnectType.EXTENSION)}
@@ -111,9 +99,7 @@ export default function Index() {
               >
                 Mint!
               </button>
-            )
-            
-            }
+            )}
 
             <FAQ />
 
