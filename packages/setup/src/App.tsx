@@ -14,10 +14,10 @@ function App() {
 
   const submitCid = async () => {
     if (typeof cid === 'undefined') return;
-    // const toastLoadingId = toast.loading('Getting token data...');
+    const toastLoadingId = toast.loading('Getting token data...');
     const files = await getFiles(cid);
-    // toast.dismiss(toastLoadingId);
-    // const toastSuccessId = toast.success("Success :)");
+    toast.dismiss(toastLoadingId);
+    const toastSuccessId = toast.success("Success :)");
     const assets = files.map(file => file.name).filter(file => !file.includes(".json"));
     console.log(assets)
     const requestOptions = {
@@ -33,7 +33,7 @@ function App() {
         console.log(res);
       })
       .catch(e => console.log(e));
-    
+    // toast.dismiss(toastSuccessId);
     navigate('/config');
   }
   
@@ -41,10 +41,10 @@ function App() {
     <div
       className='h-screen'
       style={{
-        width: '100%',
-        height: '100%',
+        // width: '100%',
+        // height: '100%',
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'contain',
+        backgroundSize: 'cover',
       }}
     >
       <Page>

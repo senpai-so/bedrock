@@ -1,11 +1,9 @@
 import { getClient } from './getClient';
 import { CacheContent } from 'lib/types';
-import { encryptedToRawKey } from '../../packages/cli/src/utils/keys'
 import { MintMsg } from "../../packages/cli/src/lib/types";
 import { isTxError, LCDClient, MsgExecuteContract } from "@terra-money/terra.js";
 import { create } from 'ipfs-http-client';
 import { concat as uint8ArrayConcat, toString as uint8ArrayToString } from 'uint8arrays'
-import { contractAddress } from 'lib/config';
 
 
 export const mint = async (
