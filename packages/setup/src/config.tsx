@@ -78,8 +78,10 @@ function Config() {
     <div
       className='h-screen'
       style={{
+        width: '100%',
+        height: '100%',
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover',
+        backgroundSize: 'contain',
       }}
     >
       <Page>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Page } from './components/Page';
 
-import { getFiles, parseFiles } from './utils/ipfs';
+import { getFiles } from './utils/ipfs';
 
 
 function App() {
@@ -41,8 +41,10 @@ function App() {
     <div
       className='h-screen'
       style={{
+        width: '100%',
+        height: '100%',
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover',
+        backgroundSize: 'contain',
       }}
     >
       <Page>
