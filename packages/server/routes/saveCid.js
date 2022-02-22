@@ -10,13 +10,12 @@ const getConfig = (path) => {
 
 var router = express.Router();
 router.post("/", function(req, res, next) {
-  const { contract_addr, chain_id } = req.body;
+  const { cid, assets } = req.body; // Make sure these come in as expected & eensure they are not undefined/''
   let config = getConfig('./config.json');
-  config.contract_addr = contract_addr;
-  config.chain_id = chain_id;
+  config.cid = cid;
+  config.assets = assets;
   fs.writeFileSync('./config.json', JSON.stringify(config));
-  fs.writeFileSync('./../../lib/config.json', JSON.stringify(config)); // CHECK THIS IS THE CORRECT PATH
-  console.log("complete");
+  console.log("complete", config);
   res.status(200)
 });
 
@@ -25,6 +24,6 @@ module.exports = router;
 /**
  * TODO
  *  - Save assets to cache before going to config page
- *    - saveCid => load cache, if exists ? update field : create new file and save with all options besides cid as empty
  *    - saveConfig => load cache, if exists ? update fields for each config : save config then throw error
+ *      - mv ./config.json ./../../lib/config.json
  */

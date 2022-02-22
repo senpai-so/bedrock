@@ -7,7 +7,7 @@ export type CacheContent = {
   assets: string[];
   cid: string;
   contract_addr: string;
-  chainId: string;
+  chain_id: string;
 }
 
 export type CacheResponse = {

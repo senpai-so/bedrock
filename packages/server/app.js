@@ -6,6 +6,7 @@ var logger = require('morgan');
 var cors = require('cors');
 
 var saveRouter = require('./routes/save');
+var saveCidRouter = require('./routes/saveCid');
 var getWasm = require('./routes/getWasm');
 
 var app = express();
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/save', saveRouter);
+app.use('/saveCid', saveCidRouter)
 app.use('/getWasm', getWasm);
 
 // catch 404 and forward to error handler

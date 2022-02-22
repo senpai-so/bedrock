@@ -14,13 +14,13 @@ export const mint = async (
 ) => {
   if (cacheContent.contract_addr == '') return;
   if (cacheContent.assets.length == 0) return;
-  if (cacheContent.chainId == '') return;
+  if (cacheContent.chain_id == '') return;
 
   // Load wallet & LCD client 
-  const lcd = await getClient(cacheContent.chainId);
+  const lcd = await getClient(cacheContent.chain_id);
 
   const { tokens } = await lcd.wasm.contractQuery(cacheContent.contract_addr, {
-    all_tokens: { limit: undefined, start_after: undefined }
+    all_tokens: { limit: undefined, start_after: undefined } // ensure all_tokens isn't bugged
   });
  
   console.log()
