@@ -11,16 +11,12 @@ export default async function handler(
   res: NextApiResponse<ConfigResponse>
 ) {
   if (req.method === 'POST') {
-    
-
-
-    res.status(200).json({ success: true, cacheStr: JSON.stringify({}) });
+    res.status(200).json({ success: true, cacheStr: JSON.stringify({}) })
 
     return
   }
 
   if (req.method === 'GET') {
-
   }
 
   // catch-all

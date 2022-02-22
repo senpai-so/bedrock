@@ -16,14 +16,14 @@ import { CacheContent } from 'lib/types'
 import { mint } from 'lib/chain/mint'
 import router from 'next/router'
 
-import cacheContent from '../lib/config.json';
+import cacheContent from '../lib/config.json'
 
 class ServerError extends Error {}
 
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
   const [showModal, setShowModal] = React.useState(false)
-  const connectedWallet = useConnectedWallet();
+  const connectedWallet = useConnectedWallet()
 
   const toggleDisconnect = () => {
     setShowModal(!showModal)
@@ -36,10 +36,10 @@ export default function Index() {
   const handleClickMint = async () => {
     const toastId = toast.loading('Transaction Pending...')
     if (connectedWallet) {
-      const token_id = await mint(connectedWallet, cacheContent as CacheContent);
-      console.log("Minted", token_id);
+      const token_id = await mint(connectedWallet, cacheContent as CacheContent)
+      console.log('Minted', token_id)
       if (typeof token_id !== 'undefined') {
-        router.push(`/${token_id}`);
+        router.push(`/${token_id}`)
       }
     }
   }
@@ -85,7 +85,7 @@ export default function Index() {
               />
             </div>
 
-            { connectedWallet?.connectType !== ConnectType.EXTENSION ? (
+            {connectedWallet?.connectType !== ConnectType.EXTENSION ? (
               <button
                 className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onClick={() => connect(ConnectType.EXTENSION)}

@@ -6,9 +6,7 @@ async function handleErrors(response: Response) {
   return response
 }
 
-const get = (
-  endpoint: string,
-): Promise<Response> => {
+const get = (endpoint: string): Promise<Response> => {
   if (endpoint.startsWith('/')) {
     endpoint = endpoint.slice(1)
   }
