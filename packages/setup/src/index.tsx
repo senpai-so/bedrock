@@ -7,8 +7,8 @@ import {
   Route,
 } from "react-router-dom";
 
-import App from './App';
-import Config from './config';
+import CIDPage from './CIDPage';
+import ConfigPage from './ConfigPage';
 import './styles/globals.css';
 
 
@@ -17,8 +17,8 @@ getChainOptions().then((chainOptions) => {
     <WalletProvider {...chainOptions}>
       <Router>
         <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/config" element={<Config />} />
+          <Route path="/" element={<CIDPage />} />
+          <Route path="/config" element={<ConfigPage />} />
         </Routes>
       </Router>
     </WalletProvider>,

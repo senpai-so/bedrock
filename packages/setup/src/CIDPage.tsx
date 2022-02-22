@@ -7,7 +7,7 @@ import { Page } from './components/Page';
 import { getFiles } from './utils/ipfs';
 
 
-function App() {
+function CIDPage() {
   // cid values
   const [cid, setCid] = useState<string | undefined>();
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ function App() {
         console.log(res);
       })
       .catch(e => console.log(e));
-    // toast.dismiss(toastSuccessId);
+    toast.dismiss(toastSuccessId);
     navigate('/config');
   }
   
@@ -94,4 +94,4 @@ function App() {
   )
 }
 
-export default App;
+export default CIDPage;

@@ -7,7 +7,7 @@ import { InitMsg } from './utils/types';
 import { createContract } from './utils/upload';
 import { getClient } from './utils/getClient';
 
-function Config() {
+function ConfigPage() {
 
   // Config values
   const [name, setName] = useState<string | undefined>();
@@ -292,4 +292,4 @@ function Config() {
   )
 }
 
-export default Config;
+export default ConfigPage;
