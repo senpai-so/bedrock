@@ -66,7 +66,7 @@ function App() {
                     {'Getting Started'}
                   </h2>
 
-                  <p className='text-base text-gray-700'>
+                  <p className='text-base text-gray-500'>
                     { 'Paste the IPFS CID for your assets below to get started!' }
                   </p>
 
