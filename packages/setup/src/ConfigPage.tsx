@@ -6,6 +6,7 @@ import { Page } from 'components/Page';
 import { InitMsg } from './utils/types';
 import { createContract } from './utils/upload';
 import { getClient } from './utils/getClient';
+import { check } from 'yargs';
 
 function ConfigPage() {
 
@@ -13,14 +14,13 @@ function ConfigPage() {
   const [name, setName] = useState<string | undefined>();
   const [symbol, setSymbol] = useState<string | undefined>();
   const [price, setPrice] = useState<string | undefined>();
-  const [adminAddr, setAdminAddr] = useState<string | undefined>();
   const [startTime, setStartTime] = useState<number | undefined>();
   const [endTime, setEndTime] = useState<number | undefined>();
   const [maxTokens, setMaxTokens] = useState<number | undefined>();
   const [isPublic, setIsPublic] = useState(false);
 
   // Wallets
-  const { status, connect } = useWallet();
+  const { status, connect, connection } = useWallet();
   const connectedWallet = useConnectedWallet();
 
   const checkFields = () => {
@@ -37,27 +37,43 @@ function ConfigPage() {
       success = false;
       toast.warn("Please enter your price as a number.");
     }
-    if (typeof adminAddr === 'undefined' || adminAddr ) { // check if addr is in a valid format (starts with terra, is X chars long)
+    if (typeof startTime !== 'undefined' && Number.isNaN(startTime)) {
       success = false;
-      toast.warn("Please enter the admin address.");
+      toast.warn("Please enter a valid start time");
     }
+    if (typeof endTime !== 'undefined' && (Number.isNaN(endTime) || endTime < new Date().getUTCSeconds())) {
+      success = false;
+      toast.warn("Please enter a valid end time");
+    }
+    if (typeof maxTokens === 'undefined' || maxTokens < 1) {
+      success = false;
+      toast.warn("Please enter a number above 0 for Max Number of Tokens")
+    }
+    return success
   }
+
+  console.log("connected wallet", connectedWallet?.walletAddress);
 
   const launchCollection = async () => {
     // Safety
-    if (status === WalletStatus.WALLET_NOT_CONNECTED || connectedWallet?.connectType !== ConnectType.EXTENSION) {
-      connect(ConnectType.EXTENSION);
-    }
-    if (typeof name === 'undefined' || 
-        typeof symbol === 'undefined' || 
-        typeof price === 'undefined' ||
-        typeof adminAddr === 'undefined' ||
-        typeof maxTokens === 'undefined'
-      ) { return }
-  
+    if (
+      status === WalletStatus.WALLET_NOT_CONNECTED || 
+      typeof connectedWallet === 'undefined' ||
+      connectedWallet?.connectType !== ConnectType.EXTENSION 
+    ) { connect(ConnectType.EXTENSION); }
+    if (!checkFields()) return; 
     if (typeof connectedWallet === 'undefined') return;
+
+    // undefined checks for typescript
+    if (
+      typeof name === 'undefined' ||
+      typeof symbol === 'undefined' ||
+      typeof price === 'undefined' ||
+      typeof maxTokens === 'undefined'
+    ) { return; }
   
     // create instantiate message
+    
     const msg: InitMsg = {
       name: name,
       symbol: symbol,
@@ -65,7 +81,7 @@ function ConfigPage() {
         amount: price.concat("000000"),
         denom: 'uluna'
       },
-      treasury_account: adminAddr,
+      treasury_account: connectedWallet.walletAddress,
       start_time: startTime,
       end_time: endTime,
       max_token_count: maxTokens,
@@ -182,7 +198,7 @@ function ConfigPage() {
                             name='price'
                             className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
                             onChange={(e) =>
-                              setPrice(e.currentTarget.value) // ensure there are commas or non-numeric values
+                              setPrice(e.currentTarget.value)
                             }
                           />
                         </div>
@@ -197,12 +213,11 @@ function ConfigPage() {
                         </label>
                         <div className='mt-1'>
                           <input
+                            disabled={true}
                             type='text'
                             name='admin'
-                            className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
-                            onChange={(e) =>
-                              setAdminAddr(e.currentTarget.value)
-                            }
+                            value={connectedWallet?.walletAddress}
+                            className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm bg-blue-100'
                           />
                         </div>
                       </div>

@@ -64,21 +64,21 @@ function CIDPage() {
           />
             <div className='bg-white max-w-2xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
               <div className='flex flex-col items-center justify-center space-y-4'>
-                <div className='flex flex-col items-center justify-center space-y-12'>
+                <div className='flex flex-col items-center justify-center space-y-8'>
 
-                  <div className='flex flex-col items-centeer justify-center'>
+                  <div className='flex flex-col items-center justify-center'>
                     <h2 className='font-bold text-center text-3xl text-blue-700'>
                       {'Getting Started'}
                     </h2>
 
-                    <p className='text-base text-center text-gray-700'>
+                    <p className='text-base text-center text-gray-700 mt-2'>
                       { 'Paste the IPFS CID for your assets below to get started!' }
                     </p>
                   </div>
                   
                   <input
                     type='text'
-                    className='input inline-flex px-3 py-3 w-max-5xl w-auto border border-blue-700 text-l rounded-xl shadow-sm'
+                    className='input inline-flex px-3 py-3 w-max-3xl w-9/12 border border-blue-700 text-l rounded-xl shadow-sm'
                     placeholder='IPFS CID'
                     onChange={(e) =>
                       setCid(e.currentTarget.value)
