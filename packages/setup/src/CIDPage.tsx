@@ -13,7 +13,10 @@ function CIDPage() {
   const navigate = useNavigate();
 
   const submitCid = async () => {
-    if (typeof cid === 'undefined') return;
+    if (typeof cid === 'undefined') {
+      toast.warn("Please enter a valid CID from IPFS");
+      return
+    };
     const toastLoadingId = toast.loading('Getting token data...');
     const files = await getFiles(cid);
     toast.dismiss(toastLoadingId);
@@ -62,18 +65,20 @@ function CIDPage() {
             <div className='bg-white max-w-2xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
               <div className='flex flex-col items-center justify-center space-y-4'>
                 <div className='flex flex-col items-center justify-center space-y-12'>
-                  <h2 className='font-bold text-3xl text-blue-700'>
-                    {'Getting Started'}
-                  </h2>
 
-                  <p className='text-base text-gray-500'>
-                    { 'Paste the IPFS CID for your assets below to get started!' }
-                  </p>
+                  <div className='flex flex-col items-centeer justify-center'>
+                    <h2 className='font-bold text-center text-3xl text-blue-700'>
+                      {'Getting Started'}
+                    </h2>
 
+                    <p className='text-base text-center text-gray-700'>
+                      { 'Paste the IPFS CID for your assets below to get started!' }
+                    </p>
+                  </div>
+                  
                   <input
                     type='text'
-                    className='input inline-flex px-3 py-3 w-max-3xl w-auto border border-blue-700 text-l rounded-xl shadow-sm'
-                    value={cid}
+                    className='input inline-flex px-3 py-3 w-max-5xl w-auto border border-blue-700 text-l rounded-xl shadow-sm'
                     placeholder='IPFS CID'
                     onChange={(e) =>
                       setCid(e.currentTarget.value)
@@ -81,7 +86,7 @@ function CIDPage() {
                   />
 
                   <button
-                    className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                    className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                     onClick={() => submitCid()}
                   >
                     Sync!
