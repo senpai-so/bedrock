@@ -18,11 +18,9 @@ import router from 'next/router'
 
 import cacheContent from '../lib/config.json'
 
-class ServerError extends Error {}
-
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
-  const [showModal, setShowModal] = React.useState(false)
+  const [showModal, setShowModal] = React.useState(true)
   const connectedWallet = useConnectedWallet()
 
   const toggleDisconnect = () => {

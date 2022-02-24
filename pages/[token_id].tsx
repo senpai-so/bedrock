@@ -14,21 +14,21 @@ import { Modal } from 'components/Modal'
 import { getLCD } from 'lib/utils/terra'
 import { NFTTokenItem, OwnerOf } from 'lib/types'
 
-const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
+import cacheContent from '../lib/config.json'
+import { getClient } from '../lib/chain/getClient';
 
 const isProperImage = (imageUri: string) =>
   imageUri.startsWith('http://') || imageUri.startsWith('https://')
 
 export default function Index() {
-  const { status, availableConnections, connect, disconnect } = useWallet()
+  const { status, availableConnections, connect, disconnect } = useWallet();
+  const connectedWallet = useConnectedWallet();
 
   const [nftInfo, setNFTInfo] = React.useState<NFTTokenItem | null>(null)
   const [showModal, setShowModal] = React.useState(false)
 
   const router = useRouter()
   const { token_id } = router.query
-
-  const connectedWallet = useConnectedWallet()
 
   const imageStyle = 'h-32 w-32 rounded-xl mx-auto mb-4'
 
@@ -106,9 +106,10 @@ export default function Index() {
   useEffect(() => {
     async function fetchSetNFTData(tokenId: string) {
       try {
-        const lcd = await getLCD()
+        if (typeof connectedWallet === 'undefined') return;
+        const lcd = await getClient(connectedWallet?.network.chainID);
         const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
-          contractAddress,
+          cacheContent.contract_addr,
           {
             owner_of: { token_id: tokenId }
           }
@@ -116,7 +117,7 @@ export default function Index() {
 
         if (ownership.owner === connectedWallet?.walletAddress) {
           const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
-            contractAddress,
+            cacheContent.contract_addr,
             {
               nft_info: { token_id: tokenId }
             }

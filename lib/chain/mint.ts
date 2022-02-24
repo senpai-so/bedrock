@@ -1,7 +1,7 @@
 import { getClient } from './getClient'
 import { CacheContent } from 'lib/types'
 import { MintMsg } from '../../packages/cli/src/lib/types'
-import { isTxError, LCDClient, MsgExecuteContract } from '@terra-money/terra.js'
+import { isTxError, MsgExecuteContract } from '@terra-money/terra.js'
 import { create } from 'ipfs-http-client'
 import {
   concat as uint8ArrayConcat,
@@ -23,12 +23,6 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
   console.log()
 
   // Select our NFT to mint
-  let mintMsg: MintMsg = {
-    token_id: '',
-    owner: undefined,
-    token_uri: undefined,
-    extension: undefined
-  }
   const newAssets = cacheContent.assets.filter(
     (asset) => !tokens.includes(asset.split('.')[0])
   )
@@ -42,7 +36,7 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
   const ipfsPath = `${cacheContent.cid}/${assetJson}`
   const tokenData = JSON.parse(await getIPFSContents(ipfsPath))
 
-  mintMsg = {
+  const mintMsg = {
     token_id: newAssets[0].split('.')[0],
     owner: wallet.walletAddress,
     token_uri: `ipfs://${cacheContent.cid}/${assetJson}`,
