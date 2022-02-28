@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { ConnectType, useWallet, WalletStatus } from '@terra-money/wallet-provider';
 
 import { Page } from './components/Page';
-
 import { getFiles } from './utils/ipfs';
-import { ConnectType, useWallet, WalletStatus } from '@terra-money/wallet-provider';
 
 
 function CIDPage() {
   const [cid, setCid] = useState<string | undefined>();
-  const { status, connect, disconnect } = useWallet();
+  const { status, connect } = useWallet();
   const navigate = useNavigate();
 
   // disconnect()

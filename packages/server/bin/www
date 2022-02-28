@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('server:server');
 var http = require('http');
-var { spawn, exec, fork } = require('child_process');
+var { spawn } = require('child_process');
 
 /**
  * Get port from environment and store in Express.
@@ -44,19 +44,6 @@ dAppProc.stderr.on('data', (data) => {
 dAppProc.stdout.on('data', (data) => {
   console.log(data.toString());
 });
-// exec('(cd ../setup && exec yarn start)', {maxBuffer: 1_000_000}, (error, stdout, stderr) => {
-//   if (error) {
-//     console.error(`error: ${error.message}`);
-//     return;
-//   }
-
-//   if (stderr) {
-//     console.error(`stderr: ${stderr}`);
-//     return;
-//   }
-
-//   console.log(`stdout:\n${stdout}`);
-// });
 
 
 /**

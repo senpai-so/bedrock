@@ -1,4 +1,3 @@
-import { reset } from 'yargs';
 import { Page } from './components/Page';
 
 function FinalPage() {

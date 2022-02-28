@@ -1,5 +1,5 @@
 const express = require("express");
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 
 let processCount = 0
 
