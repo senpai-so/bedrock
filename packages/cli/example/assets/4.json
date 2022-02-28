@@ -1,21 +1,15 @@
 {
-  "manifest": {
-    "token_id": "L1qSWy2UK5",
-    "name": "loonies4"
-  },
-  "metadata": {
-    "description": "OG loonie",
-    "name": "loonie4",
-    "image": "",
-    "attributes": [
-      { "trait_type": "Type", "value": "pedestrian" },
-      { "trait_type": "Background", "value": "galactic sunset" },
-      { "trait_type": "Body", "value": "green" },
-      { "trait_type": "Eyes", "value": "reading" },
-      { "trait_type": "Mouth", "value": "blowing bubble" },
-      { "trait_type": "Headwear", "value": "pot head" },
-      { "trait_type": "Outfit", "value": "orange turtleneck sweater" },
-      { "trait_type": "Items", "value": "map" }
-    ]
-  }
+  "description": "OG loonie",
+  "name": "loonie4",
+  "image": "",
+  "attributes": [
+    { "trait_type": "Type", "value": "pedestrian" },
+    { "trait_type": "Background", "value": "galactic sunset" },
+    { "trait_type": "Body", "value": "green" },
+    { "trait_type": "Eyes", "value": "reading" },
+    { "trait_type": "Mouth", "value": "blowing bubble" },
+    { "trait_type": "Headwear", "value": "pot head" },
+    { "trait_type": "Outfit", "value": "orange turtleneck sweater" },
+    { "trait_type": "Items", "value": "map" }
+  ]
 }

@@ -42,7 +42,14 @@ export type Trait = {
   display_type: string | undefined
 }
 
-// Legacy
+// Responses
+
+export type NftInfoResponse = {
+  extension: Metadata | undefined
+  // token_uri: string | undefined
+}
+
+/// Legacy
 
 export interface NFTContract {
   contract: string
@@ -56,19 +63,6 @@ export interface NFTContract {
 export interface NFTMarketplace {
   link: string
   name: string
-}
-
-export interface NFTTokenItem {
-  name?: string
-  description?: string
-  image?: string
-  extension: Extension
-}
-
-export interface Extension {
-  name?: string
-  description?: string
-  image?: string
 }
 
 export interface OwnerOf {

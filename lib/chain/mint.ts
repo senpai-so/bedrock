@@ -1,5 +1,5 @@
 import { getClient } from './getClient'
-import { CacheContent } from 'lib/types'
+import { CacheContent, Metadata } from 'lib/types'
 import { MintMsg } from '../../packages/cli/src/lib/types'
 import { isTxError, MsgExecuteContract } from '@terra-money/terra.js'
 import { create } from 'ipfs-http-client'
@@ -34,13 +34,14 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
 
   const assetJson = `${newAssets[0].split('.')[0]}.json`
   const ipfsPath = `${cacheContent.cid}/${assetJson}`
-  const tokenData = JSON.parse(await getIPFSContents(ipfsPath))
+  const metadata = JSON.parse(await getIPFSContents(ipfsPath)) as Metadata;
+  metadata.image = "https://ipfs.io/ipfs/QmYWztJXwypvEFrc3R2p1cA1uLBLV6A3kT7RPzzam4Qo3z/1.jpg";
 
   const mintMsg = {
     token_id: newAssets[0].split('.')[0],
     owner: wallet.walletAddress,
-    token_uri: `ipfs://${cacheContent.cid}/${assetJson}`,
-    extension: tokenData.metadata
+    // token_uri: `ipfs://${cacheContent.cid}/${assetJson}`,
+    extension: metadata
   }
 
   const execMsg = { mint: mintMsg }

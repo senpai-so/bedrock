@@ -20,7 +20,7 @@ import cacheContent from '../lib/config.json'
 
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
-  const [showModal, setShowModal] = React.useState(true)
+  const [showModal, setShowModal] = React.useState(false)
   const connectedWallet = useConnectedWallet()
 
   const toggleDisconnect = () => {

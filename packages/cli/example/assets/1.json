@@ -1,21 +1,15 @@
 {
-  "manifest": {
-    "token_id": "to0HpOKp8F",
-    "name": "loonies1"
-  },
-  "metadata": {
-    "description": "OG loonie",
-    "name": "loonie1",
-    "image": "",
-    "attributes": [
-      { "trait_type": "Type", "value": "pedestrian" },
-      { "trait_type": "Background", "value": "blue cosmos" },
-      { "trait_type": "Body", "value": "yellow" },
-      { "trait_type": "Eyes", "value": "glasses,reading" },
-      { "trait_type": "Mouth", "value": "loonie smile" },
-      { "trait_type": "Headwear", "value": "construction helmet,earplug" },
-      { "trait_type": "Outfit", "value": "blue overalls" },
-      { "trait_type": "Items", "value": "map" }
-    ]
-  }
+  "description": "OG loonie",
+  "name": "loonie1",
+  "image": "",
+  "attributes": [
+    { "trait_type": "Type", "value": "pedestrian" },
+    { "trait_type": "Background", "value": "blue cosmos" },
+    { "trait_type": "Body", "value": "yellow" },
+    { "trait_type": "Eyes", "value": "glasses,reading" },
+    { "trait_type": "Mouth", "value": "loonie smile" },
+    { "trait_type": "Headwear", "value": "construction helmet,earplug" },
+    { "trait_type": "Outfit", "value": "blue overalls" },
+    { "trait_type": "Items", "value": "map" }
+  ]
 }
