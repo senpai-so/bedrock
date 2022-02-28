@@ -10,7 +10,7 @@ const getConfig = (path) => {
 
 var router = express.Router();
 router.post("/", function(req, res, next) {
-  const { cid, assets } = req.body; // Make sure these come in as expected & eensure they are not undefined/''
+  const { cid, assets } = req.body;
   let config = getConfig('./config.json');
   config.cid = cid;
   config.assets = assets;
@@ -20,10 +20,3 @@ router.post("/", function(req, res, next) {
 });
 
 module.exports = router;
-
-/**
- * TODO
- *  - Save assets to cache before going to config page
- *    - saveConfig => load cache, if exists ? update fields for each config : save config then throw error
- *      - mv ./config.json ./../../lib/config.json
- */

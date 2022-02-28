@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-
 import {
   useWallet,
   useConnectedWallet,
@@ -10,10 +9,7 @@ import {
 
 import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
-
-import { getLCD } from 'lib/utils/terra'
 import { NftInfoResponse, OwnerOf } from 'lib/types'
-
 import cacheContent from '../lib/config.json'
 import { getClient } from '../lib/chain/getClient';
 

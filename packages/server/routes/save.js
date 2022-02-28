@@ -15,16 +15,9 @@ router.post("/", function(req, res, next) {
   config.contract_addr = contract_addr;
   config.chain_id = chain_id;
   fs.writeFileSync('./config.json', JSON.stringify(config));
-  fs.writeFileSync('./../../lib/config.json', JSON.stringify(config)); // CHECK THIS IS THE CORRECT PATH
+  fs.writeFileSync('./../../lib/config.json', JSON.stringify(config));
   console.log("complete");
   res.status(200)
 });
 
 module.exports = router;
-
-/**
- * TODO
- *  - Save assets to cache before going to config page
- *    - saveCid => load cache, if exists ? update field : create new file and save with all options besides cid as empty
- *    - saveConfig => load cache, if exists ? update fields for each config : save config then throw error
- */
