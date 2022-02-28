@@ -9,6 +9,7 @@ import {
 
 import CIDPage from './CIDPage';
 import ConfigPage from './ConfigPage';
+import FinalPage from './FinalPage';
 import './styles/globals.css';
 
 
@@ -19,6 +20,7 @@ getChainOptions().then((chainOptions) => {
         <Routes>
           <Route path="/" element={<CIDPage />} />
           <Route path="/config" element={<ConfigPage />} />
+          <Route path="/complete" element={<FinalPage />} />
         </Routes>
       </Router>
     </WalletProvider>,

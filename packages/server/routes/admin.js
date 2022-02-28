@@ -1,19 +1,25 @@
 const express = require("express");
-const fs = require('fs');
 const { spawn, exec } = require('child_process');
 
+let processCount = 0
 
 var router = express.Router();
 router.post("/startDev", function(req, res, next) {
-  // const { contract_addr, chain_id } = req.body;
-  // let config = getConfig('./config.json');
-  // config.contract_addr = contract_addr;
-  // config.chain_id = chain_id;
-  // fs.writeFileSync('./config.json', JSON.stringify(config));
-  // fs.writeFileSync('./../../lib/config.json', JSON.stringify(config));
-  // console.log("complete");
-  spawn('yarn dev', {cwd: './../../'});
-  res.status(200)
+  if (processCount > 0) {
+    next(new Error("Child process already running. Check localhost:3002"))
+  }
+
+  const dAppProc = spawn('yarn', ['dev'], { cwd: './../../' });
+
+  dAppProc.stderr.on('data', (data) => {
+    console.error(data.toString());
+  })
+  
+  dAppProc.stdout.on('data', (data) => {
+    console.log(data.toString());
+  });
+
+  res.status(200).json({success: true})
 });
 
 module.exports = router;

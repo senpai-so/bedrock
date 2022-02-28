@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { ConnectType, useConnectedWallet, useWallet, WalletStatus } from '@terra-money/wallet-provider';
+import { useEffect, useState } from 'react';
+import { ConnectType, useConnectedWallet } from '@terra-money/wallet-provider';
 import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 import { Page } from 'components/Page';
 import { InitMsg } from './utils/types';
 import { createContract } from './utils/upload';
 import { getClient } from './utils/getClient';
-import { useNavigate } from 'react-router-dom';
 
 function ConfigPage() {
 
@@ -19,16 +19,14 @@ function ConfigPage() {
   const [maxTokens, setMaxTokens] = useState<number | undefined>();
   const [isPublic, setIsPublic] = useState(false);
 
-  // Wallets
+  // Hooks
   const connectedWallet = useConnectedWallet();
-
   const navigate = useNavigate();
-
-  if (
-    status === WalletStatus.WALLET_NOT_CONNECTED || 
-    typeof connectedWallet === 'undefined' ||
-    connectedWallet?.connectType !== ConnectType.EXTENSION 
-  ) { navigate('/'); }
+  useEffect( () => {
+    if (typeof connectedWallet === 'undefined' ||
+      connectedWallet?.connectType !== ConnectType.EXTENSION 
+    ) { navigate('/'); }
+  })
 
   const checkFields = () => {
     let success = true;
@@ -73,7 +71,6 @@ function ConfigPage() {
     ) { return; }
   
     // create instantiate message
-    
     const msg: InitMsg = {
       name: name,
       symbol: symbol,
@@ -100,14 +97,12 @@ function ConfigPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config)
     }
-  
+    console.log("fetching");
     fetch("http://localhost:3001/save", requestOptions)
-      .then(res => res.json())
-      .then(res => {
-        console.log("Success!");
-        console.log(res);
-      })
-      .catch(e => console.log(e))
+      .then(() => console.log("Config saved"))
+      .catch(e => console.error(e));
+    console.log("navving");
+    navigate('/complete');
   }
 
   return (

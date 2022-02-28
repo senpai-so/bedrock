@@ -39,7 +39,7 @@ export const createContract = async (
   const instantiate = new MsgInstantiateContract(
     wallet.walletAddress,
     wallet.walletAddress,
-    CODE_ID, // Add option to update the code
+    CODE_ID,
     { 
       name: msg.name,
       symbol: msg.symbol,

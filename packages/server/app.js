@@ -8,6 +8,7 @@ var cors = require('cors');
 var saveRouter = require('./routes/save');
 var saveCidRouter = require('./routes/saveCid');
 var getWasm = require('./routes/getWasm');
+var admin = require('./routes/admin');
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/save', saveRouter);
 app.use('/saveCid', saveCidRouter)
 app.use('/getWasm', getWasm);
+app.use('/admin', admin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
