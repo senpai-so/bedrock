@@ -6,7 +6,8 @@ module.exports = {
       'assets.terra.money',
       'localhost',
       'loonies.world',
-      'dl.airtable.com'
+      'dl.airtable.com',
+      'ipfs.io',
     ]
   }
 }

@@ -51,6 +51,6 @@ export type Input = {
 };
 
 type Coin = {
-  amount: string; // Uint128
+  amount: string;
   denom: string;
 }

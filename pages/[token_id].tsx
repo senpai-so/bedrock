@@ -12,23 +12,23 @@ import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
 
 import { getLCD } from 'lib/utils/terra'
-import { NFTTokenItem, OwnerOf } from 'lib/types'
+import { NftInfoResponse, OwnerOf } from 'lib/types'
 
-const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || ''
+import cacheContent from '../lib/config.json'
+import { getClient } from '../lib/chain/getClient';
 
 const isProperImage = (imageUri: string) =>
   imageUri.startsWith('http://') || imageUri.startsWith('https://')
 
 export default function Index() {
-  const { status, availableConnections, connect, disconnect } = useWallet()
+  const { status, availableConnections, connect, disconnect } = useWallet();
+  const connectedWallet = useConnectedWallet();
 
-  const [nftInfo, setNFTInfo] = React.useState<NFTTokenItem | null>(null)
+  const [nftInfo, setNFTInfo] = React.useState<NftInfoResponse | null>(null)
   const [showModal, setShowModal] = React.useState(false)
 
   const router = useRouter()
   const { token_id } = router.query
-
-  const connectedWallet = useConnectedWallet()
 
   const imageStyle = 'h-32 w-32 rounded-xl mx-auto mb-4'
 
@@ -73,32 +73,13 @@ export default function Index() {
         <>
           <h2>You are not the owner of this NFT!</h2>
           <p>You need to be the owner to view this</p>
-          <div
-            className='border cursor-pointer px-4 py-2 sm:text-lg border-gray-300 rounded-lg text-gray-700'
-            onClick={() => toggleDisconnect()}
-          >
-            🧧{' '}
-            <span className='px-3 py-2 font-medium'>
-              {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
-            </span>
-          </div>
         </>
       )
     }
 
     return (
       <>
-        <div>{renderImage()}</div>
-
-        <div
-          className='border cursor-pointer px-4 py-2 sm:text-lg border-gray-300 rounded-lg text-gray-700'
-          onClick={() => toggleDisconnect()}
-        >
-          🧧{' '}
-          <span className='px-3 py-2 font-medium'>
-            {abbreviateWalletAddress(connectedWallet?.walletAddress || '')}
-          </span>
-        </div>
+        <div style={{height: 400, width: 400}}>{renderImage()}</div>
       </>
     )
   }
@@ -106,17 +87,18 @@ export default function Index() {
   useEffect(() => {
     async function fetchSetNFTData(tokenId: string) {
       try {
-        const lcd = await getLCD()
-        const ownership = (await lcd.wasm.contractQuery<NFTTokenItem>(
-          contractAddress,
+        if (typeof connectedWallet === 'undefined') return;
+        const lcd = await getClient(connectedWallet?.network.chainID);
+        const ownership = (await lcd.wasm.contractQuery<NftInfoResponse>(
+          cacheContent.contract_addr,
           {
             owner_of: { token_id: tokenId }
           }
         )) as unknown as OwnerOf
 
         if (ownership.owner === connectedWallet?.walletAddress) {
-          const nftInfo = await lcd.wasm.contractQuery<NFTTokenItem>(
-            contractAddress,
+          const nftInfo = await lcd.wasm.contractQuery<NftInfoResponse>(
+            cacheContent.contract_addr,
             {
               nft_info: { token_id: tokenId }
             }
@@ -136,21 +118,26 @@ export default function Index() {
   return (
     <div
       className='h-full'
-      style={{
+      style={!nftInfo ? {
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
-        height: '100vh'
+        height: '100vh',
+      } : {
+        backgroundImage: 'url(/background.png)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%',
       }}
     >
       <Page>
         <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
           <div className='flex flex-col items-center justify-center space-y-4'>
             <h2 className='font-bold text-3xl text-blue-700'>
-              {nftInfo?.extension.name || 'NFT View Page'}
+              {nftInfo?.extension?.name || 'NFT View Page'}
             </h2>
 
             <p className='text-base text-gray-700'>
-              {nftInfo?.description || ``}
+              {nftInfo?.extension?.description || ``}
             </p>
 
             {status === WalletStatus.WALLET_NOT_CONNECTED && (
