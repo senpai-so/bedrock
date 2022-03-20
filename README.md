@@ -5,12 +5,9 @@
 Our main features are
 
 - [x] _Create_ NFT collections
-- [ ] _Mint and Sell_ NFT's on storefront
-- [ ] _Pay_ using Fiat
-- [ ] _Create auctions_ for resale of NFT's
+- [x] _Mint and Sell_ NFT's on storefront
 
-Bedrock is meant to be a single repo with three components: a front-end, set of COSMWASM contracts deployable on Terra, and
-a payments integration.
+Bedrock is meant to be a single repo with three components: a front-end, and set of COSMWASM contracts deployable on Terra.
 
 ## Getting Started
 
