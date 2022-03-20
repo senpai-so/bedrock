@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "bless": "cd packages/server && yarn start:auto",
     "dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
