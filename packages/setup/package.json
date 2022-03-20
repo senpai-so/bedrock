@@ -4,7 +4,8 @@
   "proxy": "http://localhost:3001",
   "scripts": {
     "build": "react-app-rewired build",
-    "start": "react-app-rewired start"
+    "start": "react-app-rewired start",
+    "start:auto": "yarn && react-app-rewired start"
   },
   "browserslist": {
     "production": [
