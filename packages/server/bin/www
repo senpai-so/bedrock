@@ -35,7 +35,7 @@ server.on('listening', onListening);
  */
 console.log("Starting local configuration app...");
 
-const dAppProc = spawn('yarn', ['start'], { cwd: '../setup' });
+const dAppProc = spawn('yarn', ['start:auto'], { cwd: '../setup' });
 
 dAppProc.stderr.on('data', (data) => {
   console.error(data.toString());
