@@ -32,9 +32,7 @@ export const transfer = async (
   console.log("ExecMsg:", transferMsg);
 
   const result = await executeTransaction(terra, wallet, contract_address, execMsg);
-  const { from_contract } = result.logs[0].eventsByType;
 
   console.log("Transfer successful!");
   console.log("txhash:", result.txhash);
-  console.log(from_contract);
 }
