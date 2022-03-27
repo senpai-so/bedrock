@@ -40,6 +40,16 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "Path to config file"
       },
+      pinata_key: {
+        type: "string",
+        demandOption: true,
+        description: "Pinata public key"
+      },
+      pinata_secret: {
+        type: "string",
+        demandOption: true,
+        description: "Pinata private key"
+      },
     })
   })
   .command("mint", "mints a single NFT", yargs => {
@@ -107,21 +117,26 @@ const main = async () => {
   const args = await argv;
 
   const command = args._[0];
-  const env = args.e as string;
-  const pk = args.k as string;
-  const pass = args.p as string;
-  const config = args.o as string;
+  const env = args.e as string | undefined;
+  const pk = args.k as string | undefined;
+  const pass = args.p as string | undefined;
+  const config = args.o as string | undefined;
+  const recipient = args.r as string | undefined;
+  const token_id = args.t as string | undefined;
+  const pinata_key = args.pinata_key as string | undefined;
+  const pinata_secret = args.pinata_secret as string | undefined;
 
   const cache = "cache";
 
   if (typeof command === "string" && command === "upload") {
+    if (typeof env === 'undefined' || typeof pass === 'undefined' || typeof pk === 'undefined' || typeof pass === 'undefined' || typeof config === 'undefined' || typeof pinata_key === 'undefined' || typeof pinata_secret === 'undefined' ) return;
     const path = args._[1] as string;
-    await upload(cache, env, path, pk, pass, config);
+    await upload(cache, env, path, pk, pass, config, pinata_key, pinata_secret);
   } else if (typeof command === "string" && command === "mint") {
+    if (typeof env === 'undefined' || typeof pass === 'undefined' || typeof pk === 'undefined' || typeof pass === 'undefined') return;
     await mint(env, pk, pass, cache);
   } else if (typeof command === "string" && command === "transfer") {
-    const recipient = args.r as string;
-    const token_id = args.t as string;
+    if (typeof env === 'undefined' || typeof pass === 'undefined' || typeof pk === 'undefined' || typeof pass === 'undefined' || typeof config === 'undefined' || typeof recipient === 'undefined' || typeof token_id === 'undefined') return;
     await transfer(env, pk, pass, cache, recipient, token_id);
   } else {
     console.error("Invalid command");

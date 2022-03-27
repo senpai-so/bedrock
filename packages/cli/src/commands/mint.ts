@@ -6,9 +6,6 @@ import { encryptedToRawKey } from '../utils/keys';
 
 
 export const mint = async (
-  // wallet: any,
-  // cacheName: string,
-  // env: string,
   env: string,
   pk: string, 
   pass: string,

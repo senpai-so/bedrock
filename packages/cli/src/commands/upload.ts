@@ -23,12 +23,15 @@ export const upload = async (
   pk: string,
   pass: string,
   config: string,
+  pinataKey: string,
+  pinataSecret: string,
   ) => {
     const cacheContent: CacheContent = { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
 
     // Upload files to IPFS
-    const assets = await ipfsUpload(path, 'ac77071ba1a2bc88284e', 'c424e7f88c955c8dd89cd8c8c48e2b3673aa4969485188f0d1a791cb49eb3e42');
+    const { assets, cid } = await ipfsUpload(path, pinataKey, pinataSecret);
     console.log("Asset upload complete");
+    console.log("IPFS CID:", cid);
     cacheContent.items = assets;
     saveCache(cacheName, env, cacheContent);
 
@@ -94,7 +97,7 @@ const ipfsUpload = async (dirPath: string, apiKey: string, apiSecret: string) =>
     }
   });
 
-  return assets
+  return { assets, cid };
 }
 
 const createContract = async (
