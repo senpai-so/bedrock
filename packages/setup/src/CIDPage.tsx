@@ -12,8 +12,6 @@ function CIDPage() {
   const { status, connect } = useWallet();
   const navigate = useNavigate();
 
-  // disconnect()
-
   const submitCid = async () => {
     if (typeof cid === 'undefined') {
       toast.warn("Please enter a valid CID from IPFS");

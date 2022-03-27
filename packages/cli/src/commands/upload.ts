@@ -1,8 +1,8 @@
-import { IPFS, create } from 'ipfs-core';
-import { isTxError, LCDClient, MnemonicKey, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
+import pinataSDK from '@pinata/sdk';
+import { isTxError, LCDClient, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
 
 import fs from 'fs';
-import path from 'path';
+import util from 'util';
 
 import { CacheContent, saveCache } from '../utils/cache';
 import { getClient } from '../lib/getClient';
@@ -10,6 +10,7 @@ import { encryptedToRawKey } from '../utils/keys';
 import { Input, MintMsg, Metadata } from '../lib/types';
 import { loadConfig } from '../utils/config';
 import VARS from '../../env.config';
+import path from 'path';
 
 const WASM_PATH = "../../contracts/bedrock/artifacts/bedrock_base.wasm";
 
@@ -23,84 +24,75 @@ export const upload = async (
   pass: string,
   config: string,
   ) => {
-    // const node = await create();
-    // const cacheContent: CacheContent = { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
+    const cacheContent: CacheContent = { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
 
-    // // Upload files to IPFS
-    // const assets = await ipfsUpload(node, path);
-    // console.log("Asset upload complete");
-    // cacheContent.items = assets;
-    // saveCache(cacheName, env, cacheContent);
+    // Upload files to IPFS
+    const assets = await ipfsUpload(path, 'ac77071ba1a2bc88284e', 'c424e7f88c955c8dd89cd8c8c48e2b3673aa4969485188f0d1a791cb49eb3e42');
+    console.log("Asset upload complete");
+    cacheContent.items = assets;
+    saveCache(cacheName, env, cacheContent);
 
     // Load user creds
     const terra = await getClient(env);
-
-    // const key = encryptedToRawKey(pk, pass);
-    // const wallet = terra.wallet(key);
+    const key = encryptedToRawKey(pk, pass);
+    const wallet = terra.wallet(key);
 
     // Create contract
-    // if (assets.length == 0) {
-    //   throw new Error("Asset folder must contain 1 or more correctly formatted assets. \
-    //   Please ensure the assets are correctly formatted.");
-    // }
-    // const contract_address = await createContract(wallet, terra, assets.length, config);
-    // cacheContent.program = {...cacheContent.program, contract_address: contract_address }
-    // saveCache(cacheName, env, cacheContent);
-    const wallet = terra.wallet(new MnemonicKey({mnemonic: "satisfy adjust timber high purchase tuition stool faith fine install that you unaware feed domain license impose boss human eager hat rent enjoy dawn"}))
-    const wasm = fs.readFileSync('../../contracts/bedrock/target/wasm32-unknown-unknown/release/bedrock_base.wasm').toString('base64');
-    const storeCode = new MsgStoreCode(wallet.key.accAddress, wasm);
-    const storeCodeTx = await wallet.createAndSignTx({ msgs: [storeCode] });
-    const txResult = await terra.tx.broadcast(storeCodeTx)
-    if (isTxError(txResult)) {
-      throw new Error(
-        `store code failed. code: ${txResult.code}, codespace: ${txResult.codespace}, raw_log: ${txResult.raw_log}`
-      );
+    if (assets.length == 0) {
+      throw new Error("Asset folder must contain 1 or more correctly formatted assets.\n\
+      Please ensure the assets are correctly formatted.");
     }
 
-    const { store_code: { code_id } } = txResult.logs[0].eventsByType;
-    console.log(env, code_id);
+    const contract_address = await createContract(wallet, terra, config);
+    cacheContent.program = {...cacheContent.program, contract_address: contract_address }
+    saveCache(cacheName, env, cacheContent);
+
+    console.log("Contract created at", contract_address);
 }
 
-const ipfsUpload = async (node: IPFS, dirPath: string) => {
+
+
+const ipfsUpload = async (dirPath: string, apiKey: string, apiSecret: string) => {
 
   console.log() // Break line before upload logs
 
-  const uploadToIpfs = async (source: any) => {
-    const { cid } = await node.add(source).catch();
-    return cid;
-  }
+  const pinata = pinataSDK(apiKey, apiSecret);
+
+  const { authenticated } = await pinata.testAuthentication();
+  if (!authenticated) throw new Error("Invalid Pinata JWT");
 
   // Grab all image files
-  const images = new Set(
-    fs
-    .readdirSync(dirPath)
-    .filter(name => !name.includes('.json'))
-  );
-
-  const assets: MintMsg[] = [];
-
-  for (const file of Array.from(images)) {
-    const jsonFile = file.split('.')[0] + '.json';
-
-    // Upload media to IPFS
-    const media = fs.readFileSync(path.join(dirPath, file)).toString()
-    const mediaHash = await uploadToIpfs(media);
-    const mediaUrl = `https://ipfs.io/ipfs/${mediaHash}`;
-
-    // Read metadata & manifest from the input
-    const input: Input = JSON.parse(fs.readFileSync(path.join(dirPath, jsonFile)).toString());
-    const metadata: Metadata = input.metadata;
-    metadata.image = mediaUrl;
-
-    // Upload metadata to IPFS
-    const metadataHash = await uploadToIpfs(Buffer.from(JSON.stringify(metadata)));
-    const metadataUrl = `https://ipfs.io/ipfs/${metadataHash}`;
+  const path1 = __dirname + !dirPath.startsWith('/') ? dirPath : '/' + dirPath;
+  console.log(path1);
+  const files = fs.readdirSync(path.resolve(dirPath));
+  const images = new Set(files.filter(name => !name.includes('.json')));
     
-    // Store token details
-    const msg: MintMsg = {...input.manifest, token_uri: metadataUrl};
-    msg.token_uri = metadataUrl;
-    assets.push(msg);
-  };
+  // Upload in the format Storefront expects
+  let cid: string;
+  try {  
+    cid = (await pinata.pinFromFS(path.resolve(dirPath))).IpfsHash;;
+  } catch (error) {
+    throw error;
+  }
+  const assets: MintMsg[] = [];
+  
+  images.forEach( (file, idx) => {
+    console.log(`Uploading ${file}...`);
+    const rootName = file.split('.')[0];
+    if (files.includes(rootName + '.json')) {
+      const contents = fs.readFileSync(dirPath + '/' + rootName + '.json', 'utf8');
+      let msg: MintMsg = {
+        token_id: rootName,
+        owner: undefined,
+        token_uri: undefined,
+        extension: JSON.parse(contents) as Metadata,
+      };
+      if (msg.extension) {
+        msg.extension = {...msg.extension, image: `https://ipfs.io/ipfs/${cid}/${file}`}
+      }
+      assets.push(msg);
+    }
+  });
 
   return assets
 }
@@ -108,7 +100,6 @@ const ipfsUpload = async (node: IPFS, dirPath: string) => {
 const createContract = async (
   wallet: Wallet,
   terra: LCDClient,
-  tokenSupply: number,
   configPath: string,
   ): Promise<string> => {
 
@@ -124,7 +115,7 @@ const createContract = async (
   // Use uploaded code to create a new contract
   const instantiate = new MsgInstantiateContract(
     wallet.key.accAddress,
-    undefined,
+    wallet.key.accAddress,
     VARS.CODE_ID, // Add option to update the code
     { 
       name: msg.name,

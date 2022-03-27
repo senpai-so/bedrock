@@ -8,5 +8,5 @@ export default {
   LOCALTERRA_URL: 'http://localhost:1317',
   LOCALTERRA_CHAIN_ID: 'http://localhost:1317',
 
-  CODE_ID: 2351,
+  CODE_ID: 57468,//2351,
 }

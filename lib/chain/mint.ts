@@ -35,7 +35,7 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
   const assetJson = `${newAssets[0].split('.')[0]}.json`
   const ipfsPath = `${cacheContent.cid}/${assetJson}`
   const metadata = JSON.parse(await getIPFSContents(ipfsPath)) as Metadata;
-  metadata.image = "https://ipfs.io/ipfs/QmYWztJXwypvEFrc3R2p1cA1uLBLV6A3kT7RPzzam4Qo3z/1.jpg";
+  metadata.image = `https://ipfs.io/ipfs/${cacheContent.cid}/${newAssets[0]}`;
 
   const mintMsg = {
     token_id: newAssets[0].split('.')[0],
