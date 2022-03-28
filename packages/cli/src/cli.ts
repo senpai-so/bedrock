@@ -204,27 +204,6 @@ const main = async () => {
       console.error("Invalid command");
   }
 
-  // if (command === "upload") {
-  //   const path = args._[1] as string;
-  //   const config = args.o as string;
-  //   const pinata_key = args.pinata_key as string;
-  //   const pinata_secret = args.pinata_secret as string;
-  //   await upload(cache, env, path, pk, pass, config, pinata_key, pinata_secret);
-  // } else if (command === "mint") {
-  //   await mint(env, pk, pass, cache);
-  // } else if (command === "transfer") {
-  //   const recipient = args.r as string;
-  //   const token_id = args.t as string;
-  //   await transfer(env, pk, pass, cache, recipient, token_id);
-  // } else if (command === "migrate") {
-  //   const code_id = args.c as number;
-  //   const contract_address = args.a as string;
-  //   const version = args.v as string;
-  //   const config_path = args.config_path as string | undefined;
-  //   await migrate(env, pk, pass, code_id, contract_address, version, config_path);
-  // } else {
-  //   console.error("Invalid command");
-  // }
   process.exit(0); // ensure smooth exit
 }
 
