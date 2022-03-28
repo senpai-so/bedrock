@@ -1,7 +1,6 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, Empty, StdResult };
 
-use cw2::{get_contract_version, set_contract_version};
 use cw721::ContractInfoResponse;
 pub use cw721_base::{MintMsg, MinterResponse, Cw721Contract};
 use bedrock::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
@@ -17,7 +16,7 @@ use crate::{error::ContractError, execute::execute_burn};
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
     deps: DepsMut,
-    env: Env,
+    _env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> StdResult<Response> {
