@@ -144,17 +144,6 @@ const argv = yargs(hideBin(process.argv))
         demandOption: true,
         description: "The address of the contract to update"
       },
-      version: {
-        type: "string",
-        alias: "v",
-        demandOption: true,
-        description: "The new version for the contract"
-      },
-      config_path: {
-        type: "string",
-        demandOption: false,
-        description: "The path to the new contract configuration JSON file"
-      },
     })
   })
   .help()
@@ -194,10 +183,8 @@ const main = async () => {
     case "migrate":
       const code_id = args.c as number;
       const contract_address = args.a as string;
-      const version = args.v as string;
-      const config_path = args.config_path as string | undefined;
 
-      await migrate(env, pk, pass, code_id, contract_address, version, config_path);
+      await migrate(env, pk, pass, code_id, contract_address);
     
       break;
     default:
