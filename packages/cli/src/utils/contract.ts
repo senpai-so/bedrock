@@ -1,7 +1,6 @@
 import fs from 'fs';
 
 import { isTxError, LCDClient, MsgExecuteContract, MsgStoreCode, Wallet } from "@terra-money/terra.js"
-import { ConnectedWallet } from "@terra-money/wallet-provider";
 import { getClient } from '../lib/getClient';
 import { encryptedToRawKey } from './keys';
 
@@ -12,7 +11,7 @@ const storeCode = async (env: string, pk: string, pass: string) => {
   const key = encryptedToRawKey(pk, pass);
   const wallet = terra.wallet(key);
 
-  const wasm = fs.readFileSync('../../contracts/bedrock/bedrock_base.wasm').toString('base64');
+  const wasm = fs.readFileSync('../../contracts/bedrock/artifacts/bedrock_base.wasm').toString('base64');
   const storeCode = new MsgStoreCode(wallet.key.accAddress, wasm);
   const storeCodeTx = await wallet.createAndSignTx({ msgs: [storeCode] });
   const txResult = await terra.tx.broadcast(storeCodeTx)
