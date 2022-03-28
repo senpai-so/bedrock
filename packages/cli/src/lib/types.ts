@@ -33,7 +33,7 @@ export type TransferNftMsg = {
 
 export type MigrateMsg = {
   version: string;
-  config?: Config;
+  config: Config | null;
 }
 
 export type Config = {
