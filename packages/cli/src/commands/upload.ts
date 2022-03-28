@@ -65,8 +65,6 @@ const ipfsUpload = async (dirPath: string, apiKey: string, apiSecret: string) =>
   if (!authenticated) throw new Error("Invalid Pinata JWT");
 
   // Grab all image files
-  const path1 = __dirname + !dirPath.startsWith('/') ? dirPath : '/' + dirPath;
-  console.log(path1);
   const files = fs.readdirSync(path.resolve(dirPath));
   const images = new Set(files.filter(name => !name.includes('.json')));
     
@@ -108,27 +106,27 @@ const createContract = async (
 
   console.log() // Break line before contract logs
   
-  const msg = loadConfig(configPath)
+  const config = loadConfig(configPath)
 
-  if (typeof msg === 'undefined') {
+  if (typeof config === 'undefined') {
     throw new Error("could not load config");
   }
 
-  console.log("InitMsg:", msg);
+  console.log("Config:", config);
   // Use uploaded code to create a new contract
   const instantiate = new MsgInstantiateContract(
     wallet.key.accAddress,
     wallet.key.accAddress,
     VARS.CODE_ID, // Add option to update the code
     { 
-      name: msg.name,
-      symbol: msg.symbol,
-      price: msg.price, // Refactor to avoid this
-      treasury_account: msg.treasury_account,
-      start_time: msg.start_time,
-      end_time: msg.end_time,
-      max_token_count: msg.max_token_count,
-      is_mint_public: msg.is_mint_public,
+      name: config.name,
+      symbol: config.symbol,
+      price: config.price, // Refactor to avoid this
+      treasury_account: config.treasury_account,
+      start_time: config.start_time,
+      end_time: config.end_time,
+      max_token_count: config.max_token_count,
+      is_mint_public: config.is_mint_public,
     },
   );
 
