@@ -19,17 +19,6 @@ export type Metadata = {
 
 // Messages
 
-export type InitMsg = {
-  name: string;
-  symbol: string;
-  price: Coin;
-  treasury_account: string; 
-  start_time: number | undefined;
-  end_time: number | undefined;
-  max_token_count: number;
-  is_mint_public: boolean;
-}
-
 export type MintMsg = {
   token_id: string;
   owner: string | undefined;
@@ -40,6 +29,32 @@ export type MintMsg = {
 export type TransferNftMsg = {
   recipient: string;
   token_id: string;
+}
+
+export type MigrateMsg = {
+  version: string;
+  config?: Config;
+}
+
+export type Config = {
+  /// Name of the collection
+  name: string,
+  /// Symbol for the collection
+  symbol: string,
+  /// Cost of minting if public
+  price: Coin | undefined,
+  /// Address to withdraw funds to
+  treasury_account: string,
+  /// Time when minting becomes available
+  start_time: number | undefined,
+  /// Time when minting becomes unavailable
+  end_time: number | undefined,
+  /// Maximum number of tokens to mint
+  max_token_count: number,
+  /// Whether NFTs can be updated
+  frozen: boolean,
+  /// Whether minting is public
+  is_mint_public: boolean,
 }
 
 
