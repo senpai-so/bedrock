@@ -17,7 +17,7 @@ use crate::{error::ContractError, execute::execute_burn};
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
     deps: DepsMut,
-    _env: Env,
+    env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> StdResult<Response> {
@@ -87,28 +87,9 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn migrate(
-    deps: DepsMut,
+    _deps: DepsMut,
     _env: Env,
-    msg: MigrateMsg<Config>,
-) -> Result<Response, ContractError> {
-    match msg {
-        MigrateMsg { version, config } => try_migrate(deps, version, config),
-    }
-}
-
-fn try_migrate(
-    deps: DepsMut,
-    version: String,
-    config: Option<Config>,
-) -> Result<Response, ContractError> {
-    let contract_version = get_contract_version(deps.storage)?;
-    set_contract_version(deps.storage, contract_version.contract, version)?;
-
-    if config.is_some() {
-        CONFIG.save(deps.storage, &config.unwrap())?
-    }
-
-    Ok(Response::new()
-        .add_attribute("method", "try_migrate")
-        .add_attribute("version", contract_version.version))
+    _msg: MigrateMsg, 
+) -> StdResult<Response> {
+    Ok(Response::default())
 }

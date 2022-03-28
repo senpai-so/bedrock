@@ -38,3 +38,9 @@ bedrock = { path="../../packages/bedrock", version = "0.9.1" }
 
 [dev-dependencies]
 cosmwasm-schema = "0.16.0" 
+
+[package.metadata.scripts]
+optimize = """docker run --rm -v "$(pwd)":/code \
+          --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
+            --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+              cosmwasm/rust-optimizer:0.12.5"""
