@@ -19,7 +19,7 @@ export const migrate = async (
   const terra = await getClient(env);
   const key = encryptedToRawKey(pk, pass);
   const wallet = new Wallet(terra, key);
-  let migrateMsg: MigrateMsg = { version, config: undefined };
+  let migrateMsg: MigrateMsg = { version, config: null };
 
   if (configPath) {
     const content = fs.readFileSync(path.resolve(configPath), 'utf8');
