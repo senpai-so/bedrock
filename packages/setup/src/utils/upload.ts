@@ -9,7 +9,7 @@ export const createContract = async (
   wallet: ConnectedWallet,
   terra: LCDClient,
   msg: InitMsg,
-  ): Promise<string> => {
+): Promise<string> => {
   let CODE_ID = MAINNET_CODE_ID;
   if (!wallet.availableSign) throw Error("SIGNING NOT AVAILABLE");
 
