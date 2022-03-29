@@ -11,7 +11,7 @@ import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
 import { NftInfoResponse, OwnerOf } from 'lib/types'
 import cacheContent from '../lib/config.json'
-import { getClient } from '../lib/chain/getClient';
+import { getClient } from '../lib/utils/getClient';
 
 const isProperImage = (imageUri: string) =>
   imageUri.startsWith('http://') || imageUri.startsWith('https://')

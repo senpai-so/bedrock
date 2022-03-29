@@ -13,7 +13,7 @@ import { FAQ } from 'components/FAQ'
 
 import { toast, ToastContainer } from 'react-toastify'
 import { CacheContent } from 'lib/types'
-import { mint } from 'lib/chain/mint'
+import { mint } from 'lib/utils/mint'
 import router from 'next/router'
 
 import cacheContent from '../lib/config.json'
