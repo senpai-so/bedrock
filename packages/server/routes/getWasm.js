@@ -6,7 +6,7 @@ var router = express.Router();
 router.get("/", function(req, res, next) {
   res.status(200).json({ wasm:  
     fs.readFileSync( // Store the path better!!!
-      path.join('../../contracts/bedrock/bedrock_base.wasm')
+      path.join('../../contracts/bedrock/artifacts/bedrock_base.wasm')
     ).toString('base64')
   })
 });
