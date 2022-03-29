@@ -1,7 +1,6 @@
 import { LCDClient } from "@terra-money/terra.js";
 
 export const getClient = async (chainId: string): Promise<LCDClient> => {
-  let client: LCDClient;
   let url: string;
 
   switch(chainId.toLowerCase()) {
@@ -22,7 +21,7 @@ export const getClient = async (chainId: string): Promise<LCDClient> => {
       break;
   }
   
-  client = new LCDClient({
+  const client = new LCDClient({
     URL: url,
     chainID: chainId
   });

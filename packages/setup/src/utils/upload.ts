@@ -35,7 +35,6 @@ export const createContract = async (
     CODE_ID = parseInt(code_id[0]);
   }
 
-
   const instantiate = new MsgInstantiateContract(
     wallet.walletAddress,
     wallet.walletAddress,
@@ -55,16 +54,15 @@ export const createContract = async (
   if (!wallet.availableSign) {
     throw Error("signing not available in wallet");
   }
-
   
   const instantiateTx = await wallet.sign({ msgs: [instantiate] });
   const instantiateTxResult = await terra.tx.broadcast(instantiateTx.result);
-
   if (isTxError(instantiateTxResult)) {
     throw new Error(
       `instantiate failed. code: ${instantiateTxResult.code}, codespace: ${instantiateTxResult.codespace}, raw_log: ${instantiateTxResult.raw_log}`
     );
   }
+
   const { instantiate_contract: { contract_address } } = instantiateTxResult.logs[0].eventsByType;
   console.log("Contract instantiated");
   console.log("Contract address:", contract_address[0]);

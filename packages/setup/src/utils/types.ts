@@ -45,11 +45,6 @@ export type TransferNftMsg = {
 
 // Helpers
 
-export type Input = {
-  manifest: MintMsg;
-  metadata: Metadata;
-};
-
 type Coin = {
   amount: string;
   denom: string;
