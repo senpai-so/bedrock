@@ -112,7 +112,7 @@ pub fn execute_withdraw(
   }
 
   Ok(Response::new().add_message(BankMsg::Send {
-    amount, // Do we need to check that this is enough?
+    amount,
     to_address: config.treasury_account
   }))
 }

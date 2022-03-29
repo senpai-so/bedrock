@@ -33,7 +33,6 @@ impl From<CW721ContractError> for ContractError {
       CW721ContractError::Unauthorized {} => ContractError::Unauthorized {},
       CW721ContractError::Claimed {} => ContractError::Claimed {},
       CW721ContractError::Expired {} => ContractError::Expired {},
-      // CW721ContractError::MaxTokensExceeded {} => ContractError::MaxTokenSupply {},
       CW721ContractError::Std(e) => ContractError::Std(e),
     }
   }
