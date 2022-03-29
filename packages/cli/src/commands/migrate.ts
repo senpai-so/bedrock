@@ -10,9 +10,6 @@ export const migrate = async (
   codeId: number,
   contractAddr: string,
 ) => { 
-  // old: 57733
-  // new: 57734
-  
   const terra = await getClient(env);
   const key = encryptedToRawKey(pk, pass);
   const wallet = new Wallet(terra, key);
@@ -22,7 +19,7 @@ export const migrate = async (
     contractAddr,
     codeId,
     {}
-  )
+  );
   
   const tx = await wallet.createAndSignTx({ msgs: [msg] });
   const txResult = await terra.tx.broadcast(tx);

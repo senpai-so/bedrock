@@ -13,23 +13,25 @@ export const transfer = async (
   _token_id: string
 ) => { 
   const cachedContent = loadCache(cacheName, env);
-  if (typeof cachedContent === 'undefined') 
+  if (typeof cachedContent === 'undefined') {
     throw new Error("cache content not found");
+  }
 
   const terra = await getClient(env);
   const key = encryptedToRawKey(pk, pass);
   const wallet = terra.wallet(key);
 
   const { contract_address } = cachedContent.program;
-  if (typeof contract_address === 'undefined')
+  if (typeof contract_address === 'undefined') {
     throw new Error("contract_address not found");
+  }
 
   let transferMsg: TransferNftMsg = {
     recipient: _recipient,
     token_id: _token_id,
   }
   let execMsg = { transfer_nft: transferMsg }
-  console.log("ExecMsg:", transferMsg);
+  console.log("ExeuteMsg:", transferMsg);
 
   const result = await executeTransaction(terra, wallet, contract_address, execMsg);
 

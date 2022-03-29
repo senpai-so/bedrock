@@ -1,18 +1,15 @@
 import pinataSDK from '@pinata/sdk';
-import { isTxError, LCDClient, MsgInstantiateContract, MsgStoreCode, Wallet } from '@terra-money/terra.js';
+import { isTxError, LCDClient, MsgInstantiateContract, Wallet } from '@terra-money/terra.js';
 
 import fs from 'fs';
-import util from 'util';
+import path from 'path';
 
 import { CacheContent, saveCache } from '../utils/cache';
 import { getClient } from '../lib/getClient';
 import { encryptedToRawKey } from '../utils/keys';
-import { Input, MintMsg, Metadata } from '../lib/types';
+import { MintMsg, Metadata } from '../lib/types';
 import { loadConfig } from '../utils/config';
 import VARS from '../../env.config';
-import path from 'path';
-
-const WASM_PATH = "../../contracts/bedrock/artifacts/bedrock_base.wasm";
 
 // Functionality
 
@@ -30,8 +27,14 @@ export const upload = async (
 
     // Upload files to IPFS
     const { assets, cid } = await ipfsUpload(path, pinataKey, pinataSecret);
+
     console.log("Asset upload complete");
     console.log("IPFS CID:", cid);
+    if (assets.length == 0) {
+      throw new Error("Asset folder must contain 1 or more correctly formatted assets.\n\
+      Please ensure the assets are correctly formatted.");
+    }
+
     cacheContent.items = assets;
     saveCache(cacheName, env, cacheContent);
 
@@ -41,11 +44,6 @@ export const upload = async (
     const wallet = terra.wallet(key);
 
     // Create contract
-    if (assets.length == 0) {
-      throw new Error("Asset folder must contain 1 or more correctly formatted assets.\n\
-      Please ensure the assets are correctly formatted.");
-    }
-
     const contract_address = await createContract(wallet, terra, config);
     cacheContent.program = {...cacheContent.program, contract_address: contract_address }
     saveCache(cacheName, env, cacheContent);
@@ -112,7 +110,7 @@ const createContract = async (
     throw new Error("could not load config");
   }
 
-  console.log("Config:", config);
+  console.log("Contract config:", config);
   // Use uploaded code to create a new contract
   const instantiate = new MsgInstantiateContract(
     wallet.key.accAddress,

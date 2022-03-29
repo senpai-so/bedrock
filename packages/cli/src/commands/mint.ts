@@ -19,13 +19,12 @@ export const mint = async (
   // Choose next asset
   const savedContent = loadCache(cacheName, env);
   const cacheContent: CacheContent = savedContent || { program: { contract_address: undefined, tokens_minted: [] }, items: undefined, env: env, cacheName: cacheName };
+  
   if (typeof cacheContent.items === 'undefined') return;
-
+  if (typeof cacheContent.env === 'undefined' || cacheContent.env == '') return;
   if (typeof cacheContent.program.tokens_minted === 'undefined') {
     cacheContent.program.tokens_minted = []
   }
-
-  if (typeof cacheContent.env === 'undefined' || cacheContent.env == '') return;
 
   // Select our NFT to mint
   let mintMsg: MintMsg = { token_id: "", owner: undefined, token_uri: undefined, extension: undefined };
@@ -39,17 +38,17 @@ export const mint = async (
   // Load wallet & LCD client 
   const lcd = await getClient(cacheContent.env);
 
+  // Randomly select asset
   const idx = Math.floor(Math.random() * newAssets.length)
   mintMsg = cacheContent.items[idx];
   mintMsg.owner = wallet.key.accAddress;
 
   const execMsg = { mint: mintMsg };
-  console.log("ExecMsg:", execMsg);
+  console.log("ExecuteMsg:", execMsg);
 
   const { contract_address } = cacheContent.program;
   if (typeof contract_address === 'undefined') return;
   
-  // const result = await executeTransaction(terra, wallet., contract_address, execMsg);
   const execute = new MsgExecuteContract(
     wallet.key.accAddress, 
     contract_address, 

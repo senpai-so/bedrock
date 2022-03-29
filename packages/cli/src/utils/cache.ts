@@ -9,20 +9,20 @@ type Program = {
   tokens_minted: string[];
 }
 
-export type CacheContent = { 
-  program: Program;
-  items: MintMsg[] | undefined;
-  env: string | undefined;
-  cacheName: string | undefined;
-}
-
-export function cachePath(
+function cachePath(
   env: string,
   cacheName: string,
   cPath: string = CACHE_PATH,
 ) {
   const filename = `${env}-${cacheName}`;
   return path.join(cPath, `${filename}.json`);
+}
+
+export type CacheContent = { 
+  program: Program;
+  items: MintMsg[] | undefined;
+  env: string | undefined;
+  cacheName: string | undefined;
 }
 
 export function loadCache(

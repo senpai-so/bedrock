@@ -60,11 +60,6 @@ export type Config = {
 
 // Helpers
 
-export type Input = {
-  manifest: MintMsg;
-  metadata: Metadata;
-};
-
 type Coin = {
   amount: string; // Uint128
   denom: string;

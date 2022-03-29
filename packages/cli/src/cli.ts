@@ -2,8 +2,8 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { migrate } from './commands/migrate';
 
+import { migrate } from './commands/migrate';
 import { mint } from './commands/mint';
 import { transfer } from './commands/transfer';
 import { upload } from './commands/upload';
@@ -27,7 +27,7 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "k",
         demandOption: true,
-        description: "The ecnrytped private key from Terra Station"
+        description: "The encrypted private key from Terra Station"
       },
       pass: {
         type: "string",
@@ -66,7 +66,7 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "k",
         demandOption: true,
-        description: "The ecnrytped private key from Terra Station"
+        description: "The encrypted private key from Terra Station"
       },
       pass: {
         type: "string",
@@ -89,7 +89,7 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "k",
         demandOption: true,
-        description: "The ecnrytped private key from Terra Station"
+        description: "The encrypted private key from Terra Station"
       },
       pass: {
         type: "string",
@@ -107,7 +107,7 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "t",
         demandOption: true,
-        description: "ID of the token to transfer"
+        description: "ID of the token you wish to transfer"
       },
     })
   })
@@ -124,7 +124,7 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "k",
         demandOption: true,
-        description: "The ecnrytped private key from Terra Station"
+        description: "The encrypted private key from Terra Station"
       },
       pass: {
         type: "string",
@@ -142,7 +142,7 @@ const argv = yargs(hideBin(process.argv))
         type: "string",
         alias: "a",
         demandOption: true,
-        description: "The address of the contract to update"
+        description: "The address of the contract to update the code for"
       },
     })
   })
@@ -157,7 +157,7 @@ const main = async () => {
   const pk = args.k as string;
   const pass = args.p as string;
 
-  const cache = "cache";
+  const cache = "cache"; // TODO: refactor the use of cache
 
   switch(command) {
     case "upload":
