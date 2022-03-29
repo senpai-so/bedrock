@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/save', saveRouter);
-app.use('/saveCid', saveCidRouter)
+app.use('/saveCid', saveCidRouter);
 app.use('/getWasm', getWasm);
 app.use('/admin', admin);
 

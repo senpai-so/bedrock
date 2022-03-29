@@ -11,11 +11,14 @@ const getConfig = (path) => {
 var router = express.Router();
 router.post("/", function(req, res, next) {
   const { cid, assets } = req.body;
+
   let config = getConfig('./config.json');
   config.cid = cid;
   config.assets = assets;
+
+  // Save config for use by the /save endpoint
   fs.writeFileSync('./config.json', JSON.stringify(config));
-  console.log("complete", config);
+
   res.status(200)
 });
 
