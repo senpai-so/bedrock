@@ -1,68 +1,73 @@
-import { useEffect, useState } from 'react';
-import { ConnectType, useConnectedWallet } from '@terra-money/wallet-provider';
-import { toast, ToastContainer } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { ConnectType, useConnectedWallet } from '@terra-money/wallet-provider'
+import { toast, ToastContainer } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
-import { Page } from 'components/Page';
-import { InitMsg } from './utils/types';
-import { createContract } from './utils/upload';
-import { getClient } from './utils/getClient';
+import { Page } from 'components/Page'
+import { InitMsg } from './utils/types'
+import { createContract } from './utils/upload'
+import { getClient } from './utils/getClient'
 
 function ConfigPage() {
-
   // Config values
-  const [name, setName] = useState<string | undefined>();
-  const [symbol, setSymbol] = useState<string | undefined>();
-  const [price, setPrice] = useState<string | undefined>();
-  const [startTime, setStartTime] = useState<number | undefined>();
-  const [endTime, setEndTime] = useState<number | undefined>();
-  const [maxTokens, setMaxTokens] = useState<number | undefined>();
-  const [isPublic, setIsPublic] = useState(false);
+  const [name, setName] = useState<string | undefined>()
+  const [symbol, setSymbol] = useState<string | undefined>()
+  const [price, setPrice] = useState<string | undefined>()
+  const [startTime, setStartTime] = useState<number | undefined>()
+  const [endTime, setEndTime] = useState<number | undefined>()
+  const [maxTokens, setMaxTokens] = useState<number | undefined>()
+  const [isPublic, setIsPublic] = useState(false)
 
   // Hooks
-  const connectedWallet = useConnectedWallet();
-  const navigate = useNavigate();
+  const connectedWallet = useConnectedWallet()
+  const navigate = useNavigate()
 
   // Navigate back to CID page if the wallet is not connected
-  useEffect( () => {
-    if (typeof connectedWallet === 'undefined' ||
-      connectedWallet?.connectType !== ConnectType.EXTENSION 
-    ) { navigate('/'); }
+  useEffect(() => {
+    if (
+      typeof connectedWallet === 'undefined' ||
+      connectedWallet?.connectType !== ConnectType.EXTENSION
+    ) {
+      navigate('/')
+    }
   })
 
   const checkFields = () => {
-    let success = true;
-    if (typeof name === 'undefined' || name.trim() === "") {
-      success = false;
-      toast.warn("Please enter a collection name.");
+    let success = true
+    if (typeof name === 'undefined' || name.trim() === '') {
+      success = false
+      toast.warn('Please enter a collection name.')
     }
-    if (typeof symbol === 'undefined' || symbol.trim() === "") {
-      success = false;
-      toast.warn("Please enter a collection symbol.");
+    if (typeof symbol === 'undefined' || symbol.trim() === '') {
+      success = false
+      toast.warn('Please enter a collection symbol.')
     }
-    if (typeof price === 'undefined' || Number.isNaN(parseFloat(price)) ) {
-      success = false;
-      toast.warn("Please enter your price as a number.");
+    if (typeof price === 'undefined' || Number.isNaN(parseFloat(price))) {
+      success = false
+      toast.warn('Please enter your price as a number.')
     }
     if (typeof startTime !== 'undefined' && Number.isNaN(startTime)) {
-      success = false;
-      toast.warn("Please enter a valid start time");
+      success = false
+      toast.warn('Please enter a valid start time')
     }
-    if (typeof endTime !== 'undefined' && (Number.isNaN(endTime) || endTime < new Date().getUTCSeconds())) {
-      success = false;
-      toast.warn("Please enter a valid end time");
+    if (
+      typeof endTime !== 'undefined' &&
+      (Number.isNaN(endTime) || endTime < new Date().getUTCSeconds())
+    ) {
+      success = false
+      toast.warn('Please enter a valid end time')
     }
     if (typeof maxTokens === 'undefined' || maxTokens < 1) {
-      success = false;
-      toast.warn("Please enter a number above 0 for Max Number of Tokens")
+      success = false
+      toast.warn('Please enter a number above 0 for Max Number of Tokens')
     }
     return success
   }
 
   const launchCollection = async () => {
     // Safety
-    if (!checkFields()) return; 
-    if (typeof connectedWallet === 'undefined') return;
+    if (!checkFields()) return
+    if (typeof connectedWallet === 'undefined') return
 
     // undefined checks for typescript
     if (
@@ -70,32 +75,34 @@ function ConfigPage() {
       typeof symbol === 'undefined' ||
       typeof price === 'undefined' ||
       typeof maxTokens === 'undefined'
-    ) { return; }
-  
+    ) {
+      return
+    }
+
     // create instantiate message
     const msg: InitMsg = {
       name: name,
       symbol: symbol,
       price: {
-        amount: price.concat("000000"),
+        amount: price.concat('000000'),
         denom: 'uluna'
       },
       treasury_account: connectedWallet.walletAddress,
       start_time: startTime,
       end_time: endTime,
       max_token_count: maxTokens,
-      is_mint_public: isPublic,
+      is_mint_public: isPublic
     }
-  
-    const lcd = await getClient(/*connectedWallet.network.chainID*/'bombay-12');
+
+    const lcd = await getClient(/*connectedWallet.network.chainID*/ 'bombay-12')
     const contractAddr = await toast.promise(
       createContract(connectedWallet, lcd, msg),
       {
-        pending: "Creating smart contract",
-        success: "Smart contract created!",
-        error: "Error while creating smart contract :(",
+        pending: 'Creating smart contract',
+        success: 'Smart contract created!',
+        error: 'Error while creating smart contract :('
       }
-    );
+    )
 
     const config = {
       contract_addr: contractAddr,
@@ -106,12 +113,12 @@ function ConfigPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config)
     }
-    console.log("fetching");
-    fetch("http://localhost:3001/save", requestOptions)
-      .then(() => console.log("Config saved"))
-      .catch(e => console.error(e));
+    console.log('fetching')
+    fetch('http://localhost:3001/save', requestOptions)
+      .then(() => console.log('Config saved'))
+      .catch((e) => console.error(e))
 
-    navigate('/complete');
+    navigate('/complete')
   }
 
   return (
@@ -121,7 +128,7 @@ function ConfigPage() {
         width: '100%',
         height: '100%',
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'contain',
+        backgroundSize: 'contain'
       }}
     >
       <Page>
@@ -150,7 +157,6 @@ function ConfigPage() {
               {/* Entry Fields */}
               <div className='mb-12'>
                 <div className='mt-6 grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-6'>
-
                   <div className='sm:col-span-3'>
                     <label
                       htmlFor='collection-name'
@@ -163,13 +169,11 @@ function ConfigPage() {
                         type='text'
                         name='name'
                         className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
-                        onChange={(e) =>
-                          setName(e.currentTarget.value)
-                        }
+                        onChange={(e) => setName(e.currentTarget.value)}
                       />
                     </div>
                   </div>
-                  
+
                   <div className='sm:col-span-3'>
                     <label
                       htmlFor='collection-name'
@@ -182,9 +186,7 @@ function ConfigPage() {
                         type='text'
                         name='symbol'
                         className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
-                        onChange={(e) =>
-                          setSymbol(e.currentTarget.value)
-                        }
+                        onChange={(e) => setSymbol(e.currentTarget.value)}
                       />
                     </div>
                   </div>
@@ -201,9 +203,7 @@ function ConfigPage() {
                         type='text'
                         name='price'
                         className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
-                        onChange={(e) =>
-                          setPrice(e.currentTarget.value)
-                        }
+                        onChange={(e) => setPrice(e.currentTarget.value)}
                       />
                     </div>
                   </div>
@@ -292,23 +292,28 @@ function ConfigPage() {
                       Mint Permissions
                     </label>
                     <div className='mt-1 flex items-center'>
-                      <label htmlFor="toggle" className="flex items-center cursor-pointer">
-                        <div className="mr-2 block text-sm font-medium text-gray-700 select-none">
+                      <label
+                        htmlFor='toggle'
+                        className='flex items-center cursor-pointer'
+                      >
+                        <div className='mr-2 block text-sm font-medium text-gray-700 select-none'>
                           Private
                         </div>
                         {/* Switch Object */}
-                        <div className="relative">
-                          <input 
-                            type="checkbox" 
+                        <div className='relative'>
+                          <input
+                            type='checkbox'
                             name='isPublic'
-                            id="toggle" 
-                            className="sr-only"
+                            id='toggle'
+                            className='sr-only'
                             onChange={(e) => setIsPublic(!isPublic)}
                           />
-                          <div className="block bg-gray-500 w-10 h-6 rounded-full"></div> {/* Switch background */}
-                          <div className="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div> {/* Dot */}
+                          <div className='block bg-gray-500 w-10 h-6 rounded-full'></div>{' '}
+                          {/* Switch background */}
+                          <div className='dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition'></div>{' '}
+                          {/* Dot */}
                         </div>
-                        <div className="ml-2 block text-sm font-medium text-gray-700 select-none">
+                        <div className='ml-2 block text-sm font-medium text-gray-700 select-none'>
                           Public
                         </div>
                       </label>
@@ -333,4 +338,4 @@ function ConfigPage() {
   )
 }
 
-export default ConfigPage;
+export default ConfigPage

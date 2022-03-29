@@ -1,21 +1,21 @@
-import { RawKey } from '@terra-money/terra.js';
-import CryptoJS from 'crypto-js';
+import { RawKey } from '@terra-money/terra.js'
+import CryptoJS from 'crypto-js'
 
-const keySize = 256;
-const iterations = 100;
+const keySize = 256
+const iterations = 100
 
 export const encryptedToRawKey = (encrypted: string, pass: string): RawKey => {
   type ExportedWallet = {
-    name: string;
-    address: string;
-    encrypted_key: string;
-  };
+    name: string
+    address: string
+    encrypted_key: string
+  }
 
   const exportedWallet: ExportedWallet = JSON.parse(
-    Buffer.from(encrypted, "base64").toString("utf-8")
-  );
-  const decryptedKey = decrypt(exportedWallet.encrypted_key, pass);
-  return new RawKey(Buffer.from(decryptedKey, "hex"));
+    Buffer.from(encrypted, 'base64').toString('utf-8')
+  )
+  const decryptedKey = decrypt(exportedWallet.encrypted_key, pass)
+  return new RawKey(Buffer.from(decryptedKey, 'hex'))
 }
 
 const decrypt = (transitmessage: string, pass: string) => {
@@ -26,16 +26,16 @@ const decrypt = (transitmessage: string, pass: string) => {
 
     const key = CryptoJS.PBKDF2(pass, salt, {
       keySize: keySize / 32,
-      iterations: iterations,
+      iterations: iterations
     })
 
     const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
       iv: iv,
       padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.CBC,
+      mode: CryptoJS.mode.CBC
     }).toString(CryptoJS.enc.Utf8)
     return decrypted
   } catch (error) {
-    return ""
+    return ''
   }
 }

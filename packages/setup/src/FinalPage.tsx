@@ -1,30 +1,28 @@
-import { Page } from './components/Page';
+import { Page } from './components/Page'
 
 function FinalPage() {
-
   const finish = () => {
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' }
     }
-    fetch("http://localhost:3001/admin/startDev", requestOptions)
-      .then(res => res.json())
-      .then(res => {
-        console.log("Local dApp running on port 3002!");
-        console.info("Redirecting...")
-        window.location.href = "http://localhost:3002";
-        process.exit(0);
+    fetch('http://localhost:3001/admin/startDev', requestOptions)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log('Local dApp running on port 3002!')
+        console.info('Redirecting...')
+        window.location.href = 'http://localhost:3002'
+        process.exit(0)
       })
-      .catch(e => console.log(e));
+      .catch((e) => console.log(e))
   }
-  
-  
+
   return (
     <div
       className='h-screen'
       style={{
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover',
+        backgroundSize: 'cover'
       }}
     >
       <Page>
@@ -37,7 +35,7 @@ function FinalPage() {
                 </h2>
 
                 <p className='text-base font-medium text-center text-gray-700'>
-                  Your collection has been launched! 
+                  Your collection has been launched!
                 </p>
               </div>
               <div className='items-center justify-center'>
@@ -56,4 +54,4 @@ function FinalPage() {
   )
 }
 
-export default FinalPage;
+export default FinalPage

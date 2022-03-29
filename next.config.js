@@ -7,7 +7,7 @@ module.exports = {
       'localhost',
       'loonies.world',
       'dl.airtable.com',
-      'ipfs.io',
+      'ipfs.io'
     ]
   }
 }

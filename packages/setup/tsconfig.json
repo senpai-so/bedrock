@@ -19,10 +19,5 @@
     "jsx": "react-jsx",
     "baseUrl": "src"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"]
 }

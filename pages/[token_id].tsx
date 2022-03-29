@@ -11,14 +11,14 @@ import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
 import { NftInfoResponse, OwnerOf } from 'lib/types'
 import cacheContent from '../lib/config.json'
-import { getClient } from '../lib/utils/getClient';
+import { getClient } from '../lib/utils/getClient'
 
 const isProperImage = (imageUri: string) =>
   imageUri.startsWith('http://') || imageUri.startsWith('https://')
 
 export default function Index() {
-  const { status, availableConnections, connect, disconnect } = useWallet();
-  const connectedWallet = useConnectedWallet();
+  const { status, availableConnections, connect, disconnect } = useWallet()
+  const connectedWallet = useConnectedWallet()
 
   const [nftInfo, setNFTInfo] = React.useState<NftInfoResponse | null>(null)
   const [showModal, setShowModal] = React.useState(false)
@@ -75,7 +75,7 @@ export default function Index() {
 
     return (
       <>
-        <div style={{height: 400, width: 400}}>{renderImage()}</div>
+        <div style={{ height: 400, width: 400 }}>{renderImage()}</div>
       </>
     )
   }
@@ -83,8 +83,8 @@ export default function Index() {
   useEffect(() => {
     async function fetchSetNFTData(tokenId: string) {
       try {
-        if (typeof connectedWallet === 'undefined') return;
-        const lcd = await getClient(connectedWallet?.network.chainID);
+        if (typeof connectedWallet === 'undefined') return
+        const lcd = await getClient(connectedWallet?.network.chainID)
         const ownership = (await lcd.wasm.contractQuery<NftInfoResponse>(
           cacheContent.contract_addr,
           {
@@ -114,16 +114,20 @@ export default function Index() {
   return (
     <div
       className='h-full'
-      style={!nftInfo ? {
-        backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover',
-        height: '100vh',
-      } : {
-        backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover',
-        height: '100%',
-        width: '100%',
-      }}
+      style={
+        !nftInfo
+          ? {
+              backgroundImage: 'url(/background.png)',
+              backgroundSize: 'cover',
+              height: '100vh'
+            }
+          : {
+              backgroundImage: 'url(/background.png)',
+              backgroundSize: 'cover',
+              height: '100%',
+              width: '100%'
+            }
+      }
     >
       <Page>
         <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
