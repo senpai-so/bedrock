@@ -22,6 +22,8 @@ function ConfigPage() {
   // Hooks
   const connectedWallet = useConnectedWallet();
   const navigate = useNavigate();
+
+  // Navigate back to CID page if the wallet is not connected
   useEffect( () => {
     if (typeof connectedWallet === 'undefined' ||
       connectedWallet?.connectType !== ConnectType.EXTENSION 
@@ -86,8 +88,15 @@ function ConfigPage() {
     }
   
     const lcd = await getClient(/*connectedWallet.network.chainID*/'bombay-12');
-    const contractAddr = await createContract(connectedWallet, lcd, msg);
-  
+    const contractAddr = await toast.promise(
+      createContract(connectedWallet, lcd, msg),
+      {
+        pending: "Creating smart contract",
+        success: "Smart contract created!",
+        error: "Error while creating smart contract :(",
+      }
+    );
+
     const config = {
       contract_addr: contractAddr,
       chain_id: connectedWallet.network.chainID
@@ -101,7 +110,7 @@ function ConfigPage() {
     fetch("http://localhost:3001/save", requestOptions)
       .then(() => console.log("Config saved"))
       .catch(e => console.error(e));
-    console.log("navving");
+
     navigate('/complete');
   }
 
