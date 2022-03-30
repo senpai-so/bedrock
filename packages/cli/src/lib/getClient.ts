@@ -9,7 +9,7 @@ export const getClient = async (network: string): Promise<LCDClient> => {
       chainId = 'columbus-5'
       break
     case 'testnet':
-      url = 'http://165.227.56.47:1317/'
+      url = 'https://bombay-lcd.terra.dev'
       chainId = 'bombay-12'
       break
     case 'local':

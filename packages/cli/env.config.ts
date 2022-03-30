@@ -2,7 +2,7 @@ export default {
   MAINNET_URL: 'https://lcd.terra.dev',
   MAINNET_CHAIN_ID: 'columbus-5',
 
-  TESTNET_URL: 'http://165.227.56.47:1317/',//'https://bombay-lcd.terra.dev',
+  TESTNET_URL: 'https://bombay-lcd.terra.dev',
   TESTNET_CHAIN_ID: 'bombay-12',
 
   LOCALTERRA_URL: 'http://localhost:1317',
