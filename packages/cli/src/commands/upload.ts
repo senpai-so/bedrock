@@ -3,6 +3,7 @@ import {
   isTxError,
   LCDClient,
   MsgInstantiateContract,
+  MsgStoreCode,
   Wallet
 } from '@terra-money/terra.js'
 
@@ -123,6 +124,27 @@ const createContract = async (
   terra: LCDClient,
   configPath: string
 ): Promise<string> => {
+  let codeID = terra.config.chainID == VARS.MAINNET_CHAIN_ID ? VARS.MAINNET_CODE_ID : VARS.TESTNET_CODE_ID
+
+  // Store code if using localterra
+  if (terra.config.chainID == VARS.LOCALTERRA_CHAIN_ID) {
+    const wasm = fs.readFileSync(path.join('../../contracts/bedrock/artifacts/bedrock_base.wasm')).toString('base64')
+    const storeCode = new MsgStoreCode(wallet.key.accAddress, wasm)
+    const tx = await wallet.createAndSignTx({ msgs: [storeCode] })
+    const txResult = await terra.tx.broadcast(tx)
+
+    if (isTxError(txResult)) {
+      throw new Error(
+        `store code failed. code: ${txResult.code}, codespace: ${txResult.codespace}, raw_log: ${txResult.raw_log}`
+      )
+    }
+
+    const {
+      store_code: { code_id }
+    } = txResult.logs[0].eventsByType
+    codeID = parseInt(code_id[0])
+  }
+
   console.log() // Break line before contract logs
 
   const config = loadConfig(configPath)
@@ -132,15 +154,16 @@ const createContract = async (
   }
 
   console.log('Contract config:', config)
+
   // Use uploaded code to create a new contract
   const instantiate = new MsgInstantiateContract(
     wallet.key.accAddress,
     wallet.key.accAddress,
-    VARS.CODE_ID, // Add option to update the code
+    codeID,
     {
       name: config.name,
       symbol: config.symbol,
-      price: config.price, // Refactor to avoid this
+      price: config.price,
       treasury_account: config.treasury_account,
       start_time: config.start_time,
       end_time: config.end_time,
@@ -150,7 +173,8 @@ const createContract = async (
   )
 
   const instantiateTx = await wallet.createAndSignTx({
-    msgs: [instantiate]
+    msgs: [instantiate],
+    sequence: (await wallet.accountNumberAndSequence()).sequence + 1
   })
   const instantiateTxResult = await terra.tx.broadcast(instantiateTx)
 
