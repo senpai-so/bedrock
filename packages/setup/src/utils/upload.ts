@@ -8,17 +8,19 @@ import { ConnectedWallet } from '@terra-money/wallet-provider'
 import axios from 'axios'
 import { InitMsg } from './types'
 
-const MAINNET_CODE_ID = 2351
+const MAINNET_CODE_ID = 4075
+const TESTNET_CODE_ID = 58369
 
 export const createContract = async (
   wallet: ConnectedWallet,
   terra: LCDClient,
   msg: InitMsg
 ): Promise<string> => {
-  let CODE_ID = MAINNET_CODE_ID
+  let CODE_ID = terra.config.chainID.startsWith('columbus') ? MAINNET_CODE_ID : TESTNET_CODE_ID
+
   if (!wallet.availableSign) throw Error('SIGNING NOT AVAILABLE')
 
-  // Upload contract wasm if not on mainnet
+  // Upload contract wasm if using localterra
   if (terra.config.chainID == 'localterra') {
     const res = await axios('/getWasm', {
       method: 'GET',
