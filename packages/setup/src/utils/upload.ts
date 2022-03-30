@@ -19,14 +19,13 @@ export const createContract = async (
   if (!wallet.availableSign) throw Error('SIGNING NOT AVAILABLE')
 
   // Upload contract wasm if not on mainnet
-  if (!terra.config.chainID.startsWith('columbus')) {
+  if (terra.config.chainID == 'localterra') {
     const res = await axios('/getWasm', {
       method: 'GET',
       headers: { Accept: 'application/json' }
     })
 
     const storeCode = new MsgStoreCode(wallet.walletAddress, res.data.wasm)
-
     const storeCodeTx = await wallet.sign({ msgs: [storeCode] })
     const txResult = await terra.tx.broadcast(storeCodeTx.result)
 
@@ -57,7 +56,6 @@ export const createContract = async (
       is_mint_public: msg.is_mint_public
     }
   )
-
   if (!wallet.availableSign) {
     throw Error('signing not available in wallet')
   }
