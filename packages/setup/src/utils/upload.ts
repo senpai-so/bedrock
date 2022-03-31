@@ -8,8 +8,8 @@ import { ConnectedWallet } from '@terra-money/wallet-provider'
 import axios from 'axios'
 import { InitMsg } from './types'
 
-const MAINNET_CODE_ID = 4075
-const TESTNET_CODE_ID = 58369
+const MAINNET_CODE_ID = 4134
+const TESTNET_CODE_ID = 59089
 
 export const createContract = async (
   wallet: ConnectedWallet,
