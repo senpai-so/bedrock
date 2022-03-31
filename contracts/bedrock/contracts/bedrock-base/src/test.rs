@@ -9,7 +9,7 @@ mod tests {
     use cw721_base::MintMsg;
     use cw721_base::state::Cw721Contract;
     use bedrock::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-    use bedrock::state::{Extension/*, Metadata*/};
+    use bedrock::state::{Extension, Metadata, Trait};
 
     const CREATOR: &str = "creator";
     const PUBLIC: &str = "public";
@@ -119,6 +119,49 @@ mod tests {
             owner: OWNER.to_string(),
             token_uri: None, 
             extension: None,
+        };
+
+        let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
+        let res = execute(deps.as_mut(), mock_env(), mint_info.clone(), exec_msg);
+
+        assert_eq!(ContractError::Unauthorized {}, res.unwrap_err());
+    }
+
+    #[test]
+    fn mint_alex() {
+        let mut deps = mock_dependencies(&[]);
+
+        let info = mock_info(CREATOR, &[]);
+        let init_msg = InstantiateMsg {
+            name: "SpaceShips".to_string(),
+            symbol: "SPACE".to_string(),
+            max_token_count: 1, 
+            treasury_account: CREATOR.to_string(), 
+            is_mint_public: true, 
+            start_time: None, 
+            end_time: None,
+            price: None,
+        };
+
+        instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
+
+        let token_id = "1-1";
+        let mint_info = mock_info(OWNER, &[]);
+        let mint_msg = MintMsg {
+            token_id: token_id.to_string(),
+            owner: OWNER.to_string(),
+            token_uri: None, 
+            extension: Some( Metadata {
+                image: Some("ipfs://QmQwkiEyiCuuHXGndaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image_data: None,
+                external_url: None,
+                description: None,
+                name: Some("Token1-1".to_string()),
+                attributes: Some(vec!( Trait { trait_type: "Room".to_string(), value: "1".to_string(), display_type: None })),
+                background_color: None,
+                animation_url: None,
+                youtube_url: None,
+            }),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
