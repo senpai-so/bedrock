@@ -11,7 +11,7 @@ router.post('/startDev', function (req, res, next) {
 
   processCount += 1
 
-  const dAppProc = spawn('yarn', ['dev'], { cwd: './../../' })
+  const dAppProc = spawn('yarn', ['dev'], { cwd: './../../', shell: true })
 
   dAppProc.stderr.on('data', (data) => {
     console.error(data.toString())
