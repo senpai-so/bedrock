@@ -71,7 +71,7 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
 }
 
 const getIPFSContents = async (path: string) => {
-  const url = 'https://dweb.link/api/v0'
+  const url = 'https://ipfs.io/api/v0'
   if (true) console.log('')
   const ipfs = create({ url })
 
