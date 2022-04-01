@@ -32,9 +32,16 @@ export default function Index() {
   }
 
   const handleClickMint = async () => {
-    const toastId = toast.loading('Transaction Pending...')
+
     if (connectedWallet) {
-      const token_id = await mint(connectedWallet, cacheContent as CacheContent)
+      const token_id = await toast.promise(
+        mint(connectedWallet, cacheContent as CacheContent),
+        {
+          pending: "Minting NFT...",
+          success: "Successfully minted a new NFT!",
+          error: "Could not mint a new NFT :(",
+        }
+      )
       console.log('Minted', token_id)
       if (typeof token_id !== 'undefined') {
         router.push(`/${token_id}`)

@@ -20,29 +20,15 @@ function CIDPage() {
       toast.warn('Please enter a valid CID from IPFS')
       return
     }
-    const toastLoadingId = toast.loading('Getting token data...')
-    const files = await getFiles(cid)
-    toast.dismiss(toastLoadingId)
-    const toastSuccessId = toast.success('Success :)')
-    const assets = files
-      .map((file) => file.name)
-      .filter((file) => !file.includes('.json'))
-    console.log(assets)
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cid: cid, assets: assets })
-    }
-
-    fetch('http://localhost:3001/saveCid', requestOptions)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log('Success!')
-        console.log(res)
-      })
-      .catch((e) => console.log(e))
-    toast.dismiss(toastSuccessId)
-    navigate('/config')
+    // const toastLoadingId = toast.loading('Getting token data...')
+    toast.promise(
+      getFiles(cid),
+      {
+        pending: 'Fetching IPFS files...',
+        success: 'IPFS fetch succeeded!',
+        error: 'Error while fetching IPFS files :('
+      }
+    ).then(_ => navigate('/config'))
   }
 
   return (

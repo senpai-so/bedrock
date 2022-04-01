@@ -21,6 +21,7 @@ export default function Index() {
   const connectedWallet = useConnectedWallet()
 
   const [nftInfo, setNFTInfo] = React.useState<NftInfoResponse | null>(null)
+  const [roomNo, setRoomNo] = React.useState<string | null>(null)
   const [showModal, setShowModal] = React.useState(false)
 
   const router = useRouter()
@@ -39,7 +40,7 @@ export default function Index() {
   }
 
   function renderImage() {
-    const imageUrl = nftInfo?.extension?.image
+    const imageUrl = `/${roomNo}.png`
     if (!imageUrl) {
       return (
         <Image
@@ -51,20 +52,20 @@ export default function Index() {
         />
       )
     }
-    if (isProperImage(imageUrl))
-      return (
-        <Image
-          alt='nft logo'
-          src={imageUrl}
-          height='400'
-          width='400'
-          className={imageStyle}
-        />
-      )
+    // if (isProperImage(imageUrl))
+    //   return (
+    //     <Image
+    //       alt='nft logo'
+    //       src={imageUrl}
+    //       height='400'
+    //       width='400'
+    //       className={imageStyle}
+    //     />
+    //   )
   }
 
   function render() {
-    if (!nftInfo) {
+    if (!roomNo) { // TODO: Add loading indicator here
       return (
         <>
           <h2>You are not the owner of this NFT!</h2>
@@ -93,6 +94,7 @@ export default function Index() {
         )) as unknown as OwnerOf
 
         if (ownership.owner === connectedWallet?.walletAddress) {
+          setRoomNo(tokenId.split('-')[0])
           const nftInfo = await lcd.wasm.contractQuery<NftInfoResponse>(
             cacheContent.contract_addr,
             {

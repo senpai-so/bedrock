@@ -5,11 +5,20 @@ export const getFiles = async (cid: string) => {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cid: cid })
+    body: JSON.stringify({ cid: cid, assets: generateAssets() })
   }
 
-  return await fetch('http://localhost:3001/saveCid', requestOptions)
-    .then((res) => res.json())
+  return fetch('http://localhost:3001/saveCid', requestOptions)
+}
+
+const generateAssets = () => {
+  let result: string[] = [];
+  for (let i=1; i<10; i++) {
+    for (let j=1; j<556; j++) {
+      result.push(`${i}-${j}.json`)
+    }
+  }
+  return result
 }
 
 // export const getFileContents = async (path: string) => {
