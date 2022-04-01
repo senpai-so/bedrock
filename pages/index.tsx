@@ -83,10 +83,10 @@ export default function Index() {
             <div>
               <Image
                 className='rounded-xl'
-                src='/BoredApe.gif'
+                src='/img.png'
                 height='400'
                 width='400'
-                alt='BoredApe'
+                alt='Blurred room image'
               />
             </div>
 
