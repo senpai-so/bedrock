@@ -12,7 +12,7 @@ function ConfigPage() {
   // Config values
   const [name, setName] = useState<string | undefined>()
   const [symbol, setSymbol] = useState<string | undefined>()
-  const [price, setPrice] = useState<string | undefined>()
+  const [price, setPrice] = useState<number | undefined>()
   const [startTime, setStartTime] = useState<number | undefined>()
   const [endTime, setEndTime] = useState<number | undefined>()
   const [maxTokens, setMaxTokens] = useState<number | undefined>()
@@ -42,7 +42,7 @@ function ConfigPage() {
       success = false
       toast.warn('Please enter a collection symbol.')
     }
-    if (typeof price === 'undefined' || Number.isNaN(parseFloat(price))) {
+    if (typeof price === 'undefined' || Number.isNaN(price)) {
       success = false
       toast.warn('Please enter your price as a number.')
     }
@@ -84,7 +84,7 @@ function ConfigPage() {
       name: name,
       symbol: symbol,
       price: {
-        amount: price.concat('000000'),
+        amount: (price * 1_000_000).toString(),
         denom: 'uluna'
       },
       treasury_account: connectedWallet.walletAddress,
@@ -203,7 +203,7 @@ function ConfigPage() {
                         type='text'
                         name='price'
                         className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
-                        onChange={(e) => setPrice(e.currentTarget.value)}
+                        onChange={(e) => setPrice(parseFloat(e.currentTarget.value))}
                       />
                     </div>
                   </div>
