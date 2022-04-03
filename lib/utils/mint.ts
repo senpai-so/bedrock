@@ -16,6 +16,7 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
   // Load wallet & LCD client
   const lcd = await getClient(cacheContent.chain_id)
 
+  // TODO: ADD PAGINATION
   const { tokens } = await lcd.wasm.contractQuery(cacheContent.contract_addr, {
     all_tokens: { limit: undefined, start_after: undefined } // ensure all_tokens isn't bugged
   })
@@ -71,7 +72,7 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
 }
 
 const getIPFSContents = async (path: string) => {
-  const url = 'https://ipfs.io/api/v0'
+  const url = 'https://bedrock.mypinata.cloud/api/v0'//'https://ipfs.io/api/v0'
   if (true) console.log('')
   const ipfs = create({ url })
 
