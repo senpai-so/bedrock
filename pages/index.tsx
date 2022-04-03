@@ -50,68 +50,69 @@ export default function Index() {
 
   return (
     <div
+      className='py-12'
       style={{
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover'
+        backgroundSize: 'cover',
+        height: '100%',
+        // flexGrow: 1
       }}
     >
-      <Page>
-        <ToastContainer
-          position='top-right'
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover={false}
-        />
-        <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
-          <div className='flex flex-col items-center justify-center space-y-12'>
-            <h2 className='font-bold text-3xl text-blue-700'>
-              Exclusive 1st Drop
-            </h2>
+      <ToastContainer
+        position='top-right'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+      />
+      <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
+        <div className='flex flex-col items-center justify-center space-y-12'>
+          <h2 className='font-bold text-3xl text-blue-700'>
+            Exclusive 1st Drop
+          </h2>
 
-            <div>
-              <Image
-                className='rounded-xl'
-                src='/BoredApe.gif'
-                height='400'
-                width='400'
-                alt='BoredApe'
-              />
-            </div>
-
-            {connectedWallet?.connectType !== ConnectType.EXTENSION ? (
-              <button
-                className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                onClick={() => connect(ConnectType.EXTENSION)}
-              >
-                Connect!
-              </button>
-            ) : (
-              <button
-                className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                onClick={() => handleClickMint()}
-              >
-                Mint!
-              </button>
-            )}
-
-            <FAQ />
-
-            {showModal && (
-              <Modal
-                action={() => disconnect()}
-                walletAddress={abbreviateWalletAddress(
-                  connectedWallet?.walletAddress || ''
-                )}
-              />
-            )}
+          <div>
+            <Image
+              className='rounded-xl'
+              src='/BoredApe.gif'
+              height='300'
+              width='300'
+              alt='BoredApe'
+            />
           </div>
+
+          {connectedWallet?.connectType !== ConnectType.EXTENSION ? (
+            <button
+              className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              onClick={() => connect(ConnectType.EXTENSION)}
+            >
+              Connect!
+            </button>
+          ) : (
+            <button
+              className='mintButton inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              onClick={() => handleClickMint()}
+            >
+              Mint!
+            </button>
+          )}
+
+          <FAQ />
+
+          {showModal && (
+            <Modal
+              action={() => disconnect()}
+              walletAddress={abbreviateWalletAddress(
+                connectedWallet?.walletAddress || ''
+              )}
+            />
+          )}
         </div>
-      </Page>
+      </div>
     </div>
   )
 }
