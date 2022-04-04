@@ -8,7 +8,7 @@ import {
   toString as uint8ArrayToString
 } from 'uint8arrays'
 
-export const mint = async (wallet: any, cacheContent: CacheContent) => {
+export const mint = async (wallet: any, cacheContent: CacheContent, count: number) => {
   if (cacheContent.contract_addr == '') return
   if (cacheContent.assets.length == 0) return
   if (cacheContent.chain_id == '') return
@@ -27,34 +27,38 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
     (asset) => !tokens.includes(asset.split('.')[0])
   )
 
-  if (newAssets.length === 0) {
+  if (newAssets.length < count) {
     console.log('No NFTs left to mint :(')
     return
   }
 
-  const assetJson = `${newAssets[0].split('.')[0]}.json`
-  const ipfsPath = `${cacheContent.cid}/${assetJson}`
-  const metadata = JSON.parse(await getIPFSContents(ipfsPath)) as Metadata
-  metadata.image = `https://ipfs.io/ipfs/${cacheContent.cid}/${newAssets[0]}`
-
-  const mintMsg = {
-    token_id: newAssets[0].split('.')[0],
-    owner: wallet.walletAddress,
-    // token_uri: `ipfs://${cacheContent.cid}/${assetJson}`,
-    extension: metadata
-  }
-
-  const execMsg = { mint: mintMsg }
-  console.log('ExecMsg:', execMsg)
   if (cacheContent.contract_addr === '') return
 
-  const execute = new MsgExecuteContract(
-    wallet.walletAddress,
-    cacheContent.contract_addr,
-    execMsg
-  )
+  const execMsgs = []
+  for (let i=0; i<count; i++) {
+    const assetJson = `${newAssets[0].split('.')[0]}.json`
+    const ipfsPath = `${cacheContent.cid}/${assetJson}`
+    const metadata = JSON.parse(await getIPFSContents(ipfsPath)) as Metadata
+    metadata.image = `https://ipfs.io/ipfs/${cacheContent.cid}/${newAssets[0]}`
 
-  const sign_res = await wallet.sign({ msgs: [execute] })
+    const mintMsg: MintMsg = {
+    token_id: newAssets[0].split('.')[0],
+    owner: wallet.walletAddress,
+    token_uri: undefined, // `ipfs://${cacheContent.cid}/${assetJson}`,
+    extension: metadata
+    }
+
+    const execMsg = { mint: mintMsg }
+    execMsgs.push(
+      new MsgExecuteContract(
+        wallet.walletAddress,
+        cacheContent.contract_addr,
+        execMsg
+      )
+    )
+  }  
+
+  const sign_res = await wallet.sign({ msgs: execMsgs })
   const executeTxResult = await lcd.tx.broadcast(sign_res.result)
 
   if (isTxError(executeTxResult)) {

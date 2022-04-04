@@ -35,7 +35,7 @@ export const FAQ: React.FC<EmptyProps> = () => {
     <div className='bg-transparent w-full px-12'>
       <div className='w-full max-w-7xl mx-auto py-12 px-4 sm:py-6 sm:px-6 lg:px-8'>
         <div className='w-full mx-auto divide-y-2 divide-gray-200'>
-          <h2 className='text-center text-3xl font-extrabold text-gray-900 sm:text-4xl'>
+          <h2 className='text-center text-2xl font-extrabold text-gray-800 sm:text-3xl'>
             FAQ
           </h2>
 
