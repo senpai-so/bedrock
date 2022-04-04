@@ -1,9 +1,10 @@
 import React from 'react'
 
 export const Mint: React.FC<{
+  disabled: boolean,
   mintCallback: (count: number) => Promise<void>,
   mintCost: number,
-}> = ({ mintCallback, mintCost }) => {
+}> = ({ disabled, mintCallback, mintCost }) => {
   const [mintCount, setMintCount] = React.useState<number | undefined>()
 
   const updateMintCount = (value: number | undefined) => {
@@ -41,6 +42,7 @@ export const Mint: React.FC<{
             <button
               className='flex items-center mt-2 px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
               onClick={() => mintCallback(mintCount || 1)}
+              disabled={disabled}
             >
               Mint!
             </button>

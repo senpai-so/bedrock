@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Image from 'next/image'
 
 import {
   useWallet,
   useConnectedWallet,
-  ConnectType
+  ConnectType,
+  ConnectedWallet
 } from '@terra-money/wallet-provider'
 
 import { FAQ } from 'components/FAQ'
@@ -16,17 +17,31 @@ import { mint } from 'lib/utils/mint'
 import router from 'next/router'
 
 import cacheContent from '../lib/config.json'
+import { getAllTokens } from 'lib/utils/getAllTokens'
+import { getClient } from 'lib/utils/getClient'
 
 export default function Index() {
   const { connect } = useWallet()
+  const [tokensLoaded, setTokensLoaded] = React.useState<string[] | undefined>(undefined)
   const connectedWallet = useConnectedWallet()
 
+  useEffect(() => {
+    const loadTokens = async (connectedWallet: ConnectedWallet) => {
+      const lcd = await getClient(connectedWallet.network.chainID || 'columbus-5')
+      setTokensLoaded(
+        await getAllTokens(lcd, cacheContent.contract_addr)
+      )
+    }
+    if (typeof tokensLoaded === 'undefined' && typeof connectedWallet !== 'undefined') {
+      loadTokens(connectedWallet)
+    }
+  }, [connectedWallet])
 
   const handleClickMint = async (mintCount: number) => {
 
-    if (connectedWallet) {
+    if (connectedWallet && tokensLoaded) {
       const token_id = await toast.promise(
-        mint(connectedWallet, cacheContent as CacheContent, mintCount),
+        mint(connectedWallet, cacheContent as CacheContent, mintCount, tokensLoaded),
         {
           pending: "Minting token(s)...",
           success: "Token(s) minted!",
@@ -63,7 +78,6 @@ export default function Index() {
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
         <div className='flex flex-col items-center justify-center space-y-12'>
           <h2 className='text-center text-3xl font-extrabold text-gray-900 sm:text-4xl'>
-            {/* 'font-bold text-3xl text-blue-700'> */}
             Exclusive 1st Drop
           </h2>
 
@@ -86,6 +100,7 @@ export default function Index() {
             </button>
           ) : (
             <Mint 
+              disabled={typeof tokensLoaded === 'undefined'}
               mintCallback={handleClickMint} 
               mintCost={cacheContent.price.amount/1_000_000}
             />
