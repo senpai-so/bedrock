@@ -1,7 +1,7 @@
 import { getClient } from './getClient'
 import { CacheContent, Metadata } from 'lib/types'
 import { MintMsg } from '../../packages/cli/src/lib/types'
-import { isTxError, MsgExecuteContract } from '@terra-money/terra.js'
+import { Coin, isTxError, MsgExecuteContract } from '@terra-money/terra.js'
 import { create } from 'ipfs-http-client'
 import {
   concat as uint8ArrayConcat,
@@ -53,7 +53,8 @@ export const mint = async (wallet: any, cacheContent: CacheContent, count: numbe
       new MsgExecuteContract(
         wallet.walletAddress,
         cacheContent.contract_addr,
-        execMsg
+        execMsg,
+        [new Coin(cacheContent.price.denom, cacheContent.price.amount)]
       )
     )
   }  

@@ -84,7 +84,7 @@ function ConfigPage() {
       symbol: symbol,
       price: {
         amount: price.concat('000000'),
-        denom: 'uluna'
+        denom: 'uusd'
       },
       treasury_account: connectedWallet.walletAddress,
       start_time: startTime,
@@ -105,7 +105,11 @@ function ConfigPage() {
 
     const config = {
       contract_addr: contractAddr,
-      chain_id: connectedWallet.network.chainID
+      chain_id: connectedWallet.network.chainID,
+      price: {
+        amount: price.concat('000000'),
+        denom: 'uusd'
+      }
     }
     const requestOptions = {
       method: 'POST',
@@ -195,7 +199,7 @@ function ConfigPage() {
                     htmlFor='collection-name'
                     className='block text-base font-medium text-black'
                   >
-                    Price (luna)
+                    Price (UST)
                   </label>
                   <div className='mt-1'>
                     <input
