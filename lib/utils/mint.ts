@@ -36,16 +36,16 @@ export const mint = async (wallet: any, cacheContent: CacheContent, count: numbe
 
   const execMsgs = []
   for (let i=0; i<count; i++) {
-    const assetJson = `${newAssets[0].split('.')[0]}.json`
+    const assetJson = `${newAssets[i].split('.')[0]}.json`
     const ipfsPath = `${cacheContent.cid}/${assetJson}`
     const metadata = JSON.parse(await getIPFSContents(ipfsPath)) as Metadata
-    metadata.image = `https://ipfs.io/ipfs/${cacheContent.cid}/${newAssets[0]}`
+    metadata.image = `https://ipfs.io/ipfs/${cacheContent.cid}/${newAssets[i]}`
 
     const mintMsg: MintMsg = {
-    token_id: newAssets[0].split('.')[0],
-    owner: wallet.walletAddress,
-    token_uri: undefined, // `ipfs://${cacheContent.cid}/${assetJson}`,
-    extension: metadata
+      token_id: newAssets[i].split('.')[0],
+      owner: wallet.walletAddress,
+      token_uri: undefined, // `ipfs://${cacheContent.cid}/${assetJson}`,
+      extension: metadata
     }
 
     const execMsg = { mint: mintMsg }

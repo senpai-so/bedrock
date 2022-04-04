@@ -85,7 +85,10 @@ export default function Index() {
               Connect!
             </button>
           ) : (
-            <Mint mintCallback={handleClickMint} />
+            <Mint 
+              mintCallback={handleClickMint} 
+              mintCost={cacheContent.price.amount/1_000_000}
+            />
           )}
 
           <FAQ />
