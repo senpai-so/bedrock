@@ -106,10 +106,7 @@ function ConfigPage() {
     const config = {
       contract_addr: contractAddr,
       chain_id: connectedWallet.network.chainID,
-      price: {
-        amount: price.concat('000000'),
-        denom: 'uusd'
-      }
+      config: msg,
     }
     const requestOptions = {
       method: 'POST',

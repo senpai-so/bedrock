@@ -55,7 +55,7 @@ export const mint = async (
         wallet.walletAddress,
         cacheContent.contract_addr,
         execMsg,
-        [new Coin(cacheContent.price.denom, cacheContent.price.amount)]
+        [new Coin(cacheContent.config.price.denom, cacheContent.config.price.amount)]
       )
     )
   }  

@@ -1,24 +1,24 @@
 var express = require('express')
 const fs = require('fs')
 
-const getConfig = (path) => {
-  const config = fs.existsSync(path) ? fs.readFileSync(path).toString() : '{}'
-  return JSON.parse(config)
+const getCache = (path) => {
+  return JSON.parse(
+    fs.existsSync(path) ? fs.readFileSync(path).toString() : '{}'
+  )
 }
 
 var router = express.Router()
 router.post('/', function (req, res, next) {
-  const { contract_addr, chain_id, price } = req.body
+  const { contract_addr, chain_id, config } = req.body
 
-  let config = getConfig('./config.json')
-  config.contract_addr = contract_addr
-  config.chain_id = chain_id
-  config.price = price
+  let cache = getCache('./cache.json')
+  cache.contract_addr = contract_addr
+  cache.chain_id = chain_id
+  cache.config = config
 
   // Write config to two paths
-  //  - one for live dApp to use
-  fs.writeFileSync('./config.json', JSON.stringify(config)) // used by setup when someone wants to update their config
-  fs.writeFileSync('./../../lib/config.json', JSON.stringify(config)) // "live" config that is useed by the Storefront
+  fs.writeFileSync('./cache.json', JSON.stringify(cache)) // used by setup when someone wants to update their config
+  fs.writeFileSync('./../../lib/cache.json', JSON.stringify(cache)) // "live" config that is useed by the Storefront
 
   res.status(200)
 })

@@ -8,7 +8,7 @@ export type CacheContent = {
   cid: string
   contract_addr: string
   chain_id: string
-  price: Coin
+  config: Config
 }
 
 export type CacheResponse = {
@@ -41,6 +41,17 @@ export type Trait = {
   trait_type: string
   value: string
   display_type: string | undefined
+}
+
+export type Config = {
+  name: string
+  symbol: string
+  price: Coin
+  treasury_account: string
+  start_time: number | undefined
+  end_time: number | undefined
+  max_token_count: number
+  is_mint_public: boolean
 }
 
 // Responses

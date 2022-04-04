@@ -9,7 +9,7 @@ import {
 
 import { Modal } from 'components/Modal'
 import { NftInfoResponse, OwnerOf } from 'lib/types'
-import cacheContent from '../lib/config.json'
+import cacheContent from '../lib/cache.json'
 import { getClient } from '../lib/utils/getClient'
 
 const isProperImage = (imageUri: string) =>
@@ -83,7 +83,7 @@ export default function Index() {
     async function fetchSetNFTData(tokenId: string) {
       try {
         if (typeof connectedWallet === 'undefined') return
-        const lcd = await getClient(connectedWallet?.network.chainID)
+        const lcd = await getClient(connectedWallet.network.chainID)
         const ownership = (await lcd.wasm.contractQuery<NftInfoResponse>(
           cacheContent.contract_addr,
           {
@@ -91,7 +91,7 @@ export default function Index() {
           }
         )) as unknown as OwnerOf
 
-        if (ownership.owner === connectedWallet?.walletAddress) {
+        if (ownership.owner === connectedWallet.walletAddress) {
           const nftInfo = await lcd.wasm.contractQuery<NftInfoResponse>(
             cacheContent.contract_addr,
             {

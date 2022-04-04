@@ -16,7 +16,7 @@ import { CacheContent } from 'lib/types'
 import { mint } from 'lib/utils/mint'
 import router from 'next/router'
 
-import cacheContent from '../lib/config.json'
+import cacheContent from '../lib/cache.json'
 import { getAllTokens } from 'lib/utils/getAllTokens'
 import { getClient } from 'lib/utils/getClient'
 
@@ -102,7 +102,7 @@ export default function Index() {
             <Mint 
               disabled={typeof tokensLoaded === 'undefined'}
               mintCallback={handleClickMint} 
-              mintCost={cacheContent.price.amount/1_000_000}
+              mintCost={parseFloat(cacheContent.config.price.amount)/1_000_000}
             />
           )}
 
