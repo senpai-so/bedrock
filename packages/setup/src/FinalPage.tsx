@@ -21,12 +21,11 @@ function FinalPage() {
       style={{
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
-        minHeight: '100%',
         height: '100%',
         width: '100%'
       }}
     >
-      <div className='bg-white max-w-2xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
+      <div className='bg-white max-w-2xl mx-auto rounded-3xl shadow-2xl px-20 py-12'>
         <div className='flex flex-col items-center justify-center space-y-4'>
           <div className='flex flex-col items-center justify-center space-y-4'>
             <div className='flex flex-col items-center justify-center border-gray-200 rounded-lg p-4'>

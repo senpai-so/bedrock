@@ -48,8 +48,8 @@ export type Config = {
   symbol: string
   price: Coin
   treasury_account: string
-  start_time: number | undefined
-  end_time: number | undefined
+  start_time?: number | undefined
+  end_time?: number | undefined
   max_token_count: number
   is_mint_public: boolean
 }
@@ -64,7 +64,7 @@ export type NftInfoResponse = {
 // Helpers
 
 export type Coin = {
-  amount: number
+  amount: string
   denom: string
 }
 

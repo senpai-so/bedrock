@@ -127,7 +127,6 @@ function ConfigPage() {
       style={{
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
-        minHeight: '100%',
         height: '100%',
         width: '100%'
       }}
@@ -143,8 +142,8 @@ function ConfigPage() {
         draggable
         pauseOnHover={false}
       />
-      <div className='bg-white max-w-2xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
-        <div className='flex flex-col items-center justify-center space-y-4'>
+      <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
+        <div className='flex flex-col items-center justify-center max-w-l mx-auto'>
           <div className='flex flex-col items-center justify-center border-gray-200 rounded-lg p-4'>
             <h2 className='font-bold text-center text-3xl text-blue-700'>
               Configuration
@@ -270,7 +269,7 @@ function ConfigPage() {
                     htmlFor='collection-name'
                     className='block text-base font-medium text-black'
                   >
-                    Max Number of Tokens
+                    Token Supply
                   </label>
                   <div className='mt-1'>
                     <input

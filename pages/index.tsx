@@ -60,7 +60,7 @@ export default function Index() {
       className='py-12'
       style={{
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover',
+        backgroundSize: 'contain',
         minHeight: '100vh',
       }}
     >
