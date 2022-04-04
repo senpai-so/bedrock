@@ -103,6 +103,8 @@ export default function Index() {
               disabled={typeof tokensLoaded === 'undefined'}
               mintCallback={handleClickMint} 
               mintCost={parseFloat(cacheContent.config.price.amount)/1_000_000}
+              tokensMinted={tokensLoaded?.length || 0}
+              tokenSupply={cacheContent.config.max_token_count}
             />
           )}
 

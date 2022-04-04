@@ -4,21 +4,34 @@ export const Mint: React.FC<{
   disabled: boolean,
   mintCallback: (count: number) => Promise<void>,
   mintCost: number,
-}> = ({ disabled, mintCallback, mintCost }) => {
+  tokensMinted: number,
+  tokenSupply: number,
+}> = ({ disabled, mintCallback, mintCost, tokensMinted, tokenSupply }) => {
   const [mintCount, setMintCount] = React.useState<number | undefined>()
 
   const updateMintCount = (value: number | undefined) => {
     if (typeof value === 'undefined') return;
-    setMintCount(value)
+    if (value < 1) {
+      setMintCount(1)
+    } else if (value > (tokenSupply-tokensMinted)) {
+      setMintCount(tokenSupply-tokensMinted)
+    } else {
+      setMintCount(value)
+    }
   }
 
   return (
     <div className='bg-transparent w-full px-12'>
       <div className='w-full max-w-7xl mx-auto py-12 px-4 sm:py-6 sm:px-6 lg:px-8'>
         <div className='w-full mx-auto divide-y-2 divide-gray-200'>
-          <h2 className='text-center text-2xl font-extrabold text-gray-800 sm:text-3xl'>
-            Mint NFT
-          </h2>
+          <div>
+            <h2 className='text-center text-2xl font-extrabold text-gray-800 sm:text-3xl'>
+              Mint NFT
+            </h2>
+            <h3 className='text-center text-l font-bold text-gray-700 sm:text-xl mt-2'>
+              { `${tokensMinted} / ${tokenSupply}` }
+            </h3>
+          </div>
 
           <div className='flex flex-col items-center mt-6 space-y-6 '>
             <div className='flex flex-col items-center'>
@@ -27,11 +40,11 @@ export const Mint: React.FC<{
                 name='count'
                 placeholder='Quantity'
                 value={mintCount}
-                className='flex items-center mt-6 px-6 py-3 border border-blue-500 text-l font-medium rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                className='flex items-center mt-6 px-6 py-3 border-2 border-blue-500 text-l font-medium rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 onChange={(e) => updateMintCount(parseInt(e.currentTarget.value))}
               />
               <span
-                className='flex text-m font-medium mt-2'
+                className='flex text-center text-m font-medium text-gray-700 mt-2'
                 style={{
                   textAlign: 'center'
                 }}
