@@ -1,12 +1,4 @@
 import React from 'react'
-import cs from 'classnames'
-
-import ReactMarkdown from 'react-markdown'
-import { Disclosure } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
-
-import { EmptyProps } from 'lib/types'
-
 
 export const Mint: React.FC<{
   mintCallback: (count: number) => Promise<void>
@@ -34,7 +26,7 @@ export const Mint: React.FC<{
                 placeholder='Quantity'
                 value={mintCount}
                 className='flex items-center mt-6 px-6 py-3 border border-blue-500 text-xl font-medium rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                onChange={(e) => setMintCount(parseInt(e.currentTarget.value))}
+                onChange={(e) => updateMintCount(parseInt(e.currentTarget.value))}
               />
             </div>
             <button
