@@ -7,7 +7,6 @@ import {
   ConnectType
 } from '@terra-money/wallet-provider'
 
-import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
 import { FAQ } from 'components/FAQ'
 
@@ -55,7 +54,6 @@ export default function Index() {
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
         height: '100%',
-        // flexGrow: 1
       }}
     >
       <ToastContainer
