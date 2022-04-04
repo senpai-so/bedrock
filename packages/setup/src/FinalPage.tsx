@@ -17,11 +17,13 @@ function FinalPage() {
 
   return (
     <div
-      className='py-12'
+      className='flex items-center justify-center py-12'
       style={{
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
+        minHeight: '100%',
         height: '100%',
+        width: '100%'
       }}
     >
       <div className='bg-white max-w-2xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>

@@ -61,7 +61,7 @@ export default function Index() {
       style={{
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
-        height: '100%',
+        minHeight: '100vh',
       }}
     >
       <ToastContainer

@@ -3,9 +3,13 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+#__next,
 body,
 html {
-  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  margin: 0; 
+  padding: 0;
 }
 
 body {
@@ -16,6 +20,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* #__next {
+  height: 100%;
+  margin: 0;
+} */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

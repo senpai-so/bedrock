@@ -50,8 +50,7 @@ function CIDPage() {
       style={{
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
-        minHeight: '100%',
-        height: '100%',
+        minHeight: '100vh',
         width: '100%'
       }}
     >

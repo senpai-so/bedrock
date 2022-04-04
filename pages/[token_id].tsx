@@ -112,14 +112,15 @@ export default function Index() {
 
   return (
     <div
-      className='py-12'
-      style={{
-        backgroundImage: 'url(/background.png)',
-        backgroundSize: 'cover',
-        height: '100%',
-      }}
+    className='flex items-center justify-center py-12'
+    style={{
+      backgroundImage: 'url(/background.png)',
+      backgroundSize: 'cover',
+      height: '100%',
+      width: '100%'
+    }}
     >
-      <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
+      <div className='flex-grow bg-white max-w-xl max-h-xl w-max rounded-3xl shadow-2xl px-5 py-12'>
         <div className='flex flex-col items-center justify-center space-y-4'>
           <h2 className='font-bold text-3xl text-blue-700'>
             {nftInfo?.extension?.name || 'NFT View Page'}
@@ -135,8 +136,8 @@ export default function Index() {
                 <Image
                   className='rounded-xl'
                   src='/LooniesGif.gif'
-                  height='400'
-                  width='400'
+                  height='300'
+                  width='300'
                   alt='LooniesGif'
                 />
               </div>
