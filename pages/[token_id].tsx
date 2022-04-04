@@ -112,7 +112,7 @@ export default function Index() {
 
   return (
     <div
-      className='h-full'
+      className='py-12'
       style={{
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
