@@ -80,7 +80,6 @@ export const mint = async (
 
 const getIPFSContents = async (path: string) => {
   const url = 'https://dweb.link/api/v0'
-  if (true) console.log('')
   const ipfs = create({ url })
 
   const bufs: Uint8Array[] = []
