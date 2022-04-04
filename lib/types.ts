@@ -8,6 +8,7 @@ export type CacheContent = {
   cid: string
   contract_addr: string
   chain_id: string
+  config: Config
 }
 
 export type CacheResponse = {
@@ -42,12 +43,31 @@ export type Trait = {
   display_type: string | undefined
 }
 
+export type Config = {
+  name: string
+  symbol: string
+  price: Coin
+  treasury_account: string
+  start_time?: number | undefined
+  end_time?: number | undefined
+  max_token_count: number
+  is_mint_public: boolean
+}
+
 // Responses
 
 export type NftInfoResponse = {
   extension: Metadata | undefined
   // token_uri: string | undefined
 }
+
+// Helpers
+
+export type Coin = {
+  amount: string
+  denom: string
+}
+
 
 /// Legacy
 
@@ -71,15 +91,4 @@ export interface OwnerOf {
 
 export interface NumTokensResponse {
   count: number
-}
-
-// Prisma schema
-export interface NftToken {
-  id: number
-  token_id: string
-  name: string
-  description: string
-  attributes: Array<Map<string, string>>
-  image_uri: string
-  isMinted: boolean
 }

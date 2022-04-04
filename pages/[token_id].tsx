@@ -7,10 +7,9 @@ import {
   WalletStatus
 } from '@terra-money/wallet-provider'
 
-import { Page } from 'components/Page'
 import { Modal } from 'components/Modal'
 import { NftInfoResponse, OwnerOf } from 'lib/types'
-import cacheContent from '../lib/config.json'
+import cacheContent from '../lib/cache.json'
 import { getClient } from '../lib/utils/getClient'
 
 const isProperImage = (imageUri: string) =>
@@ -85,7 +84,7 @@ export default function Index() {
     async function fetchSetNFTData(tokenId: string) {
       try {
         if (typeof connectedWallet === 'undefined') return
-        const lcd = await getClient(connectedWallet?.network.chainID)
+        const lcd = await getClient(connectedWallet.network.chainID)
         const ownership = (await lcd.wasm.contractQuery<NftInfoResponse>(
           cacheContent.contract_addr,
           {
@@ -93,7 +92,7 @@ export default function Index() {
           }
         )) as unknown as OwnerOf
 
-        if (ownership.owner === connectedWallet?.walletAddress) {
+        if (ownership.owner === connectedWallet.walletAddress) {
           setRoomNo(tokenId.split('-')[0])
           const nftInfo = await lcd.wasm.contractQuery<NftInfoResponse>(
             cacheContent.contract_addr,
@@ -115,86 +114,76 @@ export default function Index() {
 
   return (
     <div
-      className='h-full'
-      style={
-        !nftInfo
-          ? {
-              backgroundImage: 'url(/background.png)',
-              backgroundSize: 'cover',
-              height: '100vh'
-            }
-          : {
-              backgroundImage: 'url(/background.png)',
-              backgroundSize: 'cover',
-              height: '100%',
-              width: '100%'
-            }
-      }
+    className='flex items-center justify-center py-12'
+    style={{
+      backgroundImage: 'url(/background.png)',
+      backgroundSize: 'cover',
+      height: '100%',
+      width: '100%'
+    }}
     >
-      <Page>
-        <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
-          <div className='flex flex-col items-center justify-center space-y-4'>
-            <h2 className='font-bold text-3xl text-blue-700'>
-              {nftInfo?.extension?.name || 'NFT View Page'}
-            </h2>
+      <div className='flex-grow bg-white max-w-xl max-h-xl w-max rounded-3xl shadow-2xl px-5 py-12'>
+        <div className='flex flex-col items-center justify-center space-y-4'>
+          <h2 className='font-bold text-3xl text-blue-700'>
+            {nftInfo?.extension?.name || 'NFT View Page'}
+          </h2>
 
-            <p className='text-base text-gray-700'>
-              {nftInfo?.extension?.description || ``}
-            </p>
+          <p className='text-base text-gray-700'>
+            {nftInfo?.extension?.description || ``}
+          </p>
 
-            {status === WalletStatus.WALLET_NOT_CONNECTED && (
-              <>
-                <div>
-                  <Image
-                    className='rounded-xl'
-                    src='/LooniesGif.gif'
-                    height='400'
-                    width='400'
-                    alt='LooniesGif'
-                  />
-                </div>
+          {status === WalletStatus.WALLET_NOT_CONNECTED && (
+            <>
+              <div>
+                <Image
+                  className='rounded-xl'
+                  src='/LooniesGif.gif'
+                  height='300'
+                  width='300'
+                  alt='LooniesGif'
+                />
+              </div>
 
-                {availableConnections
-                  .filter((_) => _.type === 'EXTENSION')
-                  .map(({ type, name, icon, identifier = '' }) => (
-                    <button
-                      key={'connection-' + type + identifier}
-                      className='inline-flex items-center px-6 py-3 text-blue-700 font-bold rounded-2xl border-2 border-blue-600 bg-white focus:outline-none '
-                      onClick={() => connect(type, identifier)}
-                    >
-                      <Image
-                        src={icon}
-                        alt={name}
-                        width='1em'
-                        height='1em'
-                        className='mr-2'
-                      />
-                      Connect Wallet
-                    </button>
-                  ))}
-              </>
-            )}
+              {availableConnections
+                .filter((_) => _.type === 'EXTENSION')
+                .map(({ type, name, icon, identifier = '' }) => (
+                  <button
+                    key={'connection-' + type + identifier}
+                    className='inline-flex items-center px-6 py-3 text-blue-700 font-bold rounded-2xl border-2 border-blue-600 bg-white focus:outline-none '
+                    onClick={() => connect(type, identifier)}
+                  >
+                    <Image
+                      src={icon}
+                      alt={name}
+                      width='1em'
+                      height='1em'
+                      className='mr-2'
+                    />
+                    Connect Wallet
+                  </button>
+                ))}
+            </>
+          )}
 
-            {status === WalletStatus.WALLET_CONNECTED && render()}
-            <br />
-            {showModal && (
-              <Modal
-                action={() => disconnect()}
-                walletAddress={abbreviateWalletAddress(
-                  connectedWallet?.walletAddress || ''
-                )}
-              />
-            )}
-            <br />
-            <button
-              className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-              onClick={() => router.push('/')}
-            >
-              Back to mint
-            </button>
-          </div>
+          {status === WalletStatus.WALLET_CONNECTED && render()}
+          <br />
+          {showModal && (
+            <Modal
+              action={() => disconnect()}
+              walletAddress={abbreviateWalletAddress(
+                connectedWallet?.walletAddress || ''
+              )}
+            />
+          )}
+          <br />
+          <button
+            className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+            onClick={() => router.push('/')}
+          >
+            Back to mint
+          </button>
         </div>
-      </Page>
+      </div>
     </div>
   )
 }

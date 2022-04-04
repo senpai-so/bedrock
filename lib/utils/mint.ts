@@ -1,25 +1,25 @@
 import { getClient } from './getClient'
 import { CacheContent, Metadata } from 'lib/types'
 import { MintMsg } from '../../packages/cli/src/lib/types'
-import { isTxError, MsgExecuteContract } from '@terra-money/terra.js'
+import { Coin, isTxError, MsgExecuteContract } from '@terra-money/terra.js'
 import { create } from 'ipfs-http-client'
 import {
   concat as uint8ArrayConcat,
   toString as uint8ArrayToString
 } from 'uint8arrays'
 
-export const mint = async (wallet: any, cacheContent: CacheContent) => {
+export const mint = async (
+  wallet: any, 
+  cacheContent: CacheContent, 
+  count: number,
+  tokens: string[]
+) => {
   if (cacheContent.contract_addr == '') return
   if (cacheContent.assets.length == 0) return
   if (cacheContent.chain_id == '') return
 
   // Load wallet & LCD client
   const lcd = await getClient(cacheContent.chain_id)
-
-  // TODO: ADD PAGINATION
-  const { tokens } = await lcd.wasm.contractQuery(cacheContent.contract_addr, {
-    all_tokens: { limit: undefined, start_after: undefined } // ensure all_tokens isn't bugged
-  })
 
   console.log()
 
@@ -28,32 +28,39 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
     (asset) => !tokens.includes(asset.split('.')[0])
   )
 
-  if (newAssets.length === 0) {
+  if (newAssets.length < count) {
     console.log('No NFTs left to mint :(')
     return
   }
 
-  const idx = Math.floor(Math.random()*newAssets.length);
-  const ipfsPath = `${cacheContent.cid}/${newAssets[idx]}`
-  const metadata = JSON.parse(await getIPFSContents(ipfsPath)) as Metadata
-  const mintMsg = {
-    token_id: newAssets[idx].split('.')[0],
-    owner: wallet.walletAddress,
-    // token_uri: `ipfs://${cacheContent.cid}/${assetJson}`,
-    extension: metadata
-  }
-
-  const execMsg = { mint: mintMsg }
-  console.log('ExecMsg:', execMsg)
   if (cacheContent.contract_addr === '') return
 
-  const execute = new MsgExecuteContract(
-    wallet.walletAddress,
-    cacheContent.contract_addr,
-    execMsg
-  )
+  const execMsgs = []
+  for (let i=0; i<count; i++) {
+    const assetJson = `${newAssets[i].split('.')[0]}.json`
+    const ipfsPath = `${cacheContent.cid}/${assetJson}`
+    const metadata = JSON.parse(await getIPFSContents(ipfsPath)) as Metadata
+    metadata.image = `https://ipfs.io/ipfs/${cacheContent.cid}/${newAssets[i]}`
 
-  const sign_res = await wallet.sign({ msgs: [execute] })
+    const mintMsg: MintMsg = {
+      token_id: newAssets[i].split('.')[0],
+      owner: wallet.walletAddress,
+      token_uri: undefined, // `ipfs://${cacheContent.cid}/${assetJson}`,
+      extension: metadata
+    }
+
+    const execMsg = { mint: mintMsg }
+    execMsgs.push(
+      new MsgExecuteContract(
+        wallet.walletAddress,
+        cacheContent.contract_addr,
+        execMsg,
+        [new Coin(cacheContent.config.price.denom, cacheContent.config.price.amount)]
+      )
+    )
+  }  
+
+  const sign_res = await wallet.sign({ msgs: execMsgs })
   const executeTxResult = await lcd.tx.broadcast(sign_res.result)
 
   if (isTxError(executeTxResult)) {
@@ -72,8 +79,7 @@ export const mint = async (wallet: any, cacheContent: CacheContent) => {
 }
 
 const getIPFSContents = async (path: string) => {
-  const url = 'https://bedrock.mypinata.cloud/api/v0'//'https://ipfs.io/api/v0'
-  if (true) console.log('')
+  const url = 'https://dweb.link/api/v0'
   const ipfs = create({ url })
 
   const bufs: Uint8Array[] = []
