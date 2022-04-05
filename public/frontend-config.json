@@ -1,16 +1,24 @@
 {
   "faqs": [
     {
-      "question": "Question 1",
-      "answer": "Answer 1"
+      "question": "What is this project?",
+      "answer": "At this current time, Home Suite Home is a project that has been born out of wanting to make my Colony home feel, well, more like my home. In its most basic state, it is right now to be enjoyed & placed in your Galactic Gridz Colony address to make it look better. This mint is a test run of the community sentiment towards the project & artwork, after privately showcasing the collection and was repeatedly asked to make it available. If the community is pro what has been created, there is a planned-out continuation of the project that could end with your own built out terra home. I hope you enjoy the pieces as much as I enjoyed spending a lot of hours creating them."
     },
     {
-      "question": "Question 2",
-      "answer": "Answer 2"
+      "question": "What is the artwork?",
+      "answer": "The artwork has been hand designed and created in an ultra-high quality voxel style. Each block & piece has been individually placed and created, not generated. "
     },
     {
-      "question": "Question 3",
-      "answer": "Answer 3"
-    }
+      "question": "How many pieces?",
+      "answer": "There are a total of 9 rooms, with 555 of each available. This leads to a total supply of 4995 rooms."
+    },
+    {
+      "question": "The cost?",
+      "answer": "The cost of each room is 0.2 Luna."
+    },
+    {
+      "question": "Secondary?",
+      "answer": "The rooms will be listed on Random Earth at the conclusion of the mint."
+    }	
   ]
 }
