@@ -84,7 +84,7 @@ export default function Index() {
           <div>
             <Image
               className='rounded-xl'
-              src='/BoredApe.gif'
+              src='/img.png'
               height='300'
               width='300'
               alt='BoredApe'

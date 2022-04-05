@@ -9,7 +9,8 @@ function FinalPage() {
       .then((res) => {
         console.log('Local dApp running on port 3002!')
         console.info('Redirecting...')
-        window.location.href = 'http://localhost:3002'
+        // window.location.href = 'http://localhost:3002'
+        window.open('http://localhost:3002')
         process.exit(0)
       })
       .catch((e) => console.log(e))

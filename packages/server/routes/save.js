@@ -20,7 +20,7 @@ router.post('/', function (req, res, next) {
   fs.writeFileSync('./cache.json', JSON.stringify(cache)) // used by setup when someone wants to update their config
   fs.writeFileSync('./../../lib/cache.json', JSON.stringify(cache)) // "live" config that is useed by the Storefront
 
-  res.status(200)
+  res.sendStatus(200)
 })
 
 module.exports = router

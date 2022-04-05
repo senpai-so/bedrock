@@ -12,9 +12,6 @@ import { NftInfoResponse, OwnerOf } from 'lib/types'
 import cacheContent from '../lib/cache.json'
 import { getClient } from '../lib/utils/getClient'
 
-const isProperImage = (imageUri: string) =>
-  imageUri.startsWith('http://') || imageUri.startsWith('https://')
-
 export default function Index() {
   const { status, availableConnections, connect, disconnect } = useWallet()
   const connectedWallet = useConnectedWallet()
@@ -39,28 +36,16 @@ export default function Index() {
   }
 
   function renderImage() {
-    const imageUrl = `/${roomNo}.png`
-    if (!imageUrl) {
-      return (
-        <Image
-          alt='no nft'
-          src={'/LASA_pp.png'}
-          className={imageStyle}
-          height='400'
-          width='400'
-        />
-      )
-    }
-    // if (isProperImage(imageUrl))
-    //   return (
-    //     <Image
-    //       alt='nft logo'
-    //       src={imageUrl}
-    //       height='400'
-    //       width='400'
-    //       className={imageStyle}
-    //     />
-    //   )
+    if (!roomNo) return
+    return (
+      <Image
+        alt='nft logo'
+        src={`/images/${roomNo}.png`}
+        height='300'
+        width='300'
+        className={imageStyle}
+      />
+    )
   }
 
   function render() {
@@ -100,6 +85,10 @@ export default function Index() {
               nft_info: { token_id: tokenId }
             }
           )
+
+          // Mock NFT metadata
+
+
           setNFTInfo(nftInfo)
         }
       } catch (error) {
@@ -166,16 +155,6 @@ export default function Index() {
           )}
 
           {status === WalletStatus.WALLET_CONNECTED && render()}
-          <br />
-          {showModal && (
-            <Modal
-              action={() => disconnect()}
-              walletAddress={abbreviateWalletAddress(
-                connectedWallet?.walletAddress || ''
-              )}
-            />
-          )}
-          <br />
           <button
             className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
             onClick={() => router.push('/')}
