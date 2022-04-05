@@ -105,8 +105,9 @@ export default function Index() {
     <div
     className='flex items-center justify-center py-12'
     style={{
-      backgroundImage: 'url(/background.png)',
-      backgroundSize: 'cover',
+      // backgroundImage: 'url(/background.png)',
+      // backgroundSize: 'cover',
+      backgroundColor: 'black',
       height: '100%',
       width: '100%'
     }}

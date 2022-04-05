@@ -59,8 +59,9 @@ export default function Index() {
     <div
       className='py-12'
       style={{
-        backgroundImage: 'url(/background.png)',
-        backgroundSize: 'contain',
+        // backgroundImage: 'url(/background.png)',
+        // backgroundSize: 'contain',
+        backgroundColor: 'black',
         minHeight: '100vh',
       }}
     >
