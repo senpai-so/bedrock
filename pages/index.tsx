@@ -16,6 +16,7 @@ import { CacheContent } from 'lib/types'
 import { mint } from 'lib/utils/mint'
 import router from 'next/router'
 
+import { title } from '../public/frontend-config.json'
 import cacheContent from '../lib/cache.json'
 import { getAllTokens } from 'lib/utils/getAllTokens'
 import { getClient } from 'lib/utils/getClient'
@@ -27,10 +28,16 @@ export default function Index() {
 
   useEffect(() => {
     const loadTokens = async (connectedWallet: ConnectedWallet) => {
-      const lcd = await getClient(connectedWallet.network.chainID || 'columbus-5')
-      setTokensLoaded(
-        await getAllTokens(lcd, cacheContent.contract_addr)
-      )
+      try {
+        const lcd = await getClient(connectedWallet.network.chainID || 'columbus-5')
+        setTokensLoaded(
+          await getAllTokens(lcd, cacheContent.contract_addr)
+        )
+      } catch (error) {
+        console.log("Error while loading tokens...")
+        console.log(error)
+      }
+      
     }
     if (typeof tokensLoaded === 'undefined' && typeof connectedWallet !== 'undefined') {
       loadTokens(connectedWallet)
@@ -79,7 +86,7 @@ export default function Index() {
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
         <div className='flex flex-col items-center justify-center space-y-12'>
           <h2 className='text-center text-3xl font-extrabold text-gray-900 sm:text-4xl'>
-            Exclusive 1st Drop
+            { title }
           </h2>
 
           <div>
