@@ -49,7 +49,7 @@ export const Mint: React.FC<{
                   textAlign: 'center'
                 }}
               >
-                { `${mintCost * (mintCount || 1)} UST` }
+                { `${mintCost * (mintCount || 1)} Luna` }
               </span>
             </div>
             <button

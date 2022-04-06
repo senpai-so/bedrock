@@ -8,6 +8,19 @@ import {
   toString as uint8ArrayToString
 } from 'uint8arrays'
 
+// https://stackoverflow.com/questions/15585216/how-to-randomly-generate-numbers-without-repetition-in-javascript
+function getRandomNums(n: number, max: number) {
+  const result: number[] = []
+  for (let i = 0; i < n; i++) {
+    let x = Math.floor(Math.random() * max)
+    while (result.includes(x)) {
+      x = Math.floor(Math.random() * max)
+    }
+    result.push(x)
+  }
+  return result 
+};
+
 export const mint = async (
   wallet: any, 
   cacheContent: CacheContent, 
@@ -23,30 +36,41 @@ export const mint = async (
 
   console.log()
 
-  // Select our NFT to mint
+  // Find which tokens have not been minted
   const newAssets = cacheContent.assets.filter(
     (asset) => !tokens.includes(asset.split('.')[0])
   )
-
-  // TODO: Randomize order
 
   if (newAssets.length < count) {
     console.log('No NFTs left to mint :(')
     return
   }
-
   if (cacheContent.contract_addr === '') return
 
+  const indices = getRandomNums(count, newAssets.length)
+
   const execMsgs = []
-  for (let i=0; i<count; i++) {
-    const assetJson = `${newAssets[i].split('.')[0]}.json`
-    const ipfsPath = `/ipfs/${cacheContent.cid}/${assetJson}`
+  for (const i of indices) {
+    const assetRoot = newAssets[i].split('.')[0]
+    const roomSplit = assetRoot.split('-')
+
+    const extension: Metadata = {
+      image: `https://bedrock.mypinata.cloud/ipfs/${cacheContent.cid}/${assetRoot}.png`,
+      name: `Room ${roomSplit[0]}`,
+      description: `#${roomSplit[1]}`,
+      animation_url: undefined,
+      attributes: [ { trait_type: "Room #", value: `${roomSplit[0]}`, display_type: undefined } ],
+      background_color: undefined,
+      external_url: undefined,
+      image_data: undefined,
+      youtube_url: undefined,
+    }
 
     const mintMsg: MintMsg = {
       token_id: newAssets[i].split('.')[0],
       owner: wallet.walletAddress,
-      token_uri: ipfsPath,
-      extension: undefined,
+      token_uri: undefined,
+      extension: extension,
     }
 
     const execMsg = { mint: mintMsg }
