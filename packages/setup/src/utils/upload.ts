@@ -46,7 +46,7 @@ export const createContract = async (
   const instantiate = new MsgInstantiateContract(
     wallet.walletAddress,
     wallet.walletAddress,
-    60537,//CODE_ID,
+    60782,//CODE_ID,
     {
       name: msg.name,
       symbol: msg.symbol,

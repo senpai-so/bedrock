@@ -86,6 +86,8 @@ export default function Index() {
             }
           )
 
+          console.log("Nft Info", nftInfo)
+
           // Mock NFT metadata
 
 

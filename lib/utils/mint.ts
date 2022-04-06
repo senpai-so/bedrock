@@ -28,6 +28,8 @@ export const mint = async (
     (asset) => !tokens.includes(asset.split('.')[0])
   )
 
+  // TODO: Randomize order
+
   if (newAssets.length < count) {
     console.log('No NFTs left to mint :(')
     return

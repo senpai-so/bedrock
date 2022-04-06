@@ -84,7 +84,7 @@ function ConfigPage() {
       symbol: symbol,
       price: {
         amount: (price * 1_000_000).toString(),
-        denom: 'uusd'
+        denom: 'uluna'
       },
       treasury_account: connectedWallet.walletAddress,
       start_time: startTime,
@@ -195,7 +195,7 @@ function ConfigPage() {
                     htmlFor='collection-name'
                     className='block text-base font-medium text-black'
                   >
-                    Price (UST)
+                    Price (Luna)
                   </label>
                   <div className='mt-1'>
                     <input

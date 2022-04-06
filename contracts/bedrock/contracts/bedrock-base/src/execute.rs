@@ -75,7 +75,16 @@ pub fn execute_mint(
     
 
     // Custom check for Alex's NFTs
-    if !msg.token_uri.is_some() || !msg.token_uri.as_ref().unwrap().contains(&String::from("QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V")) {
+    let ext = msg.extension.as_ref();
+    if ext.is_some() && ext.unwrap().image.is_some() {
+      println!("ext & image are not None");
+      if !ext.unwrap().image.as_ref().unwrap().contains(&String::from("QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V")) {
+        println!("does not contain hash");
+        println!("{}", ext.unwrap().image.as_ref().unwrap());
+        return Err(ContractError::Unauthorized {});
+      }
+    } else {
+      println!("ext or image is None");
       return Err(ContractError::Unauthorized {});
     }
   }

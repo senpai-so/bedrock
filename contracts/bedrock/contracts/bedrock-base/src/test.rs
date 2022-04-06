@@ -40,8 +40,18 @@ mod tests {
         let mint_msg = MintMsg {
             token_id: token_id.to_string(),
             owner: OWNER.to_string(),
-            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
-            extension: None,
+            token_uri: None, 
+            extension: Some( Metadata {
+                image: Some("ipfs://QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image_data: None,
+                external_url: None,
+                description: None,
+                name: Some("Token1-1".to_string()),
+                attributes: Some(vec!( Trait { trait_type: "Room".to_string(), value: "1".to_string(), display_type: None })),
+                background_color: None,
+                animation_url: None,
+                youtube_url: None,
+            }),
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
         execute(deps.as_mut(), mock_env(), mint_info, exec_msg).unwrap();
@@ -152,7 +162,7 @@ mod tests {
             owner: OWNER.to_string(),
             token_uri: None, 
             extension: Some( Metadata {
-                image: Some("ipfs://QmQwkiEyiCuuHXGndaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image: Some("ipfs://wrong_hash/1.png".to_string()),
                 image_data: None,
                 external_url: None,
                 description: None,
@@ -197,8 +207,18 @@ mod tests {
         let mint_msg1 = MintMsg {
             token_id: token_ids[0].to_string(),
             owner: OWNER.to_string(),
-            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
-            extension: None,
+            token_uri: None, 
+            extension: Some( Metadata {
+                image: Some("ipfs://QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image_data: None,
+                external_url: None,
+                description: None,
+                name: Some("Token1-1".to_string()),
+                attributes: Some(vec!( Trait { trait_type: "Room".to_string(), value: "1".to_string(), display_type: None })),
+                background_color: None,
+                animation_url: None,
+                youtube_url: None,
+            }),
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg1);
         let res = execute(deps.as_mut(), mock_env(), success_info, exec_msg.clone());
@@ -208,8 +228,18 @@ mod tests {
         let mint_msg2 = MintMsg {
             token_id: token_ids[1].to_string(),
             owner: OWNER.to_string(),
-            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-2.json".into()),
-            extension: None,
+            token_uri: None, 
+            extension: Some( Metadata {
+                image: Some("ipfs://QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image_data: None,
+                external_url: None,
+                description: None,
+                name: Some("Token1-1".to_string()),
+                attributes: Some(vec!( Trait { trait_type: "Room".to_string(), value: "1".to_string(), display_type: None })),
+                background_color: None,
+                animation_url: None,
+                youtube_url: None,
+            }),
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg2);
         let res = execute(deps.as_mut(), mock_env(), failure_info.clone(), exec_msg.clone());
@@ -240,8 +270,18 @@ mod tests {
         let mint_msg = MintMsg {
             token_id: token_id.to_string(),
             owner: OWNER.to_string(),
-            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
-            extension: None,
+            token_uri: None, 
+            extension: Some( Metadata {
+                image: Some("ipfs://QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image_data: None,
+                external_url: None,
+                description: None,
+                name: Some("Token1-1".to_string()),
+                attributes: Some(vec!( Trait { trait_type: "Room".to_string(), value: "1".to_string(), display_type: None })),
+                background_color: None,
+                animation_url: None,
+                youtube_url: None,
+            }),
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg);
         let mint_info = mock_info(OWNER, &[]);
@@ -291,8 +331,18 @@ mod tests {
         let mint_msg = MintMsg {
             token_id: token_id.to_string(),
             owner: OWNER.to_string(),
-            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
-            extension: None,
+            token_uri: None, 
+            extension: Some( Metadata {
+                image: Some("ipfs://QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image_data: None,
+                external_url: None,
+                description: None,
+                name: Some("Token1-1".to_string()),
+                attributes: Some(vec!( Trait { trait_type: "Room".to_string(), value: "1".to_string(), display_type: None })),
+                background_color: None,
+                animation_url: None,
+                youtube_url: None,
+            }),
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg);
         execute(deps.as_mut(), mock_env(), mint_info, exec_msg.clone()).unwrap();
@@ -396,8 +446,18 @@ mod tests {
         let mint_msg = MintMsg {
             token_id: token_id.into(),
             owner: OWNER.into(),
-            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
-            extension: None,
+            token_uri: None, 
+            extension: Some( Metadata {
+                image: Some("ipfs://QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1.png".to_string()),
+                image_data: None,
+                external_url: None,
+                description: None,
+                name: Some("Token1-1".to_string()),
+                attributes: Some(vec!( Trait { trait_type: "Room".to_string(), value: "1".to_string(), display_type: None })),
+                background_color: None,
+                animation_url: None,
+                youtube_url: None,
+            }),
         };
 
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
