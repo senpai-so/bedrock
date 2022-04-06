@@ -142,12 +142,6 @@ pub enum QueryMsg {
     token_id: String,
     include_expired: Option<bool>,
   },
-  ApprovedForAll {
-    owner: String,
-    include_expired: Option<bool>,
-    start_after: Option<String>,
-    limit: Option<u32>,
-  },
   NumTokens {},
   ContractInfo {},
   NftInfo {
@@ -177,17 +171,6 @@ impl From<QueryMsg> for CW721QueryMsg {
       } => CW721QueryMsg::OwnerOf {
         token_id,
         include_expired,
-      },
-      QueryMsg::ApprovedForAll {
-        owner,
-        include_expired,
-        start_after,
-        limit,
-      } => CW721QueryMsg::ApprovedForAll {
-        owner,
-        include_expired,
-        start_after,
-        limit,
       },
       QueryMsg::NumTokens {} => CW721QueryMsg::NumTokens {},
       QueryMsg::ContractInfo {} => CW721QueryMsg::ContractInfo {},

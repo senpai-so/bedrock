@@ -35,7 +35,7 @@ export const executeTransaction = async (
 }
 
 // Helper function for updating builds
-const storeCode = async (env: string, pk: string, pass: string) => {
+export const storeCode = async (env: string, pk: string, pass: string) => {
   const terra = await getClient(env)
   const key = encryptedToRawKey(pk, pass)
   const wallet = terra.wallet(key)

@@ -23,13 +23,12 @@ backtraces = ["cosmwasm-std/backtraces"]
 # use library feature to disable all instantiate/execute/query exports
 library = []
 [dependencies]
-terra-cosmwasm = "2.2.0"
-cosmwasm-std = "0.16.0"
-schemars = "0.8.1"
-serde = { version = "1.0.103", default-features = false, features = ["derive"] }
-cw721-base = { version = "0.9.1", features = ["library"] }
+cosmwasm-std = { version = "0.16.6" }
 cw721 = {  version = "0.9.2" }
-thiserror = { version = "1.0.23" }
+cw721-base = { version = "0.9.2", features = ["library"] }
+schemars = "0.8.1"
+serde = { version = "1.0.133", default-features = false, features = ["derive"] }
+thiserror = { version = "1.0" }
 
 [dev-dependencies]
-cosmwasm-schema = "0.16.0" 
+cosmwasm-schema = { version = "0.16.6" }

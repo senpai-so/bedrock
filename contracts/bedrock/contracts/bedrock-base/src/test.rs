@@ -40,7 +40,7 @@ mod tests {
         let mint_msg = MintMsg {
             token_id: token_id.to_string(),
             owner: OWNER.to_string(),
-            token_uri: Some("uri".to_string()), 
+            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
             extension: None,
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg.clone());
@@ -188,7 +188,7 @@ mod tests {
 
         instantiate(deps.as_mut(), mock_env(), info.clone(), init_msg).unwrap();
 
-        let token_ids = ["Enterprise", "Falcon"];
+        let token_ids = ["1-1", "1-2"];
         let coins = [coin(1_000_000, "uluna")];
         let success_info = mock_info(OWNER, &coins);
         let failure_info = mock_info(OWNER, &[]);
@@ -197,7 +197,7 @@ mod tests {
         let mint_msg1 = MintMsg {
             token_id: token_ids[0].to_string(),
             owner: OWNER.to_string(),
-            token_uri: None, 
+            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
             extension: None,
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg1);
@@ -208,7 +208,7 @@ mod tests {
         let mint_msg2 = MintMsg {
             token_id: token_ids[1].to_string(),
             owner: OWNER.to_string(),
-            token_uri: None, 
+            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-2.json".into()),
             extension: None,
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg2);
@@ -240,7 +240,7 @@ mod tests {
         let mint_msg = MintMsg {
             token_id: token_id.to_string(),
             owner: OWNER.to_string(),
-            token_uri: None, 
+            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
             extension: None,
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg);
@@ -291,7 +291,7 @@ mod tests {
         let mint_msg = MintMsg {
             token_id: token_id.to_string(),
             owner: OWNER.to_string(),
-            token_uri: None, 
+            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
             extension: None,
         };
         let exec_msg = ExecuteMsg::Mint(mint_msg);
@@ -394,9 +394,9 @@ mod tests {
         let token_id = "Enterprise";
         let mint_info = mock_info(OWNER, &[]);
         let mint_msg = MintMsg {
-            token_id: token_id.to_string(),
-            owner: OWNER.to_string(),
-            token_uri: None, 
+            token_id: token_id.into(),
+            owner: OWNER.into(),
+            token_uri: Some("ipfs/QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V/1-1.json".into()),
             extension: None,
         };
 

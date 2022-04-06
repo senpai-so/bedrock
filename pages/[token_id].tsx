@@ -128,8 +128,8 @@ export default function Index() {
                 <Image
                   className='rounded-xl'
                   src='/LooniesGif.gif'
-                  height='300'
-                  width='300'
+                  height='400'
+                  width='400'
                   alt='LooniesGif'
                 />
               </div>

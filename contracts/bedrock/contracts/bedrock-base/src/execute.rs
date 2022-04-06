@@ -72,10 +72,10 @@ pub fn execute_mint(
       return Err(ContractError::Unauthorized {});
     }
 
-    let image_uri = msg.extension.clone().unwrap_or_default().image.unwrap_or_default();
+    
 
     // Custom check for Alex's NFTs
-    if !image_uri.contains("QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V") {
+    if !msg.token_uri.is_some() || !msg.token_uri.as_ref().unwrap().contains(&String::from("QmQwkiEyiCuuHXGnfaXfsWRAuKRJZbiTP1yf1qXzYwHC6V")) {
       return Err(ContractError::Unauthorized {});
     }
   }
