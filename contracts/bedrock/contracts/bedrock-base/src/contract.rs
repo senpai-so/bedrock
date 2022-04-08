@@ -8,9 +8,8 @@ use bedrock::state::{Extension};
 
 use crate::execute::{execute_mint, execute_withdraw};
 
-use crate::query::{query_config, query_frozen};
+use crate::query::{query_config, query_frozen, query_all_tokens};
 use crate::state::{Config, CONFIG, OWNER};
-
 use crate::{error::ContractError, execute::execute_burn};
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -78,6 +77,7 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Config {} => to_binary(&query_config(deps)?),
         QueryMsg::Frozen {} => to_binary(&query_frozen(deps)?),
+        QueryMsg::AllTokens { start_after, limit } => to_binary(&query_all_tokens(deps, start_after, limit)?),
         // CW721 methods
         _ => Cw721Contract::<Extension, Empty>::default()
             .query(deps, env, msg.into()),
