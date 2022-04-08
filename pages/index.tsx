@@ -19,10 +19,12 @@ import router from 'next/router'
 import cacheContent from '../lib/cache.json'
 import { getAllTokens } from 'lib/utils/getAllTokens'
 import { getClient } from 'lib/utils/getClient'
+import { MyTokens } from 'components/MyTokens'
 
 export default function Index() {
   const { connect } = useWallet()
   const [tokensLoaded, setTokensLoaded] = React.useState<string[] | undefined>(undefined)
+  const [myTokens, setMyTokens] = React.useState<string[] | undefined>(undefined);
   const connectedWallet = useConnectedWallet()
 
   useEffect(() => {
@@ -60,7 +62,8 @@ export default function Index() {
       className='py-12'
       style={{
         backgroundImage: 'url(/background.png)',
-        backgroundSize: 'contain',
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
         minHeight: '100vh',
       }}
     >
@@ -99,13 +102,16 @@ export default function Index() {
               Connect!
             </button>
           ) : (
-            <Mint 
-              disabled={typeof tokensLoaded === 'undefined'}
-              mintCallback={handleClickMint} 
-              mintCost={parseFloat(cacheContent.config.price.amount)/1_000_000}
-              tokensMinted={tokensLoaded?.length || 0}
-              tokenSupply={cacheContent.config.max_token_count}
-            />
+            <>
+              <Mint 
+                disabled={typeof tokensLoaded === 'undefined'}
+                mintCallback={handleClickMint} 
+                mintCost={parseFloat(cacheContent.config.price.amount)/1_000_000}
+                tokensMinted={tokensLoaded?.length || 0}
+                tokenSupply={cacheContent.config.max_token_count}
+              />
+              { myTokens && <MyTokens tokensOwned={myTokens} /> }
+            </>
           )}
 
           <FAQ />

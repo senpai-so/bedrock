@@ -27,10 +27,6 @@ export default function Index() {
 
   const imageStyle = 'h-32 w-32 rounded-xl mx-auto mb-4'
 
-  const toggleDisconnect = () => {
-    setShowModal(!showModal)
-  }
-
   const abbreviateWalletAddress = (address: string) => {
     return address.length > 12
       ? address.slice(0, 6) + '...' + address.slice(-4)

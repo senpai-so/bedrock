@@ -79,11 +79,12 @@ export const mint = async (
 }
 
 const getIPFSContents = async (path: string) => {
-  const url = 'https://dweb.link/api/v0'
-  const ipfs = create({ url })
+  const url = 'https://ipfs.io/api/v0'
+  const ipfs = create({ url: new URL(url) })
 
   const bufs: Uint8Array[] = []
   for await (const buf of ipfs.cat(path)) {
+    console.log("Packet received")
     bufs.push(buf)
   }
   const data = uint8ArrayConcat(bufs)
