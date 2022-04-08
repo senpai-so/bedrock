@@ -25,9 +25,16 @@ export const getMyTokens = async (lcd: LCDClient, contract_address: string, owne
   let last_token = undefined
   while (true) {
     const msg = { tokens: { limit: BATCH_SIZE, owner: owner, start_after: last_token } }
-    const { tokens } = (await lcd.wasm.contractQuery(contract_address, msg)) as { tokens: string[] }
-    last_token = tokens.slice(-1)[0]
-    myTokens = myTokens.concat(tokens)
+    try {
+      const { tokens } = (await lcd.wasm.contractQuery(contract_address, msg)) as { tokens: string[] | undefined }
+      if (typeof tokens === 'undefined') break
+      if (tokens.length < BATCH_SIZE) {
+        myTokens = myTokens.concat(tokens)
+        break
+      }
+      last_token = tokens.slice(-1)[0]
+      myTokens = myTokens.concat(tokens)
+    } catch (error) { break }
   }
   
   return myTokens

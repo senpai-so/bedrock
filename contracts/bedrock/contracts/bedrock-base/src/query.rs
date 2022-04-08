@@ -26,7 +26,7 @@ pub fn query_all_tokens(
 ) -> StdResult<TokensResponse> {
     let contract = Cw721Contract::<Extension, Empty>::default();
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
-    let start = start_after.map(|s| Bound::Exclusive(s.into())); // check diff between Exclusive & ExlusiveRaw
+    let start = start_after.map(|s| Bound::Exclusive(s.into()));
 
     let tokens: StdResult<Vec<String>> = contract
         .tokens

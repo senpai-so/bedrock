@@ -17,22 +17,30 @@ import { mint } from 'lib/utils/mint'
 import router from 'next/router'
 
 import cacheContent from '../lib/cache.json'
-import { getAllTokens } from 'lib/utils/getAllTokens'
+import { getAllTokens, getMyTokens } from 'lib/utils/getAllTokens'
 import { getClient } from 'lib/utils/getClient'
 import { MyTokens } from 'components/MyTokens'
+import { LCDClient } from '@terra-money/terra.js'
+
+const loadAllTokens = async (lcd: LCDClient, setter: any) => {
+  setter(await getAllTokens(lcd, cacheContent.contract_addr))
+}
+
+const loadMyTokens = async (lcd: LCDClient, owner: string, setter: any) => {
+  setter(await getMyTokens(lcd, cacheContent.contract_addr, owner))
+}
 
 export default function Index() {
   const { connect } = useWallet()
   const [tokensLoaded, setTokensLoaded] = React.useState<string[] | undefined>(undefined)
-  const [myTokens, setMyTokens] = React.useState<string[] | undefined>(undefined);
+  const [myTokens, setMyTokens] = React.useState<string[]>([]);
   const connectedWallet = useConnectedWallet()
 
   useEffect(() => {
-    const loadTokens = async (connectedWallet: ConnectedWallet) => {
-      const lcd = await getClient(connectedWallet.network.chainID || 'columbus-5')
-      setTokensLoaded(
-        await getAllTokens(lcd, cacheContent.contract_addr)
-      )
+    const loadTokens = async (_connectedWallet: ConnectedWallet) => {
+      const lcd = await getClient(_connectedWallet.network.chainID)
+      loadAllTokens(lcd, setTokensLoaded)
+      loadMyTokens(lcd, _connectedWallet.walletAddress, setMyTokens)
     }
     if (typeof tokensLoaded === 'undefined' && typeof connectedWallet !== 'undefined') {
       loadTokens(connectedWallet)
@@ -45,14 +53,15 @@ export default function Index() {
       const token_id = await toast.promise(
         mint(connectedWallet, cacheContent as CacheContent, mintCount, tokensLoaded),
         {
-          pending: "Minting token(s)...",
-          success: "Token(s) minted!",
-          error: "Could not mint token(s)"
+          pending: "Minting token",
+          success: "Token minted!",
+          error: "Could not mint token"
         }
       )
       console.log('Minted', token_id)
       if (typeof token_id !== 'undefined') {
-        router.push(`/${token_id}`)
+        setMyTokens(myTokens.concat([token_id]))
+        router.push(`#my_tokens`)
       }
     }
   }
@@ -110,7 +119,7 @@ export default function Index() {
                 tokensMinted={tokensLoaded?.length || 0}
                 tokenSupply={cacheContent.config.max_token_count}
               />
-              { myTokens && <MyTokens tokensOwned={myTokens} /> }
+              { myTokens.length > 0 && <MyTokens tokensOwned={myTokens} /> }
             </>
           )}
 

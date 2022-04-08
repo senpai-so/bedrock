@@ -8,6 +8,6 @@ export default {
   LOCALTERRA_URL: 'http://localhost:1317',
   LOCALTERRA_CHAIN_ID: 'http://localhost:1317',
 
-  MAINNET_CODE_ID: 4075,
-  TESTNET_CODE_ID: 58369,
+  MAINNET_CODE_ID: 4368,
+  TESTNET_CODE_ID: 61578,
 }
