@@ -20,6 +20,19 @@ export const getAllTokens = async (lcd: LCDClient, contract_address: string) => 
   return all_tokens
 }
 
+export const getMyTokens = async (lcd: LCDClient, contract_address: string, owner: string) => {
+  let myTokens: string[] = [];
+  let last_token = undefined
+  while (true) {
+    const msg = { tokens: { limit: BATCH_SIZE, owner: owner, start_after: last_token } }
+    const { tokens } = (await lcd.wasm.contractQuery(contract_address, msg)) as { tokens: string[] }
+    last_token = tokens.slice(-1)[0]
+    myTokens = myTokens.concat(tokens)
+  }
+  
+  return myTokens
+}
+
 function isArrayOfStrings(value: any): boolean {
    return Array.isArray(value) && value.every(item => typeof item === "string");
 }
