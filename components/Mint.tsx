@@ -23,17 +23,17 @@ export const Mint: React.FC<{
   return (
     <div className='bg-transparent w-full px-12'>
       <div className='w-full max-w-7xl mx-auto py-12 px-4 sm:py-6 sm:px-6 lg:px-8'>
-        <div className='w-full mx-auto  divide-gray-200'>
+        <div className='w-full mx-auto divide-y-2 divide-gray-200'>
           <div>
             <h2 className='text-center text-2xl font-extrabold text-gray-800 sm:text-3xl'>
               Mint NFT
             </h2>
-            <h3 className='text-center text-l font-bold text-gray-700 sm:text-xl mt-2'>
+            <h3 className='text-center text-l font-bold text-gray-800 sm:text-xl my-2'>
               { `${tokensMinted} / ${tokenSupply}` }
             </h3>
           </div>
 
-          <div className='flex flex-col items-center mt-6 space-y-6 '>
+          <div className='flex flex-col items-center mt-3 pt-6 space-y-6 '>
             {/* <div className='flex flex-col items-center'>
               <input
                 type='number'

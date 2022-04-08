@@ -111,9 +111,10 @@ export default function Index() {
     className='flex items-center justify-center py-12'
     style={{
       backgroundImage: 'url(/background.png)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
+        minHeight: '100vh',
+        width: '100vw',
     }}
     >
       <div className='flex-grow bg-white max-w-xl max-h-xl w-max rounded-3xl shadow-2xl px-5 py-12'>
