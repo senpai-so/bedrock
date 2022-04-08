@@ -22,14 +22,14 @@ function ConfigPage() {
   const navigate = useNavigate()
 
   // Navigate back to CID page if the wallet is not connected
-  useEffect(() => {
-    if (
-      typeof connectedWallet === 'undefined' ||
-      connectedWallet?.connectType !== ConnectType.EXTENSION
-    ) {
-      navigate('/')
-    }
-  })
+  // useEffect(() => {
+  //   if (
+  //     typeof connectedWallet === 'undefined' ||
+  //     connectedWallet?.connectType !== ConnectType.EXTENSION
+  //   ) {
+  //     navigate('/')
+  //   }
+  // })
 
   const checkFields = () => {
     let success = true
@@ -127,7 +127,7 @@ function ConfigPage() {
       style={{
         backgroundImage: 'url(/background.png)',
         backgroundSize: 'cover',
-        height: '100%',
+        minHeight: '100%',
         width: '100%'
       }}
     >
@@ -142,14 +142,14 @@ function ConfigPage() {
         draggable
         pauseOnHover={false}
       />
-      <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
+      <div className='bg-white max-w-xl mx-auto mt-15 rounded-3xl shadow-2xl px-8 py-12'>
         <div className='flex flex-col items-center justify-center max-w-l mx-auto'>
           <div className='flex flex-col items-center justify-center border-gray-200 rounded-lg p-4'>
             <h2 className='font-bold text-center text-3xl text-blue-700'>
               Configuration
             </h2>
 
-            <p className='text-base font-medium text-center text-gray-700'>
+            <p className='text-lg font-medium text-center text-gray-700'>
               Configure your NFT smart contract!
             </p>
 
@@ -157,87 +157,91 @@ function ConfigPage() {
             <div className='mb-12'>
               <div className='mt-6 grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-6'>
                 <div className='sm:col-span-3'>
-                  <label
-                    htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
-                  >
-                    Collection Name
-                  </label>
-                  <div className='mt-1'>
+                  <div>
+                    <label
+                      htmlFor='collection-name'
+                      className='block text-lg font-medium text-black'
+                    >
+                      Collection Name
+                    </label>
                     <input
                       type='text'
                       name='name'
-                      className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
+                      placeholder='Test Collection'
+                      className='input px-3 py-3 w-full border border-blue-700 text-base rounded-xl shadow-sm'
                       onChange={(e) => setName(e.currentTarget.value)}
                     />
                   </div>
                 </div>
 
                 <div className='sm:col-span-3'>
-                  <label
-                    htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
-                  >
-                    Collection Symbol
-                  </label>
-                  <div className='mt-1'>
+                  <div>
+                    <label
+                      htmlFor='collection-name'
+                      className='block text-lg font-medium text-black'
+                    >
+                      Collection Symbol
+                    </label>
                     <input
                       type='text'
                       name='symbol'
-                      className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
+                      placeholder='TEST'
+                      className='input px-3 py-3 w-full border border-blue-700 text-base rounded-xl shadow-sm'
                       onChange={(e) => setSymbol(e.currentTarget.value)}
                     />
                   </div>
                 </div>
 
                 <div className='sm:col-span-3'>
-                  <label
-                    htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
-                  >
-                    Price (UST)
-                  </label>
-                  <div className='mt-1'>
+                  <div>
+                    <label
+                      htmlFor='collection-name'
+                      className='block text-lg font-medium text-black'
+                    >
+                      Price (UST)
+                    </label>
                     <input
                       type='text'
                       name='price'
-                      className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
+                      placeholder='0'
+                      className='input px-3 py-3 w-full border border-blue-700 text-base rounded-xl shadow-sm'
                       onChange={(e) => setPrice(e.currentTarget.value)}
                     />
                   </div>
                 </div>
 
                 <div className='sm:col-span-3'>
-                  <label
-                    htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
-                  >
-                    Admin Address
-                  </label>
-                  <div className='mt-1'>
+                  <div>
+                    <label
+                      htmlFor='collection-name'
+                      className='block text-lg font-medium text-black'
+                    >
+                      Admin Address
+                    </label>
                     <input
                       disabled={true}
                       type='text'
                       name='admin'
                       value={connectedWallet?.walletAddress}
-                      className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm bg-blue-100'
+                      className='input px-3 py-3 w-full border border-blue-700 text-base rounded-xl shadow-sm bg-blue-100'
                     />
                   </div>
                 </div>
 
                 {/* Correct the formatting for start & end times */}
                 <div className='sm:col-span-3'>
-                  <label
-                    htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
-                  >
-                    Mint Start Time (optional) {/* Add date/time selection */}
-                  </label>
-                  <div className='mt-1'>
+                  <div>
+                    <label
+                      htmlFor='collection-name'
+                      className='block text-lg font-medium text-black'
+                    >
+                      Mint Start Time {/* Add date/time selection */}
+                    </label>
                     <input
                       type='text'
                       name='startTime'
-                      className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
+                      placeholder='(optional)'
+                      className='input px-3 py-3 w-full border border-blue-700 text-base rounded-xl shadow-sm'
                       onChange={(e) =>
                         setStartTime(parseInt(e.currentTarget.value))
                       }
@@ -246,17 +250,18 @@ function ConfigPage() {
                 </div>
 
                 <div className='sm:col-span-3'>
-                  <label
-                    htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
-                  >
-                    Mint End Time (optional) {/* Add date/time selection */}
-                  </label>
-                  <div className='mt-1'>
+                  <div>
+                    <label
+                      htmlFor='collection-name'
+                      className='block text-lg font-medium text-black'
+                    >
+                      Mint End Time {/* Add date/time selection */}
+                    </label>
                     <input
                       type='text'
                       name='endTime'
-                      className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
+                      placeholder='(optional)'
+                      className='input px-3 py-3 w-full border border-blue-700 text-base rounded-xl shadow-sm'
                       onChange={(e) =>
                         setEndTime(parseInt(e.currentTarget.value))
                       }
@@ -265,17 +270,18 @@ function ConfigPage() {
                 </div>
 
                 <div className='sm:col-span-3'>
-                  <label
-                    htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
-                  >
-                    Token Supply
-                  </label>
-                  <div className='mt-1'>
+                  <div>
+                    <label
+                      htmlFor='collection-name'
+                      className='block text-lg font-medium text-black'
+                    >
+                      Token Supply
+                    </label>
                     <input
                       type='text'
                       name='maxTokens'
-                      className='input inline-flex text-sm font-small h-3 px-1 py-3 w-max-3xl w-full border border-gray-700 text-l rounded-md shadow-sm'
+                      placeholder='666'
+                      className='input px-3 py-3 w-full border border-blue-700 text-base rounded-xl shadow-sm'
                       onChange={(e) =>
                         setMaxTokens(parseInt(e.currentTarget.value))
                       }
@@ -283,19 +289,20 @@ function ConfigPage() {
                   </div>
                 </div>
 
-                <div className='sm:col-span-3 justify-center items-center'>
+                <div className='sm:col-span-3'>
                   <label
                     htmlFor='collection-name'
-                    className='block text-base font-medium text-black'
+                    className='block text-lg font-medium text-black'
                   >
                     Mint Permissions
                   </label>
+                  
                   <div className='mt-1 flex items-center'>
                     <label
                       htmlFor='toggle'
                       className='flex items-center cursor-pointer'
                     >
-                      <div className='mr-2 block text-sm font-medium text-gray-700 select-none'>
+                      <div className='mr-2 block text-base font-medium text-gray-700 select-none'>
                         Private
                       </div>
                       {/* Switch Object */}
@@ -312,7 +319,7 @@ function ConfigPage() {
                         <div className='dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition'></div>{' '}
                         {/* Dot */}
                       </div>
-                      <div className='ml-2 block text-sm font-medium text-gray-700 select-none'>
+                      <div className='ml-2 block text-base font-medium text-gray-700 select-none'>
                         Public
                       </div>
                     </label>

@@ -7,30 +7,39 @@ import {
   WalletStatus
 } from '@terra-money/wallet-provider'
 
-import { getFiles } from './utils/ipfs'
-
 function CIDPage() {
   const [cid, setCid] = useState<string | undefined>()
+  const [tokenCount, setTokenCount] = useState<number | undefined>()
+  const [fileExt, setFileExt] = useState<string | undefined>()
   const { status, connect } = useWallet()
   const navigate = useNavigate()
 
-  const submitCid = async () => {
-    if (typeof cid === 'undefined') {
+  const canSubmit = () => {
+    let success = true
+    if (!cid) {
       toast.warn('Please enter a valid CID from IPFS')
+      success = false
+    }
+    if (!tokenCount || tokenCount <= 0) {
+      toast.warn('Number of NFTs must be larger than 0')
+      success = false
+    }
+    if (!fileExt || !['.jpg', '.jpeg', '.png'].includes(fileExt)) {
+      toast.warn('File extension must be \".jpg\", \".jpeg\", or \".png\"')
+      success = false
+    }
+    return success
+  }
+
+  const submitCid = async () => {
+    if (!canSubmit()) {
       return
     }
-    const toastLoadingId = toast.loading('Getting token data...')
-    const files = await getFiles(cid)
-    toast.dismiss(toastLoadingId)
-    const toastSuccessId = toast.success('Success :)')
-    const assets = files
-      .map((file) => file.name)
-      .filter((file) => !file.includes('.json'))
-    console.log(assets)
+
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cid: cid, assets: assets })
+      body: JSON.stringify({ cid: cid, tokenCount: tokenCount, fileExt: fileExt })
     }
 
     fetch('http://localhost:3001/saveCid', requestOptions)
@@ -40,7 +49,6 @@ function CIDPage() {
         console.log(res)
       })
       .catch((e) => console.log(e))
-    toast.dismiss(toastSuccessId)
     navigate('/config')
   }
 
@@ -85,17 +93,60 @@ function CIDPage() {
                   {'Getting Started'}
                 </h2>
 
-                <p className='text-base text-center text-gray-700 mt-2'>
-                  {'Paste the IPFS CID for your assets below to get started!'}
+                <p className='text-lg text-center text-gray-700 mt-2'>
+                  {'Enter your CID from Pinata, number of possible NFTs, and the file extension for your images below.'}
                 </p>
               </div>
 
-              <input
-                type='text'
-                className='input inline-flex px-3 py-3 w-max-3xl w-9/12 border border-blue-700 text-l rounded-xl shadow-sm'
-                placeholder='IPFS CID'
-                onChange={(e) => setCid(e.currentTarget.value)}
-              />
+              <div className='flex flex-col items-center justify-center max-w-xl w-2/3 space-y-4'>
+                <div className='w-full'>
+                <label
+                    htmlFor='extension'
+                    className='block text-lg font-medium text-black'
+                  >
+                    IPFS CID
+                  </label>
+                  <input 
+                    type='text'
+                    name='cid'
+                    className='input px-3 py-3 w-full border border-blue-700 text-m rounded-xl shadow-sm'
+                    placeholder='QmV96Ynup4XtJm2CKhky97nFzyCQU3Ryo4kLfj69edMnk2'
+                    onChange={(e) => setCid(e.currentTarget.value)}
+                  />
+                </div>
+
+                <div className='w-full'>
+                  <label
+                    htmlFor='nftCount'
+                    className='block text-lg font-medium text-black'
+                  >
+                    NFT Count 
+                  </label>
+                  <input 
+                    type='number'
+                    name='nftCount'
+                    className='input px-3 py-3 w-full border border-blue-700 text-m rounded-xl shadow-sm'
+                    placeholder='0'
+                    onChange={(e) => setTokenCount(parseInt(e.currentTarget.value))}
+                  />
+                </div>
+
+                <div className='w-full'>
+                  <label
+                    htmlFor='extension'
+                    className='block text-lg font-medium text-black'
+                  >
+                    Image File Extension 
+                  </label>
+                  <input
+                    type='text'
+                    name='extension'
+                    className='input px-3 py-3 w-full border border-blue-700 text-m rounded-xl shadow-sm'
+                    placeholder='.jpg, .jpeg, .png'
+                    onChange={(e) => setFileExt(e.currentTarget.value)}
+                  />
+                </div>
+              </div>
 
               <button
                 className='inline-flex items-center px-6 py-3 border border-transparent text-xl font-medium rounded-2xl shadow-sm text-white bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'

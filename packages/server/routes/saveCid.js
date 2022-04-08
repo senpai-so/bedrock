@@ -7,13 +7,25 @@ const getCache = (path) => {
   )
 }
 
+const generateAssets = (tokenCount, fileExt) => {
+  const assets = []
+  for (let i=1; i<=tokenCount; i++) {
+    assets.push(`${i}` + fileExt)
+  }
+  return assets
+}
+
 var router = express.Router()
 router.post('/', function (req, res, next) {
-  const { cid, assets } = req.body
+  const { cid, tokenCount, fileExt } = req.body
+
+  if (!['.jpg', '.jpeg', '.png'].includes(fileExt)) {
+    res.sendStatus(400)
+  }
 
   let cache = getCache('./cache.json')
   cache.cid = cid
-  cache.assets = assets
+  cache.assets = generateAssets(tokenCount, fileExt)
 
   // Save config for use by the /save endpoint
   fs.writeFileSync('./cache.json', JSON.stringify(cache))
