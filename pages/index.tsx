@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import Image from 'next/image'
+import router from 'next/router'
 
 import {
   useWallet,
@@ -7,20 +8,20 @@ import {
   ConnectType,
   ConnectedWallet
 } from '@terra-money/wallet-provider'
+import { LCDClient } from '@terra-money/terra.js'
 
 import { FAQ } from 'components/FAQ'
 import { Mint } from 'components/Mint'
+import { MyTokens } from 'components/MyTokens'
 
 import { toast, ToastContainer } from 'react-toastify'
 import { CacheContent } from 'lib/types'
 import { mint } from 'lib/utils/mint'
-import router from 'next/router'
-
-import cacheContent from '../lib/cache.json'
-import { getAllTokens, getMyTokens } from 'lib/utils/getAllTokens'
 import { getClient } from 'lib/utils/getClient'
-import { MyTokens } from 'components/MyTokens'
-import { LCDClient } from '@terra-money/terra.js'
+import { getAllTokens, getMyTokens } from 'lib/utils/getAllTokens'
+
+import designConfig from '../public/design-config.json'
+import cacheContent from '../lib/cache.json'
 
 const loadAllTokens = async (lcd: LCDClient, setter: any) => {
   setter(await getAllTokens(lcd, cacheContent.contract_addr))
@@ -90,7 +91,7 @@ export default function Index() {
       <div className='bg-white max-w-xl mx-auto rounded-3xl shadow-2xl px-5 py-12'>
         <div className='flex flex-col items-center justify-center space-y-12'>
           <h2 className='text-center text-3xl font-extrabold text-gray-900 sm:text-4xl'>
-            Exclusive 1st Drop
+            {designConfig.title}
           </h2>
 
           <div>
@@ -123,7 +124,7 @@ export default function Index() {
             </>
           )}
 
-          <FAQ />
+          <FAQ faqs={designConfig.faqs}/>
 
         </div>
       </div>
