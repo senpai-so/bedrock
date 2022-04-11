@@ -7,6 +7,7 @@ import {
   concat as uint8ArrayConcat,
   toString as uint8ArrayToString
 } from 'uint8arrays'
+import { getAllTokens } from './getTokens'
 
 // https://stackoverflow.com/questions/15585216/how-to-randomly-generate-numbers-without-repetition-in-javascript
 function getRandomNums(n: number, max: number) {
@@ -25,7 +26,6 @@ export const mint = async (
   wallet: any, 
   cacheContent: CacheContent, 
   count: number,
-  tokens: string[]
 ) => {
   if (cacheContent.contract_addr == '') return
   if (cacheContent.assets.length == 0) return
@@ -33,8 +33,7 @@ export const mint = async (
 
   // Load wallet & LCD client
   const lcd = await getClient(cacheContent.chain_id)
-
-  console.log()
+  let tokens = await getAllTokens(lcd, cacheContent.contract_addr) || []
 
   // Find which tokens have not been minted
   const newAssets = cacheContent.assets.filter(

@@ -18,21 +18,32 @@ import router from 'next/router'
 
 import { title } from '../public/frontend-config.json'
 import cacheContent from '../lib/cache.json'
-import { getAllTokens } from 'lib/utils/getAllTokens'
+import { getNumTokens, getMyTokens } from 'lib/utils/getTokens'
 import { getClient } from 'lib/utils/getClient'
+import { LCDClient } from '@terra-money/terra.js'
+import { MyTokens } from 'components/MyTokens'
+
+
+const loadNumTokens = async (lcd: LCDClient, setter: any) => {
+  setter(await getNumTokens(lcd, cacheContent.contract_addr))
+}
+
+const loadMyTokens = async (lcd: LCDClient, owner: string, setter: any) => {
+  setter(await getMyTokens(lcd, cacheContent.contract_addr, owner))
+}
 
 export default function Index() {
   const { connect } = useWallet()
-  const [tokensLoaded, setTokensLoaded] = React.useState<string[] | undefined>(undefined)
+  const [tokensLoaded, setTokensLoaded] = React.useState<number>(0)
+  const [myTokens, setMyTokens] = React.useState<string[]>([])
   const connectedWallet = useConnectedWallet()
 
   useEffect(() => {
-    const loadTokens = async (connectedWallet: ConnectedWallet) => {
+    const loadTokens = async (_connectedWallet: ConnectedWallet) => {
       try {
-        const lcd = await getClient(connectedWallet.network.chainID || 'columbus-5')
-        setTokensLoaded(
-          await getAllTokens(lcd, cacheContent.contract_addr)
-        )
+        const lcd = await getClient(_connectedWallet.network.chainID || 'columbus-5')
+        loadNumTokens(lcd, setTokensLoaded)
+        loadMyTokens(lcd, _connectedWallet.walletAddress, setMyTokens)
       } catch (error) {
         console.log("Error while loading tokens...")
         console.log(error)
@@ -48,7 +59,7 @@ export default function Index() {
 
     if (connectedWallet && tokensLoaded) {
       const token_id = await toast.promise(
-        mint(connectedWallet, cacheContent as CacheContent, mintCount, tokensLoaded),
+        mint(connectedWallet, cacheContent as CacheContent, mintCount),
         {
           pending: "Minting token(s)...",
           success: "Token(s) minted!",
@@ -67,8 +78,8 @@ export default function Index() {
       className='py-12'
       style={{
         // backgroundImage: 'url(/background.png)',
-        // backgroundSize: 'contain',
-        backgroundColor: 'black',
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
         minHeight: '100vh',
       }}
     >
@@ -107,13 +118,16 @@ export default function Index() {
               Connect!
             </button>
           ) : (
-            <Mint 
-              disabled={typeof tokensLoaded === 'undefined'}
-              mintCallback={handleClickMint} 
-              mintCost={parseFloat(cacheContent.config.price.amount)/1_000_000}
-              tokensMinted={tokensLoaded?.length || 0}
-              tokenSupply={cacheContent.config.max_token_count}
-            />
+            <>
+              <Mint 
+                disabled={typeof tokensLoaded === 'undefined'}
+                mintCallback={handleClickMint} 
+                mintCost={parseFloat(cacheContent.config.price.amount)/1_000_000}
+                tokensMinted={tokensLoaded}
+                tokenSupply={cacheContent.config.max_token_count}
+              />
+              { myTokens.length > 0 && <MyTokens tokensOwned={myTokens} /> }
+            </>
           )}
 
           <FAQ />

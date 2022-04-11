@@ -2,6 +2,11 @@ import { LCDClient } from "@terra-money/terra.js";
 
 const BATCH_SIZE = 25
 
+export const getNumTokens = async (lcd: LCDClient, contract_address: string) => {
+  const { count } = await lcd.wasm.contractQuery(contract_address, { num_tokens: {} }) 
+  return count
+}
+
 export const getAllTokens = async (lcd: LCDClient, contract_address: string) => {
   const { count } = await lcd.wasm.contractQuery(contract_address, { num_tokens: {} }) 
   const iters = Math.ceil(count / BATCH_SIZE)
@@ -19,6 +24,27 @@ export const getAllTokens = async (lcd: LCDClient, contract_address: string) => 
 
   return all_tokens
 }
+
+export const getMyTokens = async (lcd: LCDClient, contract_address: string, owner: string) => {
+  let myTokens: string[] = [];
+  let last_token = undefined
+  while (true) {
+    const msg = { tokens: { limit: BATCH_SIZE, owner: owner, start_after: last_token } }
+    try {
+      const { tokens } = (await lcd.wasm.contractQuery(contract_address, msg)) as { tokens: string[] | undefined }
+      if (typeof tokens === 'undefined') break
+      if (tokens.length < BATCH_SIZE) {
+        myTokens = myTokens.concat(tokens)
+        break
+      }
+      last_token = tokens.slice(-1)[0]
+      myTokens = myTokens.concat(tokens)
+    } catch (error) { break }
+  }
+  
+  return myTokens
+}
+
 
 function isArrayOfStrings(value: any): boolean {
    return Array.isArray(value) && value.every(item => typeof item === "string");
