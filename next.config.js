@@ -9,5 +9,9 @@ module.exports = {
       'dl.airtable.com',
       'ipfs.io',
     ]
-  }
+  },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    config.experiments.asyncWebAssembly = true
+    return config
+  },
 }
