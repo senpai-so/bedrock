@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React from 'react'
 import cs from 'classnames'
 
 import ReactMarkdown from 'react-markdown'
@@ -7,35 +7,19 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 
 import { EmptyProps } from 'lib/types'
 
-const faqs = [
-  {
-    question: 'Question 1',
-    answer: `Answer 1`
-  },
-  {
-    question: 'Question 2',
-    answer: `Answer 2`
-  },
-  {
-    question: 'Question 3',
-    answer: `Answer 3`
-  },
-  {
-    question: 'Question 4',
-    answer: `Answer 4`
-  },
-  {
-    question: 'Question 5 ',
-    answer: `Answer 5`
-  }
-]
+type FAQ = {
+  question: string
+  answer: string
+}
 
-export const FAQ: React.FC<EmptyProps> = () => {
+export const FAQ: React.FC<{
+  faqs: FAQ[]
+}> = ({ faqs }) => {
   return (
     <div className='bg-transparent w-full px-12'>
       <div className='w-full max-w-7xl mx-auto py-12 px-4 sm:py-6 sm:px-6 lg:px-8'>
         <div className='w-full mx-auto divide-y-2 divide-gray-200'>
-          <h2 className='text-center text-3xl font-extrabold text-gray-900 sm:text-4xl'>
+          <h2 className='text-center text-2xl font-extrabold text-gray-800 sm:text-3xl'>
             FAQ
           </h2>
 

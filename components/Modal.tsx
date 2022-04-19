@@ -72,7 +72,7 @@ export const Modal: React.FC<{
               <div className='mt-5 sm:mt-6'>
                 <button
                   type='button'
-                  className='w-full inline-flex justify-center rounded-md border-2 border-blue-500 shadow-sm px-4 py-2 bg-white text-blue-700 font-medium text-white'
+                  className='w-full inline-flex justify-center rounded-md border-2 border-blue-500 shadow-sm px-4 py-2 bg-white text-blue-700 font-medium'
                   onClick={() => {
                     action()
                     setOpen(false)

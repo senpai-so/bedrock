@@ -1,7 +1,6 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, Empty, StdResult };
 
-use cw2::{get_contract_version, set_contract_version};
 use cw721::ContractInfoResponse;
 pub use cw721_base::{MintMsg, MinterResponse, Cw721Contract};
 use bedrock::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
@@ -9,9 +8,8 @@ use bedrock::state::{Extension};
 
 use crate::execute::{execute_mint, execute_withdraw};
 
-use crate::query::{query_config, query_frozen};
+use crate::query::{query_config, query_frozen, query_all_tokens};
 use crate::state::{Config, CONFIG, OWNER};
-
 use crate::{error::ContractError, execute::execute_burn};
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -79,6 +77,7 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Config {} => to_binary(&query_config(deps)?),
         QueryMsg::Frozen {} => to_binary(&query_frozen(deps)?),
+        QueryMsg::AllTokens { start_after, limit } => to_binary(&query_all_tokens(deps, start_after, limit)?),
         // CW721 methods
         _ => Cw721Contract::<Extension, Empty>::default()
             .query(deps, env, msg.into()),
@@ -87,28 +86,9 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn migrate(
-    deps: DepsMut,
+    _deps: DepsMut,
     _env: Env,
-    msg: MigrateMsg<Config>,
-) -> Result<Response, ContractError> {
-    match msg {
-        MigrateMsg { version, config } => try_migrate(deps, version, config),
-    }
-}
-
-fn try_migrate(
-    deps: DepsMut,
-    version: String,
-    config: Option<Config>,
-) -> Result<Response, ContractError> {
-    let contract_version = get_contract_version(deps.storage)?;
-    set_contract_version(deps.storage, contract_version.contract, version)?;
-
-    if config.is_some() {
-        CONFIG.save(deps.storage, &config.unwrap())?
-    }
-
-    Ok(Response::new()
-        .add_attribute("method", "try_migrate")
-        .add_attribute("version", contract_version.version))
+    _msg: MigrateMsg, 
+) -> StdResult<Response> {
+    Ok(Response::default())
 }

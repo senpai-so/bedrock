@@ -1,0 +1,21 @@
+{
+  "manifest": {
+    "token_id": "0000000001",
+    "name": "Stinky Hooligan 01"
+  },
+  "metadata": {
+    "description": "Truck Slap",
+    "name": "Stinky Hooligan 01",
+    "image": "",
+    "attributes": [
+      { "trait_type": "Type", "value": "amature" },
+      { "trait_type": "Background", "value": "white" },
+      { "trait_type": "Body", "value": "tan" },
+      { "trait_type": "Eyes", "value": "green,popping" },
+      { "trait_type": "Mouth", "value": "broken" },
+      { "trait_type": "Headwear", "value": "beanie" },
+      { "trait_type": "Outfit", "value": "" },
+      { "trait_type": "Items", "value": "skateboard" }
+    ]
+  }
+}

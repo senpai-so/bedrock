@@ -4,17 +4,15 @@
 
 Our main features are
 
-- [X] _Create_ NFT collections
-- [ ] _Mint and Sell_ NFT's on storefront
-- [ ] _Pay_ using Fiat
-- [ ] _Create auctions_ for resale of NFT's
+- [x] _Create_ NFT collections
+- [x] _Mint and Sell_ NFT's on storefront
 
-Bedrock is meant to be a single repo with three components: a front-end, set of COSMWASM contracts deployable on Terra, and
-a payments integration.
+Bedrock is meant to be a single repo with three components: a front-end, and set of COSMWASM contracts deployable on Terra.
 
 ## Getting Started
 
 ### Install dependencies
+
 ```shell
 yarn
 ```
@@ -34,10 +32,13 @@ Coming 🔜 !
 If you'd like to make changes or contribute:
 
 #### a) Set up local Terra Stack
+
 Follow the [tutorial](https://docs.terra.money/Tutorials/Smart-contracts/Overview.html) to set up LocalTerra and learn to deploy an example contract.
 
 #### b) Run changes against local stack
+
 After you make changes, run them agains the local stack by issuing commands with the CLI.
 
 ## Roadmap and Team
+
 You can view [our team and roadmap here](https://www.notion.so/senpai-inc/Bedrock-Terra-NFT-Tools-1a360fafc49248e69ead3b10b4af9e94).

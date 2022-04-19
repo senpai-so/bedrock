@@ -1,0 +1,17 @@
+{
+  "title": "Bedrock Demo Collection",
+  "faqs": [
+    {
+      "question": "What is Bedrock?",
+      "answer": "Bedrock is an open source project focussed on improving open utility of NFTs on Terra."
+    },
+    {
+      "question": "What is the artwork?",
+      "answer": "This is a project from Loonies. Coming to Terra soon!"
+    },
+    {
+      "question": "How many pieces?",
+      "answer": "10 :( IPFS doesn't like large folders unfortunately"
+    }
+  ]
+}

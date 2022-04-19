@@ -6,7 +6,12 @@ module.exports = {
       'assets.terra.money',
       'localhost',
       'loonies.world',
-      'dl.airtable.com'
+      'dl.airtable.com',
+      'ipfs.io',
     ]
-  }
+  },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    config.experiments.asyncWebAssembly = true
+    return config
+  },
 }

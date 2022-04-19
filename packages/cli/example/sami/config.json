@@ -1,0 +1,11 @@
+{
+  "name": "Bedrock",
+  "symbol": "BED",
+  "price": {
+    "amount": "0",
+    "denom": "uluna"
+  },
+  "treasury_account": "terra1muuppptydj95hs79xgg4yaq0pcsz7khuc6vez5",
+  "max_token_count": 1,
+  "is_mint_public": false
+}

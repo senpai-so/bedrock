@@ -1,7 +1,6 @@
 contracts/
 
 .snapshots/
-packages/
 build/
 dist/
 node_modules/

@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+
 import {
   getChainOptions,
   StaticWalletProvider,

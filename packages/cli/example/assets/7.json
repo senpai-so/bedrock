@@ -1,21 +1,15 @@
 {
-  "manifest": {
-    "token_id": "ablrm2koH0",
-    "name": "loonie7"
-  },
-  "metadata": {
-    "description": "OG loonie",
-    "name": "loonie7",
-    "image": "",
-    "attributes": [
-      { "trait_type": "Type", "value": "pedestrian" },
-      { "trait_type": "Background", "value": "deep space" },
-      { "trait_type": "Body", "value": "green" },
-      { "trait_type": "Eyes", "value": "glasses,reading" },
-      { "trait_type": "Mouth", "value": "teeth" },
-      { "trait_type": "Headwear", "value": "earplug,race helmet" },
-      { "trait_type": "Outfit", "value": "space suit" },
-      { "trait_type": "Items", "value": "map" }
-    ]
-  }
+  "description": "OG loonie",
+  "name": "loonie7",
+  "image": "",
+  "attributes": [
+    { "trait_type": "Type", "value": "pedestrian" },
+    { "trait_type": "Background", "value": "deep space" },
+    { "trait_type": "Body", "value": "green" },
+    { "trait_type": "Eyes", "value": "glasses,reading" },
+    { "trait_type": "Mouth", "value": "teeth" },
+    { "trait_type": "Headwear", "value": "earplug,race helmet" },
+    { "trait_type": "Outfit", "value": "space suit" },
+    { "trait_type": "Items", "value": "map" }
+  ]
 }

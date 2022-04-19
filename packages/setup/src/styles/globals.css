@@ -1,0 +1,49 @@
+@import 'ReactToastify.css';
+@import 'Home.module.css';
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  padding: 0;
+  font-family: -apple-system, Inter, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+mark {
+  margin: 0;
+  padding: 0.1em 0.4em;
+  border-radius: 0.8em 0.3em;
+  background: transparent;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 225, 0, 0.5),
+    rgba(255, 225, 0, 0.7) 4%,
+    rgba(255, 225, 0, 0.5)
+  );
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
